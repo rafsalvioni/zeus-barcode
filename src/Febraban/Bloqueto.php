@@ -66,7 +66,7 @@ class Bloqueto extends AbstractFebraban
      * @param string $campoLivre
      * @return self
      */
-    public static function factory(
+    public static function builder(
         $banco, \DateTime $vencto = null, $valor = 0, $campoLivre = null
     ){
         $data = '0009';

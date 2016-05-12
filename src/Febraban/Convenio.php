@@ -58,7 +58,7 @@ class Convenio extends AbstractFebraban
      * @param string $campoLivre
      * @return self
      */
-    public static function factory($segmento, $valor = 0, $campoLivre = null)
+    public static function builder($segmento, $valor = 0, $campoLivre = null)
     {
         $data = '896';
         $data = \str_pad($data, 43, '0', \STR_PAD_RIGHT);

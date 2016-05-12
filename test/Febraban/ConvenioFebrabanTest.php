@@ -49,7 +49,7 @@ class ConvenioFebrabanTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getChecksum(), 7);
         $this->assertEquals($bc->getCampoLivre(), '804135179100100993938');
         
-        $bc = Convenio::factory(6, 39585.78);
+        $bc = Convenio::builder(6, 39585.78);
         $this->assertEquals($bc->getSegmento(), '6');
         $this->assertEquals($bc->getValor(), 39585.78);
     }

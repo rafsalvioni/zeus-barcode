@@ -54,7 +54,7 @@ class BloquetoFebrabanTest extends \PHPUnit_Framework_TestCase
         $campoLivre = \substr($bc->getData(true), 19);
         $this->assertEquals($bc->getCampoLivre(), $campoLivre);
         
-        $bc = Bloqueto::factory('001', null, 39585.78);
+        $bc = Bloqueto::builder('001', null, 39585.78);
         $this->assertEquals($bc->getCodigoBanco(), '001');
         $this->assertEquals($bc->getVencto()->format('d-m-Y'), (new \DateTime())->format('d-m-Y'));
         $this->assertEquals($bc->getValor(), 39585.78);

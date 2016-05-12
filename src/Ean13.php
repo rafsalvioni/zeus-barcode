@@ -3,7 +3,7 @@
 namespace Zeus\Barcode;
 
 /**
- * Implements a barcode EAN13 standard.
+ * Implements a EAN13 barcode standard.
  *
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/ean13.phtml
