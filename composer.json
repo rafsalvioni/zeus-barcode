@@ -1,0 +1,31 @@
+{
+    "name": "rafsalvioni/zeus-log",
+    "description": "Provides a Objected-Oriented API to create barcodes and manipulate its data",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "barcode", "zeus", "standard25", "interleaved25", "codabar", "code11", "ean13", "ean8",
+        "isbn", "issn", "ismn", "jan", "upca", "upce", "febraban", "boleto", "bloqueto", "convenio"
+    ],
+    "homepage": "https://github.com/rafsalvioni/zeus-barcode",
+    "autoload": {
+        "psr-4": {
+            "Zeus\\Barcode\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZeusTest\\Barcode\\": "test/"
+        }
+    },
+    "require": {
+        "php": ">=5.5 <6",
+        "rafsalvioni/zeus-base": "1.1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.3.0"
+    },
+    "suggest": {
+    },
+    "extra": {
+    }
+}
