@@ -39,38 +39,6 @@ class Codabar extends AbstractBarcode
     ];
     
     /**
-     * Start char
-     * 
-     * @var string 
-     */
-    protected $start;
-    /**
-     * Stop char
-     * 
-     * @var string
-     */
-    protected $stop;
-    
-    /**
-     * 
-     * @param string $data
-     * @param bool $hasChecksum
-     */
-    public function __construct($data, $hasChecksum = true)
-    {
-        if (\preg_match('/^([A-D])(.+?)([A-D])$/', $data, $match)) {
-            $this->start = $match[1];
-            $this->stop  = $match[3];
-            $data        = $match[2];
-        }
-        else {
-            $this->start = 'A';
-            $this->stop  = 'B';
-        }
-        parent::__construct($data, $hasChecksum);
-    }
-    
-    /**
      * 
      * @return string
      */
@@ -121,7 +89,7 @@ class Codabar extends AbstractBarcode
      */
     protected function checkData($data, $hasChecksum = true)
     {
-        return \preg_match("/^[0-9\\-\\$\\:\\/\\.\\+]+$/", $data);
+        return \preg_match("/^[A-D][0-9\\-\\$\\:\\/\\.\\+]+[A-D]$/", $data);
     }
 
     /**
