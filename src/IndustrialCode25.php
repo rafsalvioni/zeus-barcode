@@ -3,12 +3,12 @@
 namespace Zeus\Barcode;
 
 /**
- * Implements a barcode using 2 of 5 standard.
+ * Implements a barcode using the Industrial 2 of 5 standard.
  *
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/2of5.phtml
  */
-class StandardCode25 extends AbstractBarcode
+class IndustrialCode25 extends AbstractBarcode
 {
     /**
      * Encoding table
@@ -16,16 +16,9 @@ class StandardCode25 extends AbstractBarcode
      * @var array
      */
     protected static $encodingTable = [
-        '0' => 'NNWWN',
-        '1' => 'WNNNW',
-        '2' => 'NWNNW',
-        '3' => 'WWNNN',
-        '4' => 'NNWNW',
-        '5' => 'WNWNN',
-        '6' => 'NWWNN',
-        '7' => 'NNNWW',
-        '8' => 'WNNWN',
-        '9' => 'NWNWN',
+        '0' => 'NNWWN', '1' => 'WNNNW', '2' => 'NWNNW', '3' => 'WWNNN',
+        '4' => 'NNWNW', '5' => 'WNWNN', '6' => 'NWWNN', '7' => 'NNNWW',
+        '8' => 'WNNWN', '9' => 'NWNWN',
     ];
     
     /**

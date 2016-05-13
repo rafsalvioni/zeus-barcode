@@ -16,39 +16,61 @@ class Code11 extends AbstractBarcode
      * @var array
      */
     protected static $encodingTable = [
-        '0' => '101011',
-        '1' => '1101011',
-        '2' => '1001011',
-        '3' => '1100101',
-        '4' => '1011011',
-        '5' => '1101101',
-        '6' => '1001101',
-        '7' => '1010011',
-        '8' => '1101001',
-        '9' => '110101',
-        '-' => '101101',
+        '0' => '101011',  '1' => '1101011', '2' => '1001011', '3' => '1100101',
+        '4' => '1011011', '5' => '1101101', '6' => '1001101', '7' => '1010011',
+        '8' => '1101001', '9' => '110101',  '-' => '101101',
     ];
     
-    public function __construct($data, $hasChecksum = true)
-    {
+    /**
+     * Checks if barcode data has a couple of digits of checksum
+     * 
+     * @var bool
+     */
+    private $doubleCheck = false;
+    /**
+     * Checks if the instance should be force a double checksum
+     * 
+     * @var bool
+     */
+    private $forceDoubleCheck;
+
+    /**
+     * $forceDoubleCheck will do that barcode checksum always have two digits
+     * for checksum
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     * @param bool $forceDoubleCheck Force the calc of two checksums digits
+     * @throws Exception If data or checksum is invalid
+     */
+    public function __construct(
+        $data, $hasChecksum = true, $forceDoubleCheck = false
+    ) {
         if (!$this->checkData($data, $hasChecksum)) {
-            throw new Exception('Invalid barcode data!');
+            throw new Exception('Invalid barcode data chars or length!');
         }
-        if ($hasChecksum && \preg_match('/(.+?)(.)$/', $data, $match)) {
-            $c = self::calcDigitC($match[1]);
-            $k = self::calcDigitK($match[1]);
+        
+        $this->forceDoubleCheck = (bool)$forceDoubleCheck;
+        
+        if ($hasChecksum) {
+            $k = \substr_remove($data, -1);
             
-            if ($c == $match[2]) {
-                $this->data     = $match[1];
-                $this->checksum = $c;
+            if (self::calcDigitK($data) == $k) {
+                $this->doubleCheck = true;
             }
-            else if ($k == $match[2]) {
-                $this->data     = \substr($match[1], 0, -2);
-                $this->checksum = \substr($match[1], -2);
+            else if (self::calcDigitC($data) == $k) {
+                if ($this->forceDoubleCheck) {
+                    $k .= self::calcDigitK($data . $k);
+                    $this->doubleCheck = true;
+                }
+                else {
+                    $this->doubleCheck = false;
+                }
             }
-            else{
+            else {
                 throw new Exception('Invalid barcode checksum!');
             }
+            $this->data = $data . $k;
         }
         else {
             parent::__construct($data, false);
@@ -63,7 +85,7 @@ class Code11 extends AbstractBarcode
      * @param int $divisor
      * @return int
      */
-    protected static function calcChecksumUsingWeight(
+    protected static function calcCheckDigit(
         $data, $maxWeight, $divisor
     ) {
         $sum    = 0;
@@ -82,14 +104,26 @@ class Code11 extends AbstractBarcode
         return ($sum % $divisor);
     }
     
+    /**
+     * Calculates the C checksum digit.
+     * 
+     * @param string $data
+     * @return int
+     */
     protected static function calcDigitC($data)
     {
-        return self::calcChecksumUsingWeight($data, 6, 11);
+        return self::calcCheckDigit($data, 6, 11);
     }
 
+    /**
+     * Calculates the K checksum digit.
+     * 
+     * @param string $data
+     * @return int
+     */
     protected static function calcDigitK($data)
     {
-        return self::calcChecksumUsingWeight($data, 7, 9);
+        return self::calcCheckDigit($data, 7, 9);
     }
 
     /**
@@ -102,7 +136,7 @@ class Code11 extends AbstractBarcode
     protected function calcChecksum($data)
     {
         $check = self::calcDigitC($data);
-        if (\strlen($data) > 9){
+        if ($this->forceDoubleCheck || \strlen($data) > 9) {
             $data  .= $check;
             $check .= self::calcDigitK($data);
         }
@@ -148,7 +182,7 @@ class Code11 extends AbstractBarcode
      */
     protected function extractChecksum($data, &$cleanData)
     {
-        $start     = \strlen($data) < 10 ? -1 : -2;
+        $start     = $this->doubleCheck ? -2 : -1;
         $checksum  = \substr_remove($data, $start);
         $cleanData = $data;
         return $checksum;

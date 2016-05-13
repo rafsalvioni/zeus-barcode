@@ -25,17 +25,17 @@ class Bloqueto extends AbstractFebraban
      * Identificador do campo Fator de Vencimento
      * 
      */
-    const FATOR_VENCTO = 4;
+    const FATOR_VENCTO = 5;
     /**
      * Identificador do campo Valor
      * 
      */
-    const VALOR        = 8;
+    const VALOR        = 9;
     /**
      * Identificador do campo Livre
      * 
      */
-    const CAMPO_LIVRE  = 18;
+    const CAMPO_LIVRE  = 19;
     
     /**
      * Armazena a quantidade de caracteres para cada campo
@@ -324,7 +324,7 @@ class Bloqueto extends AbstractFebraban
         $linha[]    = $this->getChecksum();
         
         $linha[]    = $this->getFatorVecto() .
-                      \substr($this->data, 8, 10);
+                      \substr($this->data, 9, 10);
         
         return \implode(' ', $linha);
     }
@@ -337,14 +337,14 @@ class Bloqueto extends AbstractFebraban
      */
     protected function getCampo($campo)
     {
-        return \substr($this->data, $campo, self::$tamanhoCampos[$campo]);
+        return $this->getDataPart($campo, self::$tamanhoCampos[$campo]);
     }
     
     /**
      * Retorna um objeto criado a partir do objeto atual substituindo o valor
      * do campo especificado.
      * 
-     * $valor será completado com zeros a esquerda utilizando o tamnho do campo
+     * $valor será completado com zeros a esquerda utilizando o tamanho do campo
      * registrado.
      * 
      * @param int $campo Constantes da classe
@@ -353,8 +353,7 @@ class Bloqueto extends AbstractFebraban
      */
     protected function withCampo($campo, $valor)
     {
-        $valor = \str_pad($valor, self::$tamanhoCampos[$campo], '0', \STR_PAD_LEFT);
-        $data  = \substr_replace($this->data, $valor, $campo, self::$tamanhoCampos[$campo]);
+        $data = $this->withDataPart($valor, $campo, self::$tamanhoCampos[$campo]);
         return new self($data, false);
     }
 }

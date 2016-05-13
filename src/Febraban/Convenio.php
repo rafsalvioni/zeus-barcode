@@ -15,7 +15,7 @@ class Convenio extends AbstractFebraban
      * Identificador do campo Valor
      * 
      */
-    const VALOR        = 3;
+    const VALOR        = 4;
     /**
      * Identificador do campo Segmento
      * 
@@ -25,17 +25,17 @@ class Convenio extends AbstractFebraban
      * Identificador do campo Livre (p/ segmentos 9)
      * 
      */
-    const EMPRESA      = 14;
+    const EMPRESA      = 15;
     /**
      * Identificador do campo Livre (p/ segmentos 9)
      * 
      */
-    const CAMPO_LIVRE1 = 18;
+    const CAMPO_LIVRE1 = 19;
     /**
      * Identificador do campo Livre  (p/ os outros segmentos)
      * 
      */
-    const CAMPO_LIVRE2 = 22;
+    const CAMPO_LIVRE2 = 23;
     
     /**
      * Armazena a quantidade de caracteres para cada campo
@@ -275,7 +275,7 @@ class Convenio extends AbstractFebraban
      */
     protected function getCampo($campo)
     {
-        return \substr($this->data, $campo, self::$tamanhoCampos[$campo]);
+        return $this->getDataPart($campo, self::$tamanhoCampos[$campo]);
     }
     
     /**
@@ -291,8 +291,7 @@ class Convenio extends AbstractFebraban
      */
     protected function withCampo($campo, $valor)
     {
-        $valor = \str_pad($valor, self::$tamanhoCampos[$campo], '0', \STR_PAD_LEFT);
-        $data  = \substr_replace($this->data, $valor, $campo, self::$tamanhoCampos[$campo]);
+        $data = $this->withDataPart($valor, $campo, self::$tamanhoCampos[$campo]);
         return new self($data, false);
     }
 }

@@ -38,9 +38,9 @@ class InterleavedCode25Test extends \PHPUnit_Framework_TestCase
     public function withChecksumTest()
     {
         $bc = new InterleavedCode25('12345670');
-        $this->assertEquals($bc->getData(), '1234567');
+        $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
-        $this->assertEquals($bc->getData(true), '12345670');
+        $this->assertEquals($bc->getData(false), '1234567');
         $this->assertEquals($bc->getEncoded(), '1010110100101011001101101001010011010011001010101010011001101101');
     }
     
@@ -51,9 +51,9 @@ class InterleavedCode25Test extends \PHPUnit_Framework_TestCase
     public function withoutChecksumTest()
     {
         $bc = new InterleavedCode25('1234567', false);
-        $this->assertEquals($bc->getData(), '1234567');
+        $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
-        $this->assertEquals($bc->getData(true), '12345670');
+        $this->assertEquals($bc->getData(false), '1234567');
         $this->assertEquals($bc->getEncoded(), '1010110100101011001101101001010011010011001010101010011001101101');
     }
 }

@@ -9,24 +9,14 @@ namespace Zeus\Barcode;
  */
 abstract class AbstractBarcode implements BarcodeInterface
 {
+    use BarcodeTrait;
+    
     /**
      * Encoded data
      * 
      * @var string
      */
     protected $encoded;
-    /**
-     * Barcode data, without checksum
-     * 
-     * @var string
-     */
-    protected $data;
-    /**
-     * Checksum
-     * 
-     * @var int
-     */
-    protected $checksum;
     
     /**
      * Calculates a barcode's checksum with a given data.
@@ -59,32 +49,6 @@ abstract class AbstractBarcode implements BarcodeInterface
     abstract protected function encodeData($data);
     
     /**
-     * Extract the checksum from a data.
-     * 
-     * @param string $data
-     * @param string $cleanData Data without checksum
-     * @return int 
-     */
-    protected function extractChecksum($data, &$cleanData)
-    {
-        $checksum  = \substr_remove($data, -1);
-        $cleanData = $data;
-        return $checksum;
-    }
-    
-    /**
-     * Insert a checksum on a data.
-     * 
-     * @param string $data
-     * @param int $checksum
-     * @return string
-     */
-    protected function insertChecksum($data, $checksum)
-    {
-        return $data . $checksum;
-    }
-    
-    /**
      * $data will be validated in constructor. If $data don't have a checksum,
      * it will generated. Else, data's checksum will be validated too.
      * 
@@ -95,7 +59,7 @@ abstract class AbstractBarcode implements BarcodeInterface
     public function __construct($data, $hasChecksum = true)
     {
         if (!$this->checkData($data, $hasChecksum)) {
-            throw new Exception('Invalid barcode data!');
+            throw new Exception('Invalid barcode data chars or length!');
         }
         if ($hasChecksum) {
             $checksum = $this->extractChecksum($data, $data);
@@ -106,29 +70,7 @@ abstract class AbstractBarcode implements BarcodeInterface
         else {
             $checksum = $this->calcChecksum($data);
         }
-        $this->data     = $data;
-        $this->checksum = $checksum;
-    }
-    
-    /**
-     * 
-     * @param bool $withChecksum
-     * @return string
-     */
-    public function getData($withChecksum = false)
-    {
-        return $withChecksum ?
-               $this->insertChecksum($this->data, $this->checksum) :
-               $this->data;
-    }
-    
-    /**
-     * 
-     * @return int
-     */
-    public function getChecksum()
-    {
-        return $this->checksum;
+        $this->data = $this->insertChecksum($data, $checksum);
     }
     
     /**
@@ -138,30 +80,9 @@ abstract class AbstractBarcode implements BarcodeInterface
     final public function getEncoded()
     {
         if (empty($this->encoded)) {
-            $this->encoded = $this->encodeData(
-                $this->insertChecksum($this->data, $this->checksum)
-            );
+            $this->encoded = $this->encodeData($this->data);
         }
         return $this->encoded;
-    }
-    
-    /**
-     * 
-     * @return string
-     */
-    public function getPrintableData()
-    {
-        return $this->getData(true);
-    }
-
-    /**
-     * On serialize, ignores "encoded" attribute.
-     * 
-     * @return string[]
-     */
-    public function __sleep()
-    {
-        return ['data', 'checksum'];
     }
     
     /**

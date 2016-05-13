@@ -37,52 +37,42 @@ class UpcE extends AbstractBarcode
      * @var array
      */
     protected static $encodingTable = [
-        '0' => ['0001101', '0100111'],
-        '1' => ['0011001', '0110011'],
-        '2' => ['0010011', '0011011'],
-        '3' => ['0111101', '0100001'],
-        '4' => ['0100011', '0011101'],
-        '5' => ['0110001', '0111001'],
-        '6' => ['0101111', '0000101'],
-        '7' => ['0111011', '0010001'],
-        '8' => ['0110111', '0001001'],
-        '9' => ['0001011', '0010111'],
+        '0' => ['0001101', '0100111'], '1' => ['0011001', '0110011'],
+        '2' => ['0010011', '0011011'], '3' => ['0111101', '0100001'],
+        '4' => ['0100011', '0011101'], '5' => ['0110001', '0111001'],
+        '6' => ['0101111', '0000101'], '7' => ['0111011', '0010001'],
+        '8' => ['0110111', '0001001'], '9' => ['0001011', '0010111'],
     ];
     
     /**
-     * UPC-E barcodes are generated using a UPC-A barcode. So, we need one...
+     * Converts a UPC-E data to UPC-A.
      * 
-     * However, not all UPC-A barcodes can generate a UPC-E. In this case,
-     * constructor will throw a exception.
-     * 
-     * @param UpcA $upca
-     * @throws UpcEException
+     * @param string $data UPC-E data
+     * @param bool $hasChecksum Has checksum?
+     * @return string
      */
-    public function __construct(UpcA $upca)
+    protected function toUpcaData($data, $hasChecksum = false)
     {
-        $data    = $upca->getData(false);
-        $system  = $data{0};
-        $mfct    = \substr($data, 1, 5);
-        $product = \substr($data, 6, 5);
+        $check = $hasChecksum ? $this->extractChecksum($data, $data) : '';
+        $last  = \substr($data, -1);
+        $upce  = \substr($data, 1);
+        $data  = $data{0};
         
-        if (\preg_match('/[0-2]00$/', $mfct) && \preg_match('/00[0-9]{3}$/', $product)) {
-            $data = \substr($mfct, 0, 2) . \substr($product, -3) . $mfct{2};
+        if ($last == '0' || $last == '1' || $last == '2') {
+            $data .= \substr($upce, 0, 2) . $last . '0000' . \substr($upce, 2, 3);
         }
-        else if (\preg_match('/00$/', $mfct) && \preg_match('/000[0-9]{2}$/', $product)) {
-            $data = \substr($mfct, 0, 3) . \substr($product, -2) . '3';
+        else if ($last == '3') {
+            $data .= \substr($upce, 0, 3) . '00000' . \substr($upce, 3, 2);
         }
-        else if (\preg_match('/0$/', $mfct) && \preg_match('/0000[0-9]$/', $product)) {
-            $data = \substr($mfct, 0, 4) . \substr($product, -1) . '4';
-        }
-        else if (\preg_match('/0000[5-9]$/', $product)) {
-            $data = $mfct . \substr($product, -1);
+        else if ($last == '4') {
+            $data .= \substr($upce, 0, 4) . '00000' . $upce{4};
         }
         else {
-            throw new UpcEException('Unconvertable UPC-A barcode!');
+            $data .= \substr($upce, 0, 5) . '0000' . $last;
         }
         
-        $this->data     = $system . $data;
-        $this->checksum = $upca->getChecksum();
+        $data .= $check;
+        return $data;
     }
 
     /**
@@ -91,7 +81,8 @@ class UpcE extends AbstractBarcode
      */
     protected function calcChecksum($data)
     {
-        //noop
+        $data = $this->toUpcaData($data, false);
+        return (new UpcA($data, false))->getChecksum();
     }
 
     /**
@@ -148,31 +139,7 @@ class UpcE extends AbstractBarcode
      */
     public function toUpcA()
     {
-        $last = \substr($this->data, -1);
-        $upce = \substr($this->data, 1);
-        $data = $this->data{0};
-        
-        if ($last == '0' || $last == '1' || $last == '2') {
-            $data .= \substr($upce, 0, 2) . $last . '0000' . \substr($upce, 2, 3);
-        }
-        else if ($last == '3') {
-            $data .= \substr($upce, 0, 3) . '00000' . \substr($upce, 3, 2);
-        }
-        else if ($last == '4') {
-            $data .= \substr($upce, 0, 4) . '00000' . $upce{4};
-        }
-        else {
-            $data .= \substr($upce, 0, 5) . '0000' . $last;
-        }
-        
-        $data .= $this->checksum;
-        
+        $data = $this->toUpcaData($this->data, true);
         return new UpcA($data, true);
     }
 }
-
-/**
- * UpcE class exception
- * 
- */
-class UpcEException extends Exception {}

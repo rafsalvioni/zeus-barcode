@@ -16,29 +16,49 @@ class Codabar extends AbstractBarcode
      * @var array
      */
     protected static $encodingTable = [
-        '0' => '101010011',
-        '1' => '101011001',
-        '2' => '101001011',
-        '3' => '110010101',
-        '4' => '101101001',
-        '5' => '110101001',
-        '6' => '100101011',
-        '7' => '100101101',
-        '8' => '100110101',
-        '9' => '110100101',
-        '-' => '101001101',
-        '$' => '101100101',
-        ':' => '1101011011',
-        '/' => '1101101011',
-        '.' => '1101101101',
-        '+' => '101100110011',
-        'A' => '1011001001',
-        'B' => '1001001011',
-        'C' => '1010010011',
-        'D' => '1010011001',
+        '0' => '101010011',   '1' => '101011001',   '2' => '101001011',
+        '3' => '110010101',   '4' => '101101001',   '5' => '110101001',
+        '6' => '100101011',   '7' => '100101101',   '8' => '100110101',
+        '9' => '110100101',   '-' => '101001101',   '$' => '101100101',
+        ':' => '1101011011',  '/' => '1101101011',  '.' => '1101101101',
+        '+' => '101100110011', 'A' => '1011001001', 'B' => '1001001011',
+        'C' => '1010010011',   'D' => '1010011001',
     ];
     
     /**
+     * Start char
+     * 
+     * @var string
+     */
+    protected $start;
+    /**
+     * Stop char
+     * 
+     * @var string 
+     */
+    protected $stop;
+
+    /**
+     * Uses the start and stop chars if they given.
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     */
+    public function __construct($data, $hasChecksum = true)
+    {
+        if (\preg_match('/^([A-D])(.+?)([A-D])$/', $data, $match)) {
+            $this->start = $match[1];
+            $this->stop  = $match[3];
+            $data        = $match[2];
+        }
+        else {
+            $this->start = 'A';
+            $this->stop  = 'B';
+        }
+        parent::__construct($data, $hasChecksum);
+    }
+
+        /**
      * 
      * @return string
      */
@@ -89,7 +109,7 @@ class Codabar extends AbstractBarcode
      */
     protected function checkData($data, $hasChecksum = true)
     {
-        return \preg_match("/^[A-D][0-9\\-\\$\\:\\/\\.\\+]+[A-D]$/", $data);
+        return \preg_match("/^[0-9\\-\\$\\:\\/\\.\\+]+$/", $data);
     }
 
     /**

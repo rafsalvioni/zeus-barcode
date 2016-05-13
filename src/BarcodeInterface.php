@@ -20,6 +20,29 @@ interface BarcodeInterface
     public function getData($withChecksum = false);
     
     /**
+     * Returns a subpart of barcode data.
+     * 
+     * @param int $start
+     * @param int $length
+     * @return string
+     */
+    public function getDataPart($start, $length = null);
+    
+    /**
+     * Makes a new barcode instance replacing a part of current data for another.
+     * 
+     * $value will be padded with left zeros if its length is less than $length.
+     * If $value length is greater than $length, a exception will be throw.
+     * 
+     * @param string $value
+     * @param int $start
+     * @param int $length
+     * @return string
+     * @throws Exception
+     */
+    public function withDataPart($part, $start, $length);
+
+    /**
      * Returns the barcode checksum, if has one.
      * 
      * @return int

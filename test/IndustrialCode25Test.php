@@ -2,9 +2,9 @@
 
 namespace ZeusTest\Barcode;
 
-use Zeus\Barcode\StandardCode25;
+use Zeus\Barcode\IndustrialCode25;
 
-class StandardCode25Test extends \PHPUnit_Framework_TestCase
+class IndustrialCode25Test extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -20,7 +20,7 @@ class StandardCode25Test extends \PHPUnit_Framework_TestCase
         
         foreach ($dataArr as $data => &$info) {
             try {
-                new StandardCode25($data, $info[0]);
+                new IndustrialCode25($data, $info[0]);
                 $this->assertTrue($info[1]);
             }
             catch (\Exception $ex) {
@@ -35,10 +35,10 @@ class StandardCode25Test extends \PHPUnit_Framework_TestCase
      */
     public function withChecksumTest()
     {
-        $bc = new StandardCode25('12345670');
-        $this->assertEquals($bc->getData(), '1234567');
+        $bc = new IndustrialCode25('12345670');
+        $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
-        $this->assertEquals($bc->getData(true), '12345670');
+        $this->assertEquals($bc->getData(false), '1234567');
         $this->assertEquals($bc->getEncoded(), '1101101011101010101110101110101011101110111010101010101110101110111010111010101011101110101010101011101110101011101110101101011');
     }
     
@@ -48,10 +48,10 @@ class StandardCode25Test extends \PHPUnit_Framework_TestCase
      */
     public function withoutChecksumTest()
     {
-        $bc = new StandardCode25('1234567', false);
-        $this->assertEquals($bc->getData(), '1234567');
+        $bc = new IndustrialCode25('1234567', false);
+        $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
-        $this->assertEquals($bc->getData(true), '12345670');
+        $this->assertEquals($bc->getData(false), '1234567');
         $this->assertEquals($bc->getEncoded(), '1101101011101010101110101110101011101110111010101010101110101110111010111010101011101110101010101011101110101011101110101101011');
     }
 }
