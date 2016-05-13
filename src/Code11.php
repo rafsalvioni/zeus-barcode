@@ -29,6 +29,32 @@ class Code11 extends AbstractBarcode
         '-' => '101101',
     ];
     
+    public function __construct($data, $hasChecksum = true)
+    {
+        if (!$this->checkData($data, $hasChecksum)) {
+            throw new Exception('Invalid barcode data!');
+        }
+        if ($hasChecksum && \preg_match('/(.+?)(.)$/', $data, $match)) {
+            $c = self::calcDigitC($match[1]);
+            $k = self::calcDigitK($match[1]);
+            
+            if ($c == $match[2]) {
+                $this->data     = $match[1];
+                $this->checksum = $c;
+            }
+            else if ($k == $match[2]) {
+                $this->data     = \substr($match[1], 0, -2);
+                $this->checksum = \substr($match[1], -2);
+            }
+            else{
+                throw new Exception('Invalid barcode checksum!');
+            }
+        }
+        else {
+            parent::__construct($data, false);
+        }
+    }
+
     /**
      * Calculates checkdigits using a max weight and modulus divisor.
      * 
@@ -38,13 +64,13 @@ class Code11 extends AbstractBarcode
      * @return int
      */
     protected static function calcChecksumUsingWeight(
-        array $data, $maxWeight, $divisor
+        $data, $maxWeight, $divisor
     ) {
         $sum    = 0;
         $weight = 1;
         
         while (!empty($data)) {
-            $num = \array_pop($data);
+            $num = \substr_remove($data, -1);
             if ($num == '-') {
                 $num = 10;
             }
@@ -54,6 +80,16 @@ class Code11 extends AbstractBarcode
             }
         }
         return ($sum % $divisor);
+    }
+    
+    protected static function calcDigitC($data)
+    {
+        return self::calcChecksumUsingWeight($data, 6, 11);
+    }
+
+    protected static function calcDigitK($data)
+    {
+        return self::calcChecksumUsingWeight($data, 7, 9);
     }
 
     /**
@@ -65,11 +101,10 @@ class Code11 extends AbstractBarcode
      */
     protected function calcChecksum($data)
     {
-        $data  = \str_split($data);
-        $check = self::calcChecksumUsingWeight($data, 6, 11);
-        if (\count($data) > 9) {
-            $data[] = $check;
-            $check .= self::calcChecksumUsingWeight($data, 7, 9);
+        $check = self::calcDigitC($data);
+        if (\strlen($data) > 9){
+            $data  .= $check;
+            $check .= self::calcDigitK($data);
         }
         return $check;
     }
@@ -82,7 +117,8 @@ class Code11 extends AbstractBarcode
      */
     protected function checkData($data, $hasChecksum = true)
     {
-        return preg_match('/^[0-9\\-]+$/', $data);
+        $mul = $hasChecksum ? '{2,}' : '+';
+        return preg_match("/^[0-9\\-]$mul$/", $data);
     }
 
     /**
