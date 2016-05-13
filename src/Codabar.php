@@ -33,10 +33,52 @@ class Codabar extends AbstractBarcode
         '.' => '1101101101',
         '+' => '101100110011',
         'A' => '1011001001',
-        'B' => '1010010011',
-        'C' => '1001001011',
+        'B' => '1001001011',
+        'C' => '1010010011',
         'D' => '1010011001',
     ];
+    
+    /**
+     * Start char
+     * 
+     * @var string 
+     */
+    protected $start;
+    /**
+     * Stop char
+     * 
+     * @var string
+     */
+    protected $stop;
+    
+    /**
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     */
+    public function __construct($data, $hasChecksum = true)
+    {
+        if (\preg_match('/^([A-D])(.+?)([A-D])$/', $data, $match)) {
+            $this->start = $match[1];
+            $this->stop  = $match[3];
+            $data        = $match[2];
+        }
+        else {
+            $this->start = 'A';
+            $this->stop  = 'B';
+        }
+        parent::__construct($data, $hasChecksum);
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getPrintableData()
+    {
+        $string = parent::getPrintableData();
+        return $this->start . $string . $this->stop;
+    }
 
     /**
      * This barcode doesn't have checksum...
@@ -79,7 +121,7 @@ class Codabar extends AbstractBarcode
      */
     protected function checkData($data, $hasChecksum = true)
     {
-        return \preg_match("/^[A-D][0-9\\-\\$\\:\\/\\.\\+]+[A-D]$/", $data);
+        return \preg_match("/^[0-9\\-\\$\\:\\/\\.\\+]+$/", $data);
     }
 
     /**
@@ -91,6 +133,9 @@ class Codabar extends AbstractBarcode
     {
         $encoded = '';
         $data    = \str_split($data);
+        
+        \array_unshift($data, $this->start);
+        \array_push($data, $this->stop);
         
         foreach ($data as &$char) {
             $encoded .= self::$encodingTable[$char] . '0';
