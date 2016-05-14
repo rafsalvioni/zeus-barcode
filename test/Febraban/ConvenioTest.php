@@ -4,6 +4,10 @@ namespace ZeusTest\Barcode\Febraban;
 
 use Zeus\Barcode\Febraban\Convenio;
 
+/**
+ * 
+ * @author Rafael M. Salvioni
+ */
 class ConvenioFebrabanTest extends \PHPUnit_Framework_TestCase
 {
     /**

@@ -8,7 +8,7 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/2of5.phtml
  */
-class IndustrialCode25 extends AbstractBarcode
+class Industrial25 extends AbstractBarcode
 {
     /**
      * Encoding table

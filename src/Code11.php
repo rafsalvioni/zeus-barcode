@@ -26,7 +26,7 @@ class Code11 extends AbstractBarcode
      * 
      * @var bool
      */
-    private $doubleCheck = false;
+    private $doubleCheck;
 
     /**
      * Code11 allows two check digits, C and K, but they are optional.
@@ -62,6 +62,7 @@ class Code11 extends AbstractBarcode
         }
         else {
             parent::__construct($data, false);
+            $this->doubleCheck = true;
         }
     }
     
@@ -147,7 +148,7 @@ class Code11 extends AbstractBarcode
      */
     protected function calcChecksum($data)
     {
-        $check = self::calcDigitC($data);
+        $check  = self::calcDigitC($data);
         $data  .= $check;
         $check .= self::calcDigitK($data);
         return $check;
@@ -192,7 +193,7 @@ class Code11 extends AbstractBarcode
      */
     protected function extractChecksum($data, &$cleanData)
     {
-        $checksum  = \substr_remove($data, -2);
+        $checksum  = \substr_remove($data, $this->doubleCheck ? -2 : -1);
         $cleanData = $data;
         return $checksum;
     }

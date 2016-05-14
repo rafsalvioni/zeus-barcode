@@ -2,9 +2,13 @@
 
 namespace ZeusTest\Barcode;
 
-use Zeus\Barcode\IndustrialCode25;
+use Zeus\Barcode\Industrial25;
 
-class IndustrialCode25Test extends \PHPUnit_Framework_TestCase
+/**
+ * 
+ * @author Rafael M. Salvioni
+ */
+class Industrial25Test extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -20,7 +24,7 @@ class IndustrialCode25Test extends \PHPUnit_Framework_TestCase
         
         foreach ($dataArr as $data => &$info) {
             try {
-                new IndustrialCode25($data, $info[0]);
+                new Industrial25($data, $info[0]);
                 $this->assertTrue($info[1]);
             }
             catch (\Exception $ex) {
@@ -35,7 +39,7 @@ class IndustrialCode25Test extends \PHPUnit_Framework_TestCase
      */
     public function withChecksumTest()
     {
-        $bc = new IndustrialCode25('12345670');
+        $bc = new Industrial25('12345670');
         $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
         $this->assertEquals($bc->getData(false), '1234567');
@@ -48,7 +52,7 @@ class IndustrialCode25Test extends \PHPUnit_Framework_TestCase
      */
     public function withoutChecksumTest()
     {
-        $bc = new IndustrialCode25('1234567', false);
+        $bc = new Industrial25('1234567', false);
         $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
         $this->assertEquals($bc->getData(false), '1234567');

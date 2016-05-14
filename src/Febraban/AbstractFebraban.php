@@ -2,7 +2,7 @@
 
 namespace Zeus\Barcode\Febraban;
 
-use Zeus\Barcode\InterleavedCode25;
+use Zeus\Barcode\Interleaved25;
 
 /**
  * Classe abstrata para criação de códigos de barra padrão Febraban.
@@ -13,7 +13,7 @@ use Zeus\Barcode\InterleavedCode25;
  * @author Rafael M. Salvioni
  * @see https://www.febraban.org.br/7Rof7SWg6qmyvwJcFwF7I0aSDf9jyV/sitefebraban/Codbar4-v28052004.pdf
  */
-abstract class AbstractFebraban extends InterleavedCode25
+abstract class AbstractFebraban extends Interleaved25
 {
     /**
      * Armazena a representação dos dados no padrão Febraban

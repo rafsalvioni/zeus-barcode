@@ -78,7 +78,7 @@ class Ean13 extends AbstractBarcode
         }
         
         $d = 10 - ($sum % 10);
-        return $d;
+        return $d == 10 ? 0 : $d;
     }
 
     /**

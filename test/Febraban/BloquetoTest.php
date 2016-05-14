@@ -4,7 +4,11 @@ namespace ZeusTest\Barcode;
 
 use Zeus\Barcode\Febraban\Bloqueto;
 
-class BloquetoFebrabanTest extends \PHPUnit_Framework_TestCase
+/**
+ * 
+ * @author Rafael M. Salvioni
+ */
+class BloquetoTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
