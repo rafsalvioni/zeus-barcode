@@ -27,30 +27,24 @@ class Code11 extends AbstractBarcode
      * @var bool
      */
     private $doubleCheck = false;
-    /**
-     * Checks if the instance should be force a double checksum
-     * 
-     * @var bool
-     */
-    private $forceDoubleCheck;
 
     /**
-     * $forceDoubleCheck will do that barcode checksum always have two digits
-     * for checksum
+     * Code11 allows two check digits, C and K, but they are optional.
+     * 
+     * When the class needs to calculate the checksum, it will calc both
+     * check digits. But its possible toggle it using toSingle and toDoubleCheck
+     * methods.
+     * 
+     * If the data given has a checksum, both digits are will accepted.
      * 
      * @param string $data
      * @param bool $hasChecksum
-     * @param bool $forceDoubleCheck Force the calc of two checksums digits
      * @throws Exception If data or checksum is invalid
      */
-    public function __construct(
-        $data, $hasChecksum = true, $forceDoubleCheck = false
-    ) {
+    public function __construct($data, $hasChecksum = true) {
         if (!$this->checkData($data, $hasChecksum)) {
             throw new Exception('Invalid barcode data chars or length!');
         }
-        
-        $this->forceDoubleCheck = (bool)$forceDoubleCheck;
         
         if ($hasChecksum) {
             $k = \substr_remove($data, -1);
@@ -59,13 +53,7 @@ class Code11 extends AbstractBarcode
                 $this->doubleCheck = true;
             }
             else if (self::calcDigitC($data) == $k) {
-                if ($this->forceDoubleCheck) {
-                    $k .= self::calcDigitK($data . $k);
-                    $this->doubleCheck = true;
-                }
-                else {
-                    $this->doubleCheck = false;
-                }
+                $this->doubleCheck = false;
             }
             else {
                 throw new Exception('Invalid barcode checksum!');
@@ -75,6 +63,30 @@ class Code11 extends AbstractBarcode
         else {
             parent::__construct($data, false);
         }
+    }
+    
+    /**
+     * Creates a new barcode with only C check digit.
+     * 
+     * @return Code11
+     */
+    public function toSingleCheck()
+    {
+        return $this->doubleCheck ?
+               new self(\substr($this->data, 0, -1)) :
+               $this;
+    }
+    
+    /**
+     * Creates a new barcode with K check digit.
+     * 
+     * @return Code11
+     */
+    public function toDoubleCheck()
+    {
+        return $this->doubleCheck ?
+               $this :
+               new self($this->data . self::calcDigitK($this->data));
     }
 
     /**
@@ -136,10 +148,8 @@ class Code11 extends AbstractBarcode
     protected function calcChecksum($data)
     {
         $check = self::calcDigitC($data);
-        if ($this->forceDoubleCheck || \strlen($data) > 9) {
-            $data  .= $check;
-            $check .= self::calcDigitK($data);
-        }
+        $data  .= $check;
+        $check .= self::calcDigitK($data);
         return $check;
     }
 
@@ -182,8 +192,7 @@ class Code11 extends AbstractBarcode
      */
     protected function extractChecksum($data, &$cleanData)
     {
-        $start     = $this->doubleCheck ? -2 : -1;
-        $checksum  = \substr_remove($data, $start);
+        $checksum  = \substr_remove($data, -2);
         $cleanData = $data;
         return $checksum;
     }

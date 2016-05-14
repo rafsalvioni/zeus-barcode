@@ -278,7 +278,7 @@ class Bloqueto extends AbstractFebraban
      */
     protected function insertChecksum($data, $checksum)
     {
-        return \substr($data, 0, 4) . $checksum . \substr($data, 4);
+        return \substr_replace($data, $checksum, 4, 0);
     }
 
     /**
@@ -305,21 +305,21 @@ class Bloqueto extends AbstractFebraban
                       \substr($campoLivre, 3, 2);
         
         $linha[0]  .= self::modulo10($linha[0]);
-        $linha[0]   = \substr($linha[0], 0, 5) . '.' . \substr($linha[0], 5);
+        $linha[0]   = \substr_replace($linha[0], '.', 5, 0);
                  
         $linha[]    = \substr($campoLivre, 5, 6) .
                       \substr($campoLivre, 11, 1) .
                       \substr($campoLivre, 12, 3);
         
         $linha[1]  .= self::modulo10($linha[1]);
-        $linha[1]   = \substr($linha[1], 0, 5) . '.' . \substr($linha[1], 5);
+        $linha[1]   = \substr_replace($linha[1], '.', 5, 0);
         
         $linha[]    = \substr($campoLivre, 15, 1) .
                       \substr($campoLivre, 16, 6) .
                       \substr($campoLivre, 22);
         
         $linha[2]  .= self::modulo10($linha[2]);
-        $linha[2]   = \substr($linha[2], 0, 5) . '.' . \substr($linha[2], 5);
+        $linha[2]   = \substr_replace($linha[2], '.', 5, 0);
         
         $linha[]    = $this->getChecksum();
         

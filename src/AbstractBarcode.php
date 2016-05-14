@@ -59,12 +59,12 @@ abstract class AbstractBarcode implements BarcodeInterface
     public function __construct($data, $hasChecksum = true)
     {
         if (!$this->checkData($data, $hasChecksum)) {
-            throw new Exception('Invalid barcode data chars or length!');
+            throw new Exception(\get_class($this) . ': Invalid barcode data chars or length!');
         }
         if ($hasChecksum) {
             $checksum = $this->extractChecksum($data, $data);
             if ($checksum != $this->calcChecksum($data)) {
-                throw new Exception('Invalid barcode checksum!');
+                throw new Exception(\get_class($this) . ': Invalid barcode checksum!');
             }
         }
         else {

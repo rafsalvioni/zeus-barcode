@@ -44,7 +44,8 @@ class IndustrialCode25 extends AbstractBarcode
      */
     protected function checkData($data, $hasChecksum = true)
     {
-        return \preg_match('/^[0-9]+$/', $data);
+        $mul = $hasChecksum ? '{2,}' : '+';
+        return \preg_match("/^[0-9]{$mul}$/", $data);
     }
 
     /**

@@ -220,7 +220,7 @@ class Convenio extends AbstractFebraban
      */
     protected function insertChecksum($data, $checksum)
     {
-        return \substr($data, 0, 3) . $checksum . \substr($data, 3);
+        return \substr_replace($data, $checksum, 3, 0);
     }
 
     /**

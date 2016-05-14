@@ -22,6 +22,23 @@ trait BarcodeTrait
      */
     protected $checksum;
 
+    /**
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     * @return bool
+     */
+    public static function check($data, $hasChecksum = true)
+    {
+        $class =  \get_called_class();
+        try {
+            new $class($data, $hasChecksum);
+            return true;
+        }
+        catch (Exception $ex) {
+            return false;
+        }
+    }
 
     /**
      * Extract the checksum from a data.
