@@ -3,8 +3,8 @@
 namespace Zeus\Barcode\Febraban;
 
 /**
- * Implementa um código de barras padrão Febraban utilizado na arrecadação
- * de convênios e serviços públicos.
+ * Implementa um código de barras padrão Febraban utilizado para pagamentos
+ * diversos.
  *
  * @author Rafael M. Salvioni
  * @see http://download.itau.com.br/bankline/cobranca_cnab240.pdf

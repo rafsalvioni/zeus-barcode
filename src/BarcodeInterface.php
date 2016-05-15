@@ -35,7 +35,7 @@ interface BarcodeInterface
     public function __construct($data, $hasChecksum = true);
     
     /**
-     * Returns the barcode data, without or without checksum, if has one.
+     * Returns the barcode data, with or without checksum, if has one.
      * 
      * @param bool $withChecksum
      * @return string

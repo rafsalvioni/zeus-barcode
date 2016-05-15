@@ -8,8 +8,15 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/upca.phtml
  */
-class UpcA extends Ean13
+class UpcA extends AbstractBarcode
 {
+    /**
+     * UPC-A is a subset of EAN-13. So...
+     * 
+     * @var Ean13
+     */
+    private $ean13;
+    
     /**
      * 
      * @param string $data
@@ -17,41 +24,9 @@ class UpcA extends Ean13
      */
     public function __construct($data, $hasChecksum = true)
     {
-        parent::__construct('0' . $data, $hasChecksum);
-    }
-    
-    /**
-     * 
-     * @param bool $withChecksum
-     * @return string
-     */
-    public function getData($withChecksum = false)
-    {
-        $data = parent::getData($withChecksum);
-        return \substr($data, 1);
-    }
-    
-    /**
-     * Separates using a space the system number.
-     * 
-     * @return string
-     */
-    public function getPrintableData()
-    {
-        $data = parent::getPrintableData();
-        $data = \substr($data, 0, -1) . ' ' . \substr($data, -1);
-        return $data;
-    }
-    
-    /**
-     * Checks if this barcode can be converted to UPC-E.
-     * 
-     * @return bool
-     */
-    public function isUpcEConvertable()
-    {
-        $data = $this->getData(false);
-        return \preg_match('/([0-2]0{4}[0-9]{3}|0{5}[0-9]{2}|0{5}[0-9]|0{4}[5-9])$/', $data);
+        $this->ean13 = new Ean13('0' . $data, $hasChecksum);
+        parent::__construct($data, $hasChecksum);
+        $this->data  = \substr($this->ean13->getData(true), 1);
     }
 
     /**
@@ -85,6 +60,39 @@ class UpcA extends Ean13
         
         $data = $system . $data;
         return new UpcE($data, false);
+    }
+
+    /**
+     * Return the Ean-13 checksum.
+     * 
+     * @param string $data
+     * @return string
+     */
+    protected function calcChecksum($data)
+    {
+        return $this->ean13->getChecksum();
+    }
+
+    /**
+     * Always return true. Not used...
+     *  
+     * @param string $data
+     * @param bool $hasChecksum
+     * @return bool
+     */
+    protected function checkData($data, $hasChecksum = true)
+    {
+        return true;
+    }
+
+    /**
+     * 
+     * @param string $data
+     * @return string
+     */
+    protected function encodeData($data)
+    {
+        return $this->ean13->getEncoded();
     }
 }
 
