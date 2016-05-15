@@ -72,6 +72,18 @@ class UpcA extends AbstractBarcode
         $data = $system . $data;
         return new UpcE($data, false);
     }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getPrintableData()
+    {
+        $data = parent::getPrintableData();
+        $data = \substr_replace($data, ' ', 1, 0);
+        $data = \substr_replace($data, ' ', -1, 0);
+        return $data;
+    }
 
     /**
      * Return the Ean-13 checksum.
