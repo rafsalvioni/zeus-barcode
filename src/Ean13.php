@@ -11,6 +11,12 @@ namespace Zeus\Barcode;
 class Ean13 extends AbstractBarcode
 {
     /**
+     * Product field
+     * 
+     */
+    const PRODUCT = 7;
+
+    /**
      * Parity table
      * 
      * 0 => Odd
@@ -60,6 +66,53 @@ class Ean13 extends AbstractBarcode
     {
         $data = $this->getData(true);
         return $data{0} . ' ' . \substr($data, 1);
+    }
+    
+    /**
+     * Returns the product code.
+     * 
+     * @return string
+     */
+    public function getProductCode()
+    {
+        return $this->getDataPart(self::PRODUCT, 5);
+    }
+    
+    /**
+     * Creates a new instance with another product code.
+     * 
+     * @param string|int $code
+     * @return Ean13
+     */
+    public function withProductCode($code)
+    {
+        $data = $this->withDataPart($code, self::PRODUCT, 5);
+        return new self($data, false);
+    }
+    
+    /**
+     * Checks if barcode is compatible with UPC-A.
+     * 
+     * @return bool
+     */
+    public function isUpcACompatible()
+    {
+        return $this->data{0} == '0';
+    }
+    
+    /**
+     * Converts this barcode to a UPC-A barcode, if compatible. Otherwise,
+     * a exception will be throw.
+     * 
+     * @return UpcA
+     * @exception Ean13Exception
+     */
+    public function toUpcA()
+    {
+        if ($this->isUpcACompatible()) {
+            return new UpcA(\substr($this->data, 1));
+        }
+        throw new Ean13Exception('Uncompatible UPC-A barcode!');
     }
 
     /**
@@ -120,3 +173,8 @@ class Ean13 extends AbstractBarcode
         return $encoded;
     }
 }
+
+/**
+ * Ean13 exception
+ */
+class Ean13Exception extends Exception {}

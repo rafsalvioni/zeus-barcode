@@ -28,8 +28,23 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
         
         foreach ($dataArr as $data => &$info) {
             try {
-                new Ean13($data, $info[0]);
+                $bc = new Ean13($data, $info[0]);
                 $this->assertTrue($info[1]);
+                $this->assertEquals($bc->getProductCode(), \substr($data, 7, 5));
+                $this->assertEquals($bc->withProductCode('56')->getProductCode(), '00056');
+                $this->assertEquals($bc->isUpcACompatible(), $data{0} == '0');
+                if ($bc->isUpcACompatible()) {
+                    $this->assertEquals($bc->toUpcA()->getData($info[0]), \substr($data, 1));
+                }
+                else {
+                    try {
+                        $bc->toUpcA();
+                        $this->assertTrue(false);
+                    }
+                    catch (\Zeus\Barcode\Exception $ex) {
+                        $this->assertTrue(true);
+                    }
+                }
             }
             catch (\Exception $ex) {
                 $this->assertFalse($info[1]);

@@ -30,7 +30,7 @@ trait BarcodeTrait
      */
     public static function check($data, $hasChecksum = true)
     {
-        $class =  \get_called_class();
+        $class = \get_called_class();
         try {
             new $class($data, $hasChecksum);
             return true;

@@ -30,10 +30,15 @@ class UpcATest extends \PHPUnit_Framework_TestCase
             try {
                 $bc = new UpcA($data, $info[0]);
                 $this->assertTrue($info[1]);
-                $this->assertEquals($bc->isUpcEConvertable(), $info[2]);
+                $this->assertEquals($bc->isUpcECompatible(), $info[2]);
+                $this->assertEquals($bc->getManufacturerCode(), \substr($data, 1, 5));
+                $this->assertEquals($bc->getProductCode(), \substr($data, 6, 5));
+                $this->assertEquals($bc->withManufacturerCode('345')->getManufacturerCode(), '00345');
+                $this->assertEquals($bc->withProductCode('5677')->getProductCode(), '05677');
                 if ($info[2]) {
                     $this->assertEquals($bc->toUpcE()->toUpcA()->getData($info[1]), $data);
                 }
+                $this->assertEquals($bc->toEan13()->getData($info[0]), '0' . $data);
             }
             catch (\Exception $ex) {
                 $this->assertFalse($info[1]);
