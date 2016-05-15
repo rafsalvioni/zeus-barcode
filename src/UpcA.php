@@ -30,6 +30,17 @@ class UpcA extends AbstractBarcode
     }
 
     /**
+     * Checks if this barcode can be converted to UPC-E.
+     * 
+     * @return bool
+     */
+    public function isUpcEConvertable()
+    {
+        $data = $this->getData(false);
+        return \preg_match('/([0-2]0{4}[0-9]{3}|0{5}[0-9]{2}|0{5}[0-9]|0{4}[5-9])$/', $data);
+    }
+    
+    /**
      * Converts this barcode to a UPC-E barcode.
      * 
      * @return UpcE
