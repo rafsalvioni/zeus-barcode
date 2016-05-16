@@ -47,17 +47,18 @@ trait BarcodeTrait
      * Returns the sum result.
      * 
      * @param array $data Array of integers
+     * @param int $minWeight
      * @param int $maxWeight
      * @return int
      */
-    protected static function sumCrescentWeight(array $data, $maxWeight)
+    protected static function sumCrescentWeight(array $data, $minWeight, $maxWeight = null)
     {
         $sum    = 0;
-        $weight = 1;
+        $weight = $minWeight;
         while (!empty($data)) {
             $sum += $weight++ * (int)\array_pop($data);
-            if ($weight > $maxWeight) {
-                $weight = 1;
+            if ($maxWeight !== null && $weight > $maxWeight) {
+                $weight = $minWeight;
             }
         }
         return $sum;
@@ -71,17 +72,18 @@ trait BarcodeTrait
      * Returns the sum result.
      * 
      * @param array $data Array of integers
-     * @param int $startWeight
+     * @param int $maxWeight
+     * @param int $minWeight
      * @return int
      */
-    protected static function sumDecrescentWeight(array $data, $startWeight)
+    protected static function sumDecrescentWeight(array $data, $maxWeight, $minWeight = null)
     {
         $sum    = 0;
-        $weight = $startWeight;
+        $weight = $maxWeight;
         while (!empty($data)) {
             $sum += $weight-- * (int)\array_pop($data);
-            if ($weight < 1) {
-                $weight = $startWeight;
+            if ($minWeight !== null && $weight < $minWeight) {
+                $weight = $minWeight;
             }
         }
         return $sum;

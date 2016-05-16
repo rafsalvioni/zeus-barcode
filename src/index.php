@@ -14,7 +14,8 @@ $bcs = [
     new Zeus\Barcode\Upc\Ean5('51234'),
     new Zeus\Barcode\Upc\Upca('075678164125'),
     new Zeus\Barcode\Upc\Upce('04252614'),
-    new Zeus\Barcode\Code11('123-4552'),
+    new Zeus\Barcode\Code11('123-45', false),
+    (new Zeus\Barcode\Msi('80523')),
 ];
 
 $render = new Zeus\Barcode\Renderer\HtmlRenderer();

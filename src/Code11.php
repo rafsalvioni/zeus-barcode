@@ -59,7 +59,7 @@ class Code11 extends AbstractChecksumBarcode
                 $this->doubleCheck = false;
             }
             else {
-                throw new Exception('Invalid barcode checksum!');
+                throw $this->createException('Invalid "%class%" barcode checksum!');
             }
             $this->data = $data . $k;
         }
