@@ -2,7 +2,7 @@
 
 namespace ZeusTest\Barcode;
 
-use Zeus\Barcode\Ean2;
+use Zeus\Barcode\Upc\Ean2;
 
 /**
  * 

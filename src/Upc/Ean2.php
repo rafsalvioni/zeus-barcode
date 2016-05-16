@@ -1,6 +1,9 @@
 <?php
 
-namespace Zeus\Barcode;
+namespace Zeus\Barcode\Upc;
+
+use Zeus\Barcode\AbstractBarcode;
+use Zeus\Barcode\FixedLengthInterface;
 
 /**
  * Implements a EAN-2 supplemental barcode standard.
@@ -8,7 +11,7 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/upcext.phtml
  */
-class Ean2 extends AbstractBarcode
+class Ean2 extends AbstractBarcode implements FixedLengthInterface
 {
     use EanHelperTrait;
     
@@ -34,15 +37,15 @@ class Ean2 extends AbstractBarcode
         $data = self::zeroLeftPadding($data, 2);
         parent::__construct($data);
     }
-
+    
     /**
+     * Returns 2.
      * 
-     * @param string $data
-     * @return bool
+     * @return int
      */
-    protected function checkData($data)
+    public function getLength()
     {
-        return \preg_match("/^[0-9]{2}$/", $data);
+        return 2;
     }
 
     /**

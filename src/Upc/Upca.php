@@ -1,6 +1,9 @@
 <?php
 
-namespace Zeus\Barcode;
+namespace Zeus\Barcode\Upc;
+
+use Zeus\Barcode\AbstractChecksumBarcode;
+use Zeus\Barcode\FixedLengthInterface;
 
 /**
  * Implements a UPC-A barcode standard.
@@ -8,7 +11,7 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/upca.phtml
  */
-class UpcA extends AbstractChecksumBarcode
+class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
 {
     /**
      * Manufacturer field
@@ -33,7 +36,7 @@ class UpcA extends AbstractChecksumBarcode
      * 
      * @param string $mfc Manufacturer code. 1-5 digits
      * @param string $prod Product code. 1-5 digits
-     * @return UpcA
+     * @return Upca
      */
     public static function builder($mfc, $prod)
     {
@@ -53,27 +56,37 @@ class UpcA extends AbstractChecksumBarcode
         parent::__construct($data, $hasChecksum);
         $this->data  = \substr($this->ean13->getData(), 1);
     }
+    
+    /**
+     * Returns 12.
+     * 
+     * @return int
+     */
+    public function getLength()
+    {
+        return 12;
+    }
 
     /**
      * Checks if this barcode is compatible to UPC-E.
      * 
      * @return bool
      */
-    public function isUpcECompatible()
+    public function isUpceCompatible()
     {
-        $data = $this->getDataWithoutChecksum();
+        $data = $this->getRawData();
         return \preg_match('/([0-2]0{4}[0-9]{3}|0{5}[0-9]{2}|0{5}[0-9]|0{4}[5-9])$/', $data);
     }
     
     /**
      * Converts this barcode to a UPC-E barcode.
      * 
-     * @return UpcE
-     * @throws UpcAException If was unconvertable
+     * @return Upce
+     * @throws UpcaException If was unconvertable
      */
-    public function toUpcE()
+    public function toUpce()
     {
-        $data    = $this->getDataWithoutChecksum();
+        $data    = $this->getRawData();
         $system  = $data{0};
         $mfct    = \substr($data, 1, 5);
         $product = \substr($data, 6, 5);
@@ -91,11 +104,11 @@ class UpcA extends AbstractChecksumBarcode
             $data = $mfct . \substr($product, -1);
         }
         else {
-            throw new UpcAException('Uncompatible UPC-A barcode!');
+            throw new UpcaException('Uncompatible UPC-A barcode!');
         }
         
         $data = $system . $data;
-        return new UpcE($data, false);
+        return new Upce($data, false);
     }
     
     /**
@@ -124,7 +137,7 @@ class UpcA extends AbstractChecksumBarcode
      * Create a new instance with another manufacturer code.
      * 
      * @param string $code Code, 1-5 digits
-     * @return UpcA
+     * @return Upca
      */
     public function withManufacturerCode($code)
     {
@@ -146,7 +159,7 @@ class UpcA extends AbstractChecksumBarcode
      * Create a new instance with another product code.
      * 
      * @param string $code Code, 1-5 digits
-     * @return UpcA
+     * @return Upca
      */
     public function withProductCode($code)
     {
@@ -201,5 +214,5 @@ class UpcA extends AbstractChecksumBarcode
  * Default class exception
  * 
  */
-class UpcAException extends Exception {}
+class UpcaException extends Exception {}
 

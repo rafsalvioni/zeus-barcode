@@ -2,7 +2,7 @@
 
 namespace ZeusTest\Barcode;
 
-use Zeus\Barcode\ISBN;
+use Zeus\Barcode\Upc\ISBN;
 
 /**
  * 
@@ -38,6 +38,6 @@ class ISBNTest extends \PHPUnit_Framework_TestCase
     public function fromIsbnTest()
     {
         $b = ISBN::fromISBN('0-93-7175-59-5');
-        $this->assertEquals($b->getDataWithoutChecksum(), '978093717559');
+        $this->assertEquals($b->getRawData(), '978093717559');
     }
 }

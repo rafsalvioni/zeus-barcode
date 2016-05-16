@@ -2,7 +2,7 @@
 
 namespace ZeusTest\Barcode;
 
-use Zeus\Barcode\ISSN;
+use Zeus\Barcode\Upc\ISSN;
 
 /**
  * 
@@ -38,6 +38,6 @@ class ISSNTest extends \PHPUnit_Framework_TestCase
     public function fromTest()
     {
         $bc = ISSN::fromISSN('2049-3630');
-        $this->assertEquals($bc->getData(), '9772049363002');
+        $this->assertEquals($bc->getRawData(), '977204936300');
     }
 }

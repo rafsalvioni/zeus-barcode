@@ -3,8 +3,7 @@
 namespace Zeus\Barcode;
 
 /**
- * Simple abstract barcode that implements BarcodeInterface and
- * BarcodeTrait.
+ * Abstract barcode.
  *
  * @author Rafael M. Salvioni
  */
@@ -13,52 +12,30 @@ abstract class AbstractBarcode implements BarcodeInterface
     use BarcodeTrait;
     
     /**
-     * Encoded data
+     * Stores the encoded string. Its a cache. Use getEncoded().
      * 
      * @var string
      */
     protected $encoded;
-    
-    /**
-     * Create a barcode exception using current class. The class name formatted
-     * will be put on '%class%' mark of $message.
-     * 
-     * @param string $message
-     * @return Exception
-     */
-    protected function createException($message)
-    {
-        $class = \get_class($this);
-        $class = \str_replace(__NAMESPACE__ . '\\', '', $class);
-        return new Exception(\str_replace('%class%', $class, $message));
-    }
 
     /**
-     * Validates a barcode data.
+     * Checks if a data is compatible with barcode specification.
      * 
-     * This method should validate only if data chars and length are valid.
-     * 
-     * @param string $data
-
      * @return bool
      */
     abstract protected function checkData($data);
-
+    
     /**
-     * Encodes a data.
+     * Encodes a data in a binary string, using only 1 or 0.
      * 
-     * Should return a string formed by 0 and 1 only.
-     * 
-     * @param string $data
      * @return string
      */
     abstract protected function encodeData($data);
-    
+
     /**
-     * $data will be validated in constructor.
      * 
      * @param string $data
-     * @throws Exception If data is invalid
+     * @throws Exception
      */
     public function __construct($data)
     {
@@ -67,12 +44,12 @@ abstract class AbstractBarcode implements BarcodeInterface
         }
         $this->data = $data;
     }
-    
+
     /**
      * 
      * @return string
      */
-    final public function getEncoded()
+    public function getEncoded()
     {
         if (empty($this->encoded)) {
             $this->encoded = $this->encodeData($this->data);
@@ -98,5 +75,29 @@ abstract class AbstractBarcode implements BarcodeInterface
         }
         
         return $renderer;
+    }
+    
+    /**
+     * Serializes only $data property.
+     * 
+     * @return string[]
+     */
+    public function __sleep()
+    {
+        return ['data'];
+    }
+    
+    /**
+     * Create a barcode exception using current class. The class name formatted
+     * will be put on '%class%' mark of $message.
+     * 
+     * @param string $message
+     * @return Exception
+     */
+    protected function createException($message)
+    {
+        $class = \get_class($this);
+        $class = \str_replace(__NAMESPACE__ . '\\', '', $class);
+        return new Exception(\str_replace('%class%', $class, $message));
     }
 }

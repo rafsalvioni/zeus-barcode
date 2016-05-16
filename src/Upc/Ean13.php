@@ -1,14 +1,19 @@
 <?php
 
-namespace Zeus\Barcode;
+namespace Zeus\Barcode\Upc;
+
+use Zeus\Barcode\AbstractChecksumBarcode;
+use Zeus\Barcode\FixedLengthInterface;
 
 /**
  * Implements a EAN13 barcode standard.
+ * 
+ * Supports 13 numeric chars and the last digit it's the checksum.
  *
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/ean13.phtml
  */
-class Ean13 extends AbstractChecksumBarcode
+class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
 {
     use EanHelperTrait;
     
@@ -63,6 +68,16 @@ class Ean13 extends AbstractChecksumBarcode
     }
     
     /**
+     * Returns 13.
+     * 
+     * @return int
+     */
+    public function getLength()
+    {
+        return 13;
+    }
+    
+    /**
      * Returns the product code.
      * 
      * @return string
@@ -89,7 +104,7 @@ class Ean13 extends AbstractChecksumBarcode
      * 
      * @return bool
      */
-    public function isUpcACompatible()
+    public function isUpcaCompatible()
     {
         return $this->data{0} == '0';
     }
@@ -98,35 +113,15 @@ class Ean13 extends AbstractChecksumBarcode
      * Converts this barcode to a UPC-A barcode, if compatible. Otherwise,
      * a exception will be throw.
      * 
-     * @return UpcA
+     * @return Upca
      * @exception Ean13Exception
      */
-    public function toUpcA()
+    public function toUpca()
     {
-        if ($this->isUpcACompatible()) {
-            return new UpcA(\substr($this->data, 1));
+        if ($this->isUpcaCompatible()) {
+            return new Upca(\substr($this->data, 1));
         }
         throw new Ean13Exception('Uncompatible UPC-A barcode!');
-    }
-
-    /**
-     * 
-     * @param string $data
-     * @return int
-     */
-    protected function calcChecksum($data)
-    {
-        return self::checkSumMod10($data);
-    }
-
-    /**
-     * 
-     * @param string $data
-     * @return bool
-     */
-    protected function checkData($data)
-    {
-        return \preg_match("/^[0-9]{13}$/", $data);
     }
 
     /**

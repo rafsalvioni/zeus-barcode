@@ -3,7 +3,10 @@
 namespace Zeus\Barcode;
 
 /**
- * Implements a barcode Code11 standard.
+ * Implements a Code11 barcode standard.
+ * 
+ * This barcode is length variable, use a optional checksum and suports
+ * only numeric chars and dash.
  *
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/code11.phtml
@@ -43,7 +46,7 @@ class Code11 extends AbstractChecksumBarcode
      */
     public function __construct($data, $hasChecksum = true) {
         if (!$this->checkData(!$hasChecksum ? $data . '0' : $data)) {
-            throw new Exception('Invalid barcode data chars or length!');
+            throw $this->createException('Invalid "%class%" barcode data chars or length!');
         }
         
         if ($hasChecksum) {

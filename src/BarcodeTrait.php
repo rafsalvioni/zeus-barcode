@@ -3,38 +3,92 @@
 namespace Zeus\Barcode;
 
 /**
- * Trait to implement some methods of BarcodeInterface.
+ * Trait to implements some methods of BarcodeInterface.
  *
  * @author Rafael M. Salvioni
  */
 trait BarcodeTrait
 {
     /**
-     * Barcode data, with checksum if has one
+     * Stores the barcode data.
      * 
      * @var string
      */
     protected $data;
-
+    
     /**
+     * Auxiliar function to calculate checksums alterning between weights.
      * 
-     * @param string $data
-     * @return bool
+     * The order is from right to left.
+     * 
+     * Returns the sum result.
+     * 
+     * @param array $data Array of integers
+     * @param int $firstWeight
+     * @param int $secWeight
+     * @return int
      */
-    public static function check($data)
+    protected static function sumAlternateWeight(array $data, $firstWeight, $secWeight)
     {
-        $class = \get_called_class();
-        try {
-            new $class($data);
-            return true;
+        $sum    = 0;
+        $weight = $firstWeight;
+        while (!empty($data)) {
+            $sum   += $weight * (int)\array_pop($data);
+            $weight = $weight == $firstWeight ? $secWeight : $firstWeight;
         }
-        catch (Exception $ex) {
-            return false;
-        }
+        return $sum;
     }
     
     /**
-     * Padding zeros left to necessary length.
+     * Auxiliar function to calculate checksums using cresacent weights.
+     * 
+     * The order is from right to left.
+     * 
+     * Returns the sum result.
+     * 
+     * @param array $data Array of integers
+     * @param int $maxWeight
+     * @return int
+     */
+    protected static function sumCrescentWeight(array $data, $maxWeight)
+    {
+        $sum    = 0;
+        $weight = 1;
+        while (!empty($data)) {
+            $sum += $weight++ * (int)\array_pop($data);
+            if ($weight > $maxWeight) {
+                $weight = 1;
+            }
+        }
+        return $sum;
+    }
+
+    /**
+     * Auxiliar function to calculate checksums using decrescent weights.
+     * 
+     * The order is from right to left.
+     * 
+     * Returns the sum result.
+     * 
+     * @param array $data Array of integers
+     * @param int $startWeight
+     * @return int
+     */
+    protected static function sumDecrescentWeight(array $data, $startWeight)
+    {
+        $sum    = 0;
+        $weight = $startWeight;
+        while (!empty($data)) {
+            $sum += $weight-- * (int)\array_pop($data);
+            if ($weight < 1) {
+                $weight = $startWeight;
+            }
+        }
+        return $sum;
+    }
+
+    /**
+     * Padding zeros on left.
      * 
      * @param string $data
      * @param int $length
@@ -43,65 +97,6 @@ trait BarcodeTrait
     protected static function zeroLeftPadding($data, $length)
     {
         return \str_pad($data, $length, '0', \STR_PAD_LEFT);
-    }
-
-    /**
-     * Return the sum of products from $data chars using weights given.
-     * 
-     * @param string $data Numerical data
-     * @param int $firstWeight Weight for odd positions
-     * @param int $secWeight Weight for even positions
-     * @return int
-     */
-    protected static function calcSumCheck($data, $firstWeight = 3, $secWeight = 1)
-    {
-        $len    = \strlen($data);
-        $sum    = 0;
-        $weight = $firstWeight;
-        
-        for ($i = $len - 1; $i >= 0; $i--) {
-            $sum   += $weight * (int)$data{$i};
-            $weight = $weight == $firstWeight ? $secWeight : $firstWeight;
-        }
-        
-        return $sum;
-    }
-
-    /**
-     * Returns a subpart of barcode data.
-     * 
-     * @param int $start
-     * @param int $length
-     * @return string
-     */
-    public function getDataPart($start, $length = null)
-    {
-        return \substr($this->data, $start, $length);
-    }
-    
-    /**
-     * Makes a new data replacing a part of current data for another.
-     * 
-     * $value will be padded with left zeros if its length is less than $length.
-     * If $value length is greater than $length, a exception will be throw.
-     * 
-     * New $data returned will be without checksum.
-     * 
-     * @param string $value
-     * @param int $start
-     * @param int $length
-     * @return string
-     * @throws Exception
-     */
-    public function withDataPart($value, $start, $length)
-    {
-        $value = self::zeroLeftPadding($value, $length);
-        if (\strlen($value) == $length) {
-            $data = \substr_replace($this->data, $value, $start, $length);
-            $this->extractChecksum($data, $data);
-            return $data;
-        }
-        throw new Exception('Wrong data part length!');
     }
 
     /**
@@ -121,14 +116,34 @@ trait BarcodeTrait
     {
         return $this->getData();
     }
-
+    
     /**
-     * On serialize, use only "data" attribute.
      * 
-     * @return string[]
+     * @param int $start
+     * @param int $length
+     * @return string
      */
-    public function __sleep()
+    public function getDataPart($start, $length = null)
     {
-        return ['data'];
+        return \substr($this->data, $start, $length);
+    }
+    
+    /**
+     * 
+     * @param string $value
+     * @param int $start
+     * @param int $length
+     * @return string
+     * @throws Exception
+     */
+    public function withDataPart($value, $start, $length)
+    {
+        $value = self::zeroLeftPadding($value, $length);
+        if (\strlen($value) == $length) {
+            $data = \substr_replace($this->data, $value, $start, $length);
+            $this->extractChecksum($data, $data);
+            return $data;
+        }
+        throw new Exception('Wrong data part length!');
     }
 }

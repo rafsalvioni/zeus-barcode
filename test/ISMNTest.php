@@ -2,7 +2,7 @@
 
 namespace ZeusTest\Barcode;
 
-use Zeus\Barcode\ISMN;
+use Zeus\Barcode\Upc\ISMN;
 
 /**
  * 

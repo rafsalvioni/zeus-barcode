@@ -2,7 +2,7 @@
 
 namespace ZeusTest\Barcode;
 
-use Zeus\Barcode\Interleaved25;
+use Zeus\Barcode\Code2of5\Interleaved;
 
 /**
  * 
@@ -27,7 +27,7 @@ class Interleaved25Test extends \PHPUnit_Framework_TestCase
         
         foreach ($dataArr as $data => &$info) {
             try {
-                new Interleaved25($data, $info[0]);
+                new Interleaved($data, $info[0]);
                 $this->assertTrue($info[1]);
             }
             catch (\Exception $ex) {
@@ -42,10 +42,10 @@ class Interleaved25Test extends \PHPUnit_Framework_TestCase
      */
     public function withChecksumTest()
     {
-        $bc = new Interleaved25('12345670');
+        $bc = new Interleaved('12345670');
         $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
-        $this->assertEquals($bc->getDataWithoutChecksum(), '1234567');
+        $this->assertEquals($bc->getRawData(), '1234567');
         $this->assertEquals($bc->getEncoded(), '1010110100101011001101101001010011010011001010101010011001101101');
     }
     
@@ -55,10 +55,10 @@ class Interleaved25Test extends \PHPUnit_Framework_TestCase
      */
     public function withoutChecksumTest()
     {
-        $bc = new Interleaved25('1234567', false);
+        $bc = new Interleaved('1234567', false);
         $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
-        $this->assertEquals($bc->getDataWithoutChecksum(), '1234567');
+        $this->assertEquals($bc->getRawData(), '1234567');
         $this->assertEquals($bc->getEncoded(), '1010110100101011001101101001010011010011001010101010011001101101');
     }
 }

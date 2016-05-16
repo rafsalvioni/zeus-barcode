@@ -1,14 +1,17 @@
 <?php
 
-namespace Zeus\Barcode;
+namespace Zeus\Barcode\Upc;
+
+use Zeus\Barcode\AbstractChecksumBarcode;
+use Zeus\Barcode\FixedLengthInterface;
 
 /**
- * Implements a EAN8 barcode standard.
+ * Implements a EAN-8 barcode standard.
  *
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/ean8.phtml
  */
-class Ean8 extends AbstractChecksumBarcode
+class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
 {
     use EanHelperTrait;
     
@@ -25,23 +28,13 @@ class Ean8 extends AbstractChecksumBarcode
     }
     
     /**
+     * Returns 8.
      * 
-     * @param string $data
      * @return int
      */
-    protected function calcChecksum($data)
+    public function getLength()
     {
-        return self::checkSumMod10($data);
-    }
-
-    /**
-     * 
-     * @param string $data
-     * @return bool
-     */
-    protected function checkData($data)
-    {
-        return \preg_match("/^[0-9]{8}$/", $data);
+        return 8;
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Zeus\Barcode;
+namespace Zeus\Barcode\Upc;
 
 /**
  * Implements a EAN13-ISBN barcode standard.
@@ -27,13 +27,12 @@ class ISBN extends Ean13
      * ISBN's barcodes is a EAN-13 beggining with 978.
      * 
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
         if (\strpos($data, '978') === 0) {
-            return parent::checkData($data, $hasChecksum);
+            return parent::checkData($data);
         }
         return false;
     }

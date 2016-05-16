@@ -3,46 +3,41 @@
 namespace Zeus\Barcode;
 
 /**
- * Abstract barcode that uses checksum.
+ * Abstract barcode that implements ChecksumInterface.
  *
  * @author Rafael M. Salvioni
  */
 abstract class AbstractChecksumBarcode extends AbstractBarcode implements
-    ChecksumBarcodeInterface
+    ChecksumInterface
 {
-    use ChecksumBarcodeTrait;
+    use ChecksumTrait;
     
     /**
-     * Calculates a barcode's checksum with a given data.
-     * 
+     *  
      * @param string $data
-     * @return string
-     */
-    abstract protected function calcChecksum($data);
-    
-    /**
-     * $data will be validated in constructor. If $data don't have a checksum,
-     * it will generated. Else, data's checksum will be validated too.
-     * 
-     * @param string $data
-     * @param bool $hasChecksum Indicates if $data has a builtin checksum
-     * @throws Exception If data or checksum is invalid
+     * @param bool $hasChecksum
+     * @throws Exception
      */
     public function __construct($data, $hasChecksum = true)
     {
         if (!$hasChecksum) {
             $data = $this->insertChecksum($data, '0');
         }
-        
         parent::__construct($data);
         
         $check = $this->extractChecksum($this->data, $this->data);
         $calc  = $this->calcChecksum($this->data);
         
         if ($hasChecksum && $check != $calc) {
-            throw $this->createException('Invalid "%class%" checksum!');
+            throw $this->createException('Invalid "%class%" barcode checksum!');
         }
-        
         $this->data = $this->insertChecksum($this->data, $calc);
     }
+    
+    /**
+     * Calculates the checksum.
+     * 
+     * @return int
+     */
+    abstract protected function calcChecksum($data);
 }

@@ -2,32 +2,21 @@
 
 namespace Zeus\Barcode;
 
-use Zeus\Barcode\Renderer\RendererInterface;
-
 /**
- * Identifies a barcode object.
+ * Identifies a generic barcode.
  * 
  * @author Rafael M. Salvioni
  */
 interface BarcodeInterface
 {
     /**
-     * Check if a barcode data is valid.
+     * Constructor should be check if $data is compatible with barcode
+     * especification and throw a exception if not.
      * 
      * @param string $data
-     * @return bool
-     */
-    public static function check($data);
-
-    /**
-     * Constructor should be accepts a barcode data and, if a data is invalid,
-     * a exception will should throw.
-     * 
-     * @param string $data
-     * @throws Exception
      */
     public function __construct($data);
-    
+
     /**
      * Returns the barcode data.
      * 
@@ -36,50 +25,50 @@ interface BarcodeInterface
     public function getData();
     
     /**
-     * Returns a subpart of barcode data.
+     * Returns the encoded barcode data.
      * 
-     * @param int $start
-     * @param int $length
-     * @return string
-     */
-    public function getDataPart($start, $length = null);
-    
-    /**
-     * Makes a new barcode instance replacing a part of current data for another.
-     * 
-     * $value will be padded with left zeros if its length is less than $length.
-     * If $value length is greater than $length, a exception will be throw.
-     * 
-     * @param string $part
-     * @param int $start
-     * @param int $length
-     * @return string
-     * @throws Exception
-     */
-    public function withDataPart($part, $start, $length);
-
-    /**
-     * Returns the barcode data encoded with 0 or 1. "0" represents a white
-     * bar and "1" a black bar.
+     * The string returned should have only 0 and 1.
      * 
      * @return string
      */
     public function getEncoded();
     
     /**
-     * Returns the barcode data to be printed.
+     * Returns the printable data of barcode.
      * 
      * @return string
      */
     public function getPrintableData();
-
+    
     /**
-     * Draw the barcode on a renderer.
+     * Returns a part of barcode data.
+     * 
+     * @param int $start Start position
+     * @param int $length Part length
+     * @return string
+     */
+    public function getDataPart($start, $length);
+    
+    /**
+     * Gets the barcode data, replaces a part of it for another and returns
+     * the result.
+     * 
+     * If $part is less than $length, it will be padding qith zeros left. If
+     * greater, a exception should be throwed.
+     * 
+     * @param string $value Replacement
+     * @param int $start Start position
+     * @param int $length Part data length
+     */
+    public function withDataPart($value, $start, $length);
+    
+    /**
+     * Render the barcode to a renderer object.
      * 
      * Returns the own renderer.
      * 
-     * @param RendererInterface $renderer
-     * @return RendererInterface
+     * @param Renderer\RendererInterface $renderer
+     * @return Renderer\RendererInterface
      */
-    public function render(RendererInterface $renderer);
+    public function render(Renderer\RendererInterface $renderer);
 }

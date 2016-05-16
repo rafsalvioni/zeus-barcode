@@ -1,6 +1,6 @@
 <?php
 
-namespace Zeus\Barcode;
+namespace Zeus\Barcode\Upc;
 
 /**
  * Implements a EAN13-ISMN barcode standard.
@@ -14,13 +14,12 @@ class ISMN extends Ean13
      * ISMN's barcodes is a EAN-13 beggining with 979.
      * 
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
         if (\strpos($data, '979') === 0) {
-            return parent::checkData($data, $hasChecksum);
+            return parent::checkData($data);
         }
         return false;
     }

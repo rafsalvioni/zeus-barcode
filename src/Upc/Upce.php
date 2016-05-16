@@ -1,6 +1,9 @@
 <?php
 
-namespace Zeus\Barcode;
+namespace Zeus\Barcode\Upc;
+
+use Zeus\Barcode\AbstractChecksumBarcode;
+use Zeus\Barcode\FixedLengthInterface;
 
 /**
  * Implements a UPC-E barcode standard.
@@ -8,9 +11,12 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/upce.phtml
  */
-class UpcE extends AbstractChecksumBarcode
+class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
 {
-    use EanHelperTrait;
+    use EanHelperTrait {
+        EanHelperTrait::checkData as eanCheckData;
+        EanHelperTrait::calcChecksum as eanCalcChecksum;
+    }
     
     /**
      * Parity table
@@ -44,6 +50,16 @@ class UpcE extends AbstractChecksumBarcode
         $data = self::zeroLeftPadding($data, $hasChecksum ? 8 : 7);
         parent::__construct($data, $hasChecksum);
     }
+    
+    /**
+     * Returns 8.
+     * 
+     * @return int
+     */
+    public function getLength()
+    {
+        return 8;
+    }
 
     /**
      * Separates by a space the system number and checksum digit.
@@ -59,12 +75,12 @@ class UpcE extends AbstractChecksumBarcode
     /**
      * Converts this barcode to a UPC-A barcode.
      * 
-     * @return UpcA
+     * @return Upca
      */
-    public function toUpcA()
+    public function toUpca()
     {
         $data = $this->toUpcaData($this->data, true);
-        return new UpcA($data, true);
+        return new Upca($data, true);
     }
     
     /**
@@ -105,7 +121,7 @@ class UpcE extends AbstractChecksumBarcode
     protected function calcChecksum($data)
     {
         $data = $this->toUpcaData($data, false);
-        return self::checkSumMod10($data);
+        return $this->eanCalcChecksum($data);
     }
 
     /**
@@ -115,7 +131,10 @@ class UpcE extends AbstractChecksumBarcode
      */
     protected function checkData($data)
     {
-        return \preg_match("/^[01][0-9]{7}$/", $data);
+        if (\preg_match('/^[01]/', $data)) {
+            return $this->eanCheckData($data);
+        }
+        return false;
     }
 
     /**

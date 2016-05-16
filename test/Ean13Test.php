@@ -2,7 +2,7 @@
 
 namespace ZeusTest\Barcode;
 
-use Zeus\Barcode\Ean13;
+use Zeus\Barcode\Upc\Ean13;
 
 /**
  * 
@@ -32,13 +32,13 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($info[1]);
                 $this->assertEquals($bc->getProductCode(), \substr($data, 7, 5));
                 $this->assertEquals($bc->withProductCode('56')->getProductCode(), '00056');
-                $this->assertEquals($bc->isUpcACompatible(), $data{0} == '0');
-                if ($bc->isUpcACompatible()) {
-                    $this->assertStringStartsWith(\substr($data, 1), $bc->toUpcA()->getData());
+                $this->assertEquals($bc->isUpcaCompatible(), $data{0} == '0');
+                if ($bc->isUpcaCompatible()) {
+                    $this->assertStringStartsWith(\substr($data, 1), $bc->toUpca()->getData());
                 }
                 else {
                     try {
-                        $bc->toUpcA();
+                        $bc->toUpca();
                         $this->assertTrue(false);
                     }
                     catch (\Zeus\Barcode\Exception $ex) {
@@ -61,7 +61,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
         $bc = new Ean13('7501031311309');
         $this->assertEquals($bc->getData(), '7501031311309');
         $this->assertEquals($bc->getChecksum(), '9');
-        $this->assertEquals($bc->getDataWithoutChecksum(), '750103131130');
+        $this->assertEquals($bc->getRawData(), '750103131130');
         $this->assertEquals($bc->getEncoded(), '10101100010100111001100101001110111101011001101010100001011001101100110100001011100101110100101');
     }
     
@@ -74,7 +74,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
         $bc = new Ean13('750103131130', false);
         $this->assertEquals($bc->getData(), '7501031311309');
         $this->assertEquals($bc->getChecksum(), '9');
-        $this->assertEquals($bc->getDataWithoutChecksum(), '750103131130');
+        $this->assertEquals($bc->getRawData(), '750103131130');
         $this->assertEquals($bc->getEncoded(), '10101100010100111001100101001110111101011001101010100001011001101100110100001011100101110100101');
     }
 }

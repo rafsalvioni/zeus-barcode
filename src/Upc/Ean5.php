@@ -1,6 +1,9 @@
 <?php
 
-namespace Zeus\Barcode;
+namespace Zeus\Barcode\Upc;
+
+use Zeus\Barcode\AbstractBarcode;
+use Zeus\Barcode\FixedLengthInterface;
 
 /**
  * Implements a EAN-5 supplemental barcode standard.
@@ -8,7 +11,7 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/upcext.phtml
  */
-class Ean5 extends AbstractBarcode
+class Ean5 extends AbstractBarcode implements FixedLengthInterface
 {
     use EanHelperTrait;
     
@@ -38,15 +41,15 @@ class Ean5 extends AbstractBarcode
         $data = self::zeroLeftPadding($data, 5);
         parent::__construct($data);
     }
-
+    
     /**
+     * Returns 5.
      * 
-     * @param string $data
-     * @return bool
+     * @return int
      */
-    protected function checkData($data)
+    public function getLength()
     {
-        return \preg_match("/^[0-9]{5}$/", $data);
+        return 5;
     }
 
     /**
@@ -56,12 +59,13 @@ class Ean5 extends AbstractBarcode
      */
     protected function encodeData($data)
     {
-        $check     = \substr(self::calcSumCheck($data, 3, 9), -1);
+        $data      = \str_split($data);
+        $check     = \substr(self::sumAlternateWeight($data, 3, 9), -1);
         $parityTab =& self::$parityTable[$check];
         $encoded   = '1011';
                     
-        for ($i = 0; $i < 5; $i++) {
-            $encoded .= self::$encodingTable[$data{$i}][$parityTab[$i]];
+        foreach ($data as $i => &$char) {
+            $encoded .= self::$encodingTable[$char][$parityTab[$i]];
             $encoded .= '01';
         }
         

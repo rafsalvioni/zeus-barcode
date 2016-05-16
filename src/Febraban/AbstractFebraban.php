@@ -2,7 +2,8 @@
 
 namespace Zeus\Barcode\Febraban;
 
-use Zeus\Barcode\Interleaved25;
+use Zeus\Barcode\Code2of5\Interleaved;
+use Zeus\Barcode\FixedLengthInterface;
 
 /**
  * Classe abstrata para criação de códigos de barra padrão Febraban.
@@ -13,7 +14,8 @@ use Zeus\Barcode\Interleaved25;
  * @author Rafael M. Salvioni
  * @see https://www.febraban.org.br/7Rof7SWg6qmyvwJcFwF7I0aSDf9jyV/sitefebraban/Codbar4-v28052004.pdf
  */
-abstract class AbstractFebraban extends Interleaved25
+abstract class AbstractFebraban extends Interleaved implements
+    FixedLengthInterface
 {
     /**
      * Armazena a representação dos dados no padrão Febraban
@@ -81,21 +83,26 @@ abstract class AbstractFebraban extends Interleaved25
         $data = self::zeroLeftPadding($data, $hasChecksum ? 44 : 43);
         parent::__construct($data, $hasChecksum);
     }
+    
+    /**
+     * Returns 44.
+     * 
+     * @return int
+     */
+    public function getLength()
+    {
+        return 44;
+    }
 
     /**
      * 
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
-        $len = 44;
-        if (!$hasChecksum) {
-            $len--;
-        }
-        if (\strlen($data) == $len) {
-            return parent::checkData($data, $hasChecksum);
+        if (\strlen($data) == $this->getLength()) {
+            return parent::checkData($data);
         }
         return false;
     }
