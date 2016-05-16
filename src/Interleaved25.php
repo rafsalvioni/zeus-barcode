@@ -8,7 +8,7 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/int2of5.phtml
  */
-class Interleaved25 extends AbstractBarcode
+class Interleaved25 extends AbstractChecksumBarcode
 {
     /**
      * Encoding table
@@ -59,11 +59,10 @@ class Interleaved25 extends AbstractBarcode
      * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
         // On constructor, data length even or odd is adjusted
-        $mul = $hasChecksum ? '{2,}' : '+';
-        return \preg_match("/^[0-9]{$mul}$/", $data);
+        return \preg_match("/^[0-9]{2,}$/", $data);
     }
 
     /**
@@ -97,6 +96,7 @@ class Interleaved25 extends AbstractBarcode
      */
     protected function calcChecksum($data)
     {
-        return (new Industrial25($data, false))->getChecksum();
+        $sum = self::calcSumCheck($data, 3, 1);
+        return ($sum % 10);
     }
 }

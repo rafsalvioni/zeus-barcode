@@ -8,7 +8,7 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/2of5.phtml
  */
-class Industrial25 extends AbstractBarcode
+class Industrial25 extends AbstractChecksumBarcode
 {
     /**
      * Encoding table
@@ -28,24 +28,18 @@ class Industrial25 extends AbstractBarcode
      */
     protected function calcChecksum($data)
     {
-        $data = \str_split($data);
-        $sum  = 0;
-        foreach ($data as $i => &$num) {
-            $sum += (($i % 2) == 0 ? 3 : 1) * (int)$num;
-        }
+        $sum = self::calcSumCheck($data, 3, 1);
         return ($sum % 10);
     }
 
     /**
      * 
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
-        $mul = $hasChecksum ? '{2,}' : '+';
-        return \preg_match("/^[0-9]{$mul}$/", $data);
+        return \preg_match("/^[0-9]{2,}$/", $data);
     }
 
     /**

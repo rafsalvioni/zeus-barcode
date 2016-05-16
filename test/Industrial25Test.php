@@ -42,7 +42,7 @@ class Industrial25Test extends \PHPUnit_Framework_TestCase
         $bc = new Industrial25('12345670');
         $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
-        $this->assertEquals($bc->getData(false), '1234567');
+        $this->assertEquals($bc->getDataWithoutChecksum(), '1234567');
         $this->assertEquals($bc->getEncoded(), '1101101011101010101110101110101011101110111010101010101110101110111010111010101011101110101010101011101110101011101110101101011');
     }
     
@@ -55,7 +55,7 @@ class Industrial25Test extends \PHPUnit_Framework_TestCase
         $bc = new Industrial25('1234567', false);
         $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
-        $this->assertEquals($bc->getData(false), '1234567');
+        $this->assertEquals($bc->getDataWithoutChecksum(), '1234567');
         $this->assertEquals($bc->getEncoded(), '1101101011101010101110101110101011101110111010101010101110101110111010111010101011101110101010101011101110101011101110101101011');
     }
 }

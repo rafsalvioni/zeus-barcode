@@ -8,8 +8,10 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/ean13.phtml
  */
-class Ean13 extends AbstractBarcode
+class Ean13 extends AbstractChecksumBarcode
 {
+    use EanHelperTrait;
+    
     /**
      * Product field
      * 
@@ -38,26 +40,6 @@ class Ean13 extends AbstractBarcode
     ];
     
     /**
-     * Encoding table, with parity
-     * 
-     * [Odd, Even, Right]
-     * 
-     * @var array
-     */
-    protected static $encodingTable = [
-        '0' => ['0001101', '0100111', '1110010'],
-        '1' => ['0011001', '0110011', '1100110'],
-        '2' => ['0010011', '0011011', '1101100'],
-        '3' => ['0111101', '0100001', '1000010'],
-        '4' => ['0100011', '0011101', '1011100'],
-        '5' => ['0110001', '0111001', '1001110'],
-        '6' => ['0101111', '0000101', '1010000'],
-        '7' => ['0111011', '0010001', '1000100'],
-        '8' => ['0110111', '0001001', '1001000'],
-        '9' => ['0001011', '0010111', '1110100'],
-    ];
-    
-    /**
      * Padding zeros left on $data to complete the necessary length.
      * 
      * @param string $data
@@ -76,7 +58,7 @@ class Ean13 extends AbstractBarcode
      */
     public function getPrintableData()
     {
-        $data = $this->getData(true);
+        $data = $this->getData();
         return $data{0} . ' ' . \substr($data, 1);
     }
     
@@ -134,31 +116,17 @@ class Ean13 extends AbstractBarcode
      */
     protected function calcChecksum($data)
     {
-        $data = \str_split($data);
-        $sum  = 0;
-        
-        foreach ($data as $i => &$num) {
-            $weight = ($i % 2) == 0 ? 1 : 3;
-            $sum   += (int)$num * $weight;
-        }
-        
-        $d = 10 - ($sum % 10);
-        return $d == 10 ? 0 : $d;
+        return self::checkSumMod10($data);
     }
 
     /**
      * 
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
-        $len = 13;
-        if (!$hasChecksum) {
-            $len--;
-        }
-        return \preg_match("/^[0-9]{{$len}}$/", $data);
+        return \preg_match("/^[0-9]{13}$/", $data);
     }
 
     /**

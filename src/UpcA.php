@@ -8,7 +8,7 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/upca.phtml
  */
-class UpcA extends AbstractBarcode
+class UpcA extends AbstractChecksumBarcode
 {
     /**
      * Manufacturer field
@@ -51,7 +51,7 @@ class UpcA extends AbstractBarcode
     {
         $this->ean13 = new Ean13('0' . $data, $hasChecksum);
         parent::__construct($data, $hasChecksum);
-        $this->data  = \substr($this->ean13->getData(true), 1);
+        $this->data  = \substr($this->ean13->getData(), 1);
     }
 
     /**
@@ -61,7 +61,7 @@ class UpcA extends AbstractBarcode
      */
     public function isUpcECompatible()
     {
-        $data = $this->getData(false);
+        $data = $this->getDataWithoutChecksum();
         return \preg_match('/([0-2]0{4}[0-9]{3}|0{5}[0-9]{2}|0{5}[0-9]|0{4}[5-9])$/', $data);
     }
     
@@ -73,7 +73,7 @@ class UpcA extends AbstractBarcode
      */
     public function toUpcE()
     {
-        $data    = $this->getData(false);
+        $data    = $this->getDataWithoutChecksum();
         $system  = $data{0};
         $mfct    = \substr($data, 1, 5);
         $product = \substr($data, 6, 5);
@@ -179,10 +179,9 @@ class UpcA extends AbstractBarcode
      * Always return true. Not used...
      *  
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
         return true;
     }

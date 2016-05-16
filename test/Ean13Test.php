@@ -34,7 +34,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
                 $this->assertEquals($bc->withProductCode('56')->getProductCode(), '00056');
                 $this->assertEquals($bc->isUpcACompatible(), $data{0} == '0');
                 if ($bc->isUpcACompatible()) {
-                    $this->assertEquals($bc->toUpcA()->getData($info[0]), \substr($data, 1));
+                    $this->assertStringStartsWith(\substr($data, 1), $bc->toUpcA()->getData());
                 }
                 else {
                     try {
@@ -61,7 +61,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
         $bc = new Ean13('7501031311309');
         $this->assertEquals($bc->getData(), '7501031311309');
         $this->assertEquals($bc->getChecksum(), '9');
-        $this->assertEquals($bc->getData(false), '750103131130');
+        $this->assertEquals($bc->getDataWithoutChecksum(), '750103131130');
         $this->assertEquals($bc->getEncoded(), '10101100010100111001100101001110111101011001101010100001011001101100110100001011100101110100101');
     }
     
@@ -74,7 +74,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
         $bc = new Ean13('750103131130', false);
         $this->assertEquals($bc->getData(), '7501031311309');
         $this->assertEquals($bc->getChecksum(), '9');
-        $this->assertEquals($bc->getData(false), '750103131130');
+        $this->assertEquals($bc->getDataWithoutChecksum(), '750103131130');
         $this->assertEquals($bc->getEncoded(), '10101100010100111001100101001110111101011001101010100001011001101100110100001011100101110100101');
     }
 }

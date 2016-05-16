@@ -30,7 +30,7 @@ class UpcETest extends \PHPUnit_Framework_TestCase
             try {
                 $bc = new UpcE($data, $info[0]);
                 $this->assertTrue($info[1]);
-                $this->assertEquals($bc->toUpcA()->toUpcE()->getData($info[1]), $data);
+                $this->assertEquals($bc->toUpcA()->toUpcE()->getData(), $data);
             }
             catch (\Exception $ex) {
                 $this->assertFalse($info[1]);

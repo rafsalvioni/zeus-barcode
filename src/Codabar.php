@@ -42,9 +42,8 @@ class Codabar extends AbstractBarcode
      * Uses the start and stop chars if they given.
      * 
      * @param string $data
-     * @param bool $hasChecksum
      */
-    public function __construct($data, $hasChecksum = true)
+    public function __construct($data)
     {
         if (\preg_match('/^([A-D])(.+?)([A-D])$/', $data, $match)) {
             $this->start = $match[1];
@@ -55,10 +54,10 @@ class Codabar extends AbstractBarcode
             $this->start = 'A';
             $this->stop  = 'B';
         }
-        parent::__construct($data, $hasChecksum);
+        parent::__construct($data);
     }
 
-        /**
+    /**
      * 
      * @return string
      */
@@ -69,45 +68,11 @@ class Codabar extends AbstractBarcode
     }
 
     /**
-     * This barcode doesn't have checksum...
      * 
      * @param string $data
-     */
-    protected function calcChecksum($data)
-    {
-        //n.a
-    }
-    
-    /**
-     * 
-     * @param string $data
-     * @param int $checksum
-     * @return string
-     */
-    protected function insertChecksum($data, $checksum)
-    {
-        return $data;
-    }
-    
-    /**
-     * 
-     * @param string $data
-     * @param mixed $cleanData
-     * @return null
-     */
-    protected function extractChecksum($data, &$cleanData)
-    {
-        $cleanData = $data;
-        return null;
-    }
-
-    /**
-     * 
-     * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
         return \preg_match("/^[0-9\\-\\$\\:\\/\\.\\+]+$/", $data);
     }

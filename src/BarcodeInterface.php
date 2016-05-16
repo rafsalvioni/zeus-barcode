@@ -12,35 +12,28 @@ use Zeus\Barcode\Renderer\RendererInterface;
 interface BarcodeInterface
 {
     /**
-     * Check if a barcode data is valid. If data has a checksum digit is given,
-     * it will be checked too.
+     * Check if a barcode data is valid.
      * 
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    public static function check($data, $hasChecksum = true);
+    public static function check($data);
 
     /**
      * Constructor should be accepts a barcode data and, if a data is invalid,
      * a exception will should throw.
      * 
-     * If $hasChecksum was given, the checksum digit of data should be checked
-     * too. Otherwise, the class will should calculate the checksum.
-     * 
      * @param string $data
-     * @param bool $hasChecksum
      * @throws Exception
      */
-    public function __construct($data, $hasChecksum = true);
+    public function __construct($data);
     
     /**
-     * Returns the barcode data, with or without checksum, if has one.
+     * Returns the barcode data.
      * 
-     * @param bool $withChecksum
      * @return string
      */
-    public function getData($withChecksum = false);
+    public function getData();
     
     /**
      * Returns a subpart of barcode data.
@@ -65,13 +58,6 @@ interface BarcodeInterface
      */
     public function withDataPart($part, $start, $length);
 
-    /**
-     * Returns the barcode checksum, if has one.
-     * 
-     * @return int
-     */
-    public function getChecksum();
-    
     /**
      * Returns the barcode data encoded with 0 or 1. "0" represents a white
      * bar and "1" a black bar.

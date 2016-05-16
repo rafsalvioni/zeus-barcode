@@ -8,7 +8,7 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/code11.phtml
  */
-class Code11 extends AbstractBarcode
+class Code11 extends AbstractChecksumBarcode
 {
     /**
      * Encoding table
@@ -42,7 +42,7 @@ class Code11 extends AbstractBarcode
      * @throws Exception If data or checksum is invalid
      */
     public function __construct($data, $hasChecksum = true) {
-        if (!$this->checkData($data, $hasChecksum)) {
+        if (!$this->checkData(!$hasChecksum ? $data . '0' : $data)) {
             throw new Exception('Invalid barcode data chars or length!');
         }
         
@@ -157,13 +157,11 @@ class Code11 extends AbstractBarcode
     /**
      * 
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
-        $mul = $hasChecksum ? '{2,}' : '+';
-        return preg_match("/^[0-9\\-]$mul$/", $data);
+        return preg_match("/^[0-9\\-]{2,}/", $data);
     }
 
     /**

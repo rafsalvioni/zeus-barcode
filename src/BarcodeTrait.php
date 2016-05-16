@@ -15,24 +15,17 @@ trait BarcodeTrait
      * @var string
      */
     protected $data;
-    /**
-     * Stores only the checksum. Its a cache. Use getChecksum()
-     * 
-     * @var string
-     */
-    protected $checksum;
 
     /**
      * 
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    public static function check($data, $hasChecksum = true)
+    public static function check($data)
     {
         $class = \get_called_class();
         try {
-            new $class($data, $hasChecksum);
+            new $class($data);
             return true;
         }
         catch (Exception $ex) {
@@ -53,31 +46,27 @@ trait BarcodeTrait
     }
 
     /**
-     * Extract the checksum from a data.
+     * Return the sum of products from $data chars using weights given.
      * 
-     * @param string $data
-     * @param string $cleanData Data without checksum
-     * @return int 
+     * @param string $data Numerical data
+     * @param int $firstWeight Weight for odd positions
+     * @param int $secWeight Weight for even positions
+     * @return int
      */
-    protected function extractChecksum($data, &$cleanData)
+    protected static function calcSumCheck($data, $firstWeight = 3, $secWeight = 1)
     {
-        $checksum  = \substr_remove($data, -1);
-        $cleanData = $data;
-        return $checksum;
+        $len    = \strlen($data);
+        $sum    = 0;
+        $weight = $firstWeight;
+        
+        for ($i = $len - 1; $i >= 0; $i--) {
+            $sum   += $weight * (int)$data{$i};
+            $weight = $weight == $firstWeight ? $secWeight : $firstWeight;
+        }
+        
+        return $sum;
     }
-    
-    /**
-     * Insert a checksum on a data.
-     * 
-     * @param string $data
-     * @param int $checksum
-     * @return string
-     */
-    protected function insertChecksum($data, $checksum)
-    {
-        return $data . $checksum;
-    }
-    
+
     /**
      * Returns a subpart of barcode data.
      * 
@@ -117,32 +106,11 @@ trait BarcodeTrait
 
     /**
      * 
-     * @param bool $withChecksum
      * @return string
      */
-    public function getData($withChecksum = true)
+    public function getData()
     {
-        if ($withChecksum) {
-            return $this->data;
-        }
-        else {
-            $foo = null;
-            $this->extractChecksum($this->data, $foo);
-            return $foo;
-        }
-    }
-    
-    /**
-     * 
-     * @return int
-     */
-    public function getChecksum()
-    {
-        if (\is_null($this->checksum)) {
-            $foo = null;
-            $this->checksum = $this->extractChecksum($this->data, $foo);
-        }
-        return $this->checksum;
+        return $this->data;
     }
     
     /**
@@ -151,7 +119,7 @@ trait BarcodeTrait
      */
     public function getPrintableData()
     {
-        return $this->getData(true);
+        return $this->getData();
     }
 
     /**

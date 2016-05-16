@@ -33,24 +33,15 @@ abstract class AbstractBarcode implements BarcodeInterface
     }
 
     /**
-     * Calculates a barcode's checksum with a given data.
-     * 
-     * @param string $data
-     * @return string
-     */
-    abstract protected function calcChecksum($data);
-
-    /**
      * Validates a barcode data.
      * 
      * This method should validate only if data chars and length are valid.
-     * Checksum will be validate later.
      * 
      * @param string $data
-     * @param bool $hasChecksum Indicates if $data has a builtin checksum
+
      * @return bool
      */
-    abstract protected function checkData($data, $hasChecksum = true);
+    abstract protected function checkData($data);
 
     /**
      * Encodes a data.
@@ -63,28 +54,17 @@ abstract class AbstractBarcode implements BarcodeInterface
     abstract protected function encodeData($data);
     
     /**
-     * $data will be validated in constructor. If $data don't have a checksum,
-     * it will generated. Else, data's checksum will be validated too.
+     * $data will be validated in constructor.
      * 
      * @param string $data
-     * @param bool $hasChecksum Indicates if $data has a builtin checksum
-     * @throws Exception If data or checksum is invalid
+     * @throws Exception If data is invalid
      */
-    public function __construct($data, $hasChecksum = true)
+    public function __construct($data)
     {
-        if (!$this->checkData($data, $hasChecksum)) {
+        if (!$this->checkData($data)) {
             throw $this->createException('Invalid "%class%" barcode data chars or length!');
         }
-        if ($hasChecksum) {
-            $checksum = $this->extractChecksum($data, $data);
-            if ($checksum != $this->calcChecksum($data)) {
-                throw $this->createException('Invalid "%class%" barcode checksum!');
-            }
-        }
-        else {
-            $checksum = $this->calcChecksum($data);
-        }
-        $this->data = $this->insertChecksum($data, $checksum);
+        $this->data = $data;
     }
     
     /**

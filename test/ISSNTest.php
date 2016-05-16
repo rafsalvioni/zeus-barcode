@@ -24,7 +24,7 @@ class ISSNTest extends \PHPUnit_Framework_TestCase
             try {
                 $bc = new ISSN($data, $info[0]);
                 $this->assertTrue($info[1]);
-                $this->assertEquals($bc->getData($info[0]), $data);
+                $this->assertEquals($bc->getData(), $data);
             }
             catch (\Exception $ex) {
                 $this->assertFalse($info[1]);

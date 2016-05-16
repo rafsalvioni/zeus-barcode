@@ -55,7 +55,7 @@ class BloquetoTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getValor(), 392.11);
         $this->assertEquals($bc->getChecksum(), 4);
         
-        $campoLivre = \substr($bc->getData(true), 19);
+        $campoLivre = \substr($bc->getData(), 19);
         $this->assertEquals($bc->getCampoLivre(), $campoLivre);
         
         $bc = Bloqueto::builder('001', null, 39585.78);

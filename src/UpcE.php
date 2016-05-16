@@ -8,8 +8,10 @@ namespace Zeus\Barcode;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/upce.phtml
  */
-class UpcE extends AbstractBarcode
+class UpcE extends AbstractChecksumBarcode
 {
+    use EanHelperTrait;
+    
     /**
      * Parity table
      * 
@@ -29,19 +31,6 @@ class UpcE extends AbstractBarcode
         '7' => [[1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1]],
         '8' => [[1, 0, 1, 0, 0, 1], [0, 1, 0, 1, 1, 0]],
         '9' => [[1, 0, 0, 1, 0, 1], [0, 1, 1, 0, 1, 0]],
-    ];
-    
-    /**
-     * Encoding table, by parity
-     * 
-     * @var array
-     */
-    protected static $encodingTable = [
-        '0' => ['0001101', '0100111'], '1' => ['0011001', '0110011'],
-        '2' => ['0010011', '0011011'], '3' => ['0111101', '0100001'],
-        '4' => ['0100011', '0011101'], '5' => ['0110001', '0111001'],
-        '6' => ['0101111', '0000101'], '7' => ['0111011', '0010001'],
-        '8' => ['0110111', '0001001'], '9' => ['0001011', '0010111'],
     ];
     
     /**
@@ -116,22 +105,17 @@ class UpcE extends AbstractBarcode
     protected function calcChecksum($data)
     {
         $data = $this->toUpcaData($data, false);
-        return (new UpcA($data, false))->getChecksum();
+        return self::checkSumMod10($data);
     }
 
     /**
      * 
      * @param string $data
-     * @param bool $hasChecksum
      * @return bool
      */
-    protected function checkData($data, $hasChecksum = true)
+    protected function checkData($data)
     {
-        $len = 7;
-        if (!$hasChecksum) {
-            $len--;
-        }
-        return \preg_match("/^[01][0-9]{{$len}}$/", $data);
+        return \preg_match("/^[01][0-9]{7}$/", $data);
     }
 
     /**

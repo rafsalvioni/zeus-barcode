@@ -259,7 +259,7 @@ class Convenio extends AbstractFebraban
      */
     protected function montaLinhaDigitavel()
     {
-        $linha = \str_split($this->getData(true), 11);
+        $linha = \str_split($this->getData(), 11);
         foreach ($linha as $i => $grupo) {
             $linha[$i] .= $this->calcChecksum($grupo);
         }

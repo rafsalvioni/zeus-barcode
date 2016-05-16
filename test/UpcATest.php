@@ -36,9 +36,9 @@ class UpcATest extends \PHPUnit_Framework_TestCase
                 $this->assertEquals($bc->withManufacturerCode('345')->getManufacturerCode(), '00345');
                 $this->assertEquals($bc->withProductCode('5677')->getProductCode(), '05677');
                 if ($info[2]) {
-                    $this->assertEquals($bc->toUpcE()->toUpcA()->getData($info[1]), $data);
+                   $this->assertStringStartsWith($data, $bc->toUpcE()->toUpcA()->getData());
                 }
-                $this->assertEquals($bc->toEan13()->getData($info[0]), '0' . $data);
+                $this->assertStringStartsWith('0' . $data, $bc->toEan13()->getData());
             }
             catch (\Exception $ex) {
                 $this->assertFalse($info[1]);
