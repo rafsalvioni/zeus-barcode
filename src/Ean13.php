@@ -56,6 +56,18 @@ class Ean13 extends AbstractBarcode
         '8' => ['0110111', '0001001', '1001000'],
         '9' => ['0001011', '0010111', '1110100'],
     ];
+    
+    /**
+     * Padding zeros left on $data to complete the necessary length.
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     */
+    public function __construct($data, $hasChecksum = true)
+    {
+        $data = self::zeroLeftPadding($data, $hasChecksum ? 13 : 12);
+        parent::__construct($data, $hasChecksum);
+    }
 
     /**
      * Separates the first digit

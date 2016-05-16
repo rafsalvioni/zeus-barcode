@@ -60,8 +60,7 @@ class Convenio extends AbstractFebraban
      */
     public static function builder($segmento, $valor = 0, $campoLivre = null)
     {
-        $data = '896';
-        $data = \str_pad($data, 43, '0', \STR_PAD_RIGHT);
+        $data = '896' . self::zeroLeftPadding('', 40);
         
         $me   = new self($data, false);
         return $me->comSegmento($segmento)
@@ -82,7 +81,7 @@ class Convenio extends AbstractFebraban
     public function __construct($data, $hasChecksum = true)
     {
         if (\strlen($data) >= 48) {
-            $linha = \preg_replace('/[^\d]/', '', $data);
+            $linha = \preg_replace('/[ -]/', '', $data);
             $linha = \str_split($linha, 12);
             $data  = '';
             

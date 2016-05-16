@@ -69,8 +69,7 @@ class Bloqueto extends AbstractFebraban
     public static function builder(
         $banco, \DateTime $vencto = null, $valor = 0, $campoLivre = null
     ){
-        $data = '0009';
-        $data = \str_pad($data, 43, '0', \STR_PAD_RIGHT);
+        $data = '0009' . self::zeroLeftPadding('', 39);
         $me   = new self($data, false);
         
         if (!$vencto) {
@@ -96,7 +95,7 @@ class Bloqueto extends AbstractFebraban
     public function __construct($data, $hasChecksum = true)
     {
         if (\strlen($data) >= 45) {
-            $linha = \preg_replace('/[^\d]/', '', $data);
+            $linha = \preg_replace('/[ .-]/', '', $data);
             $data  = \substr($linha, 0, 4) .
                      \substr($linha, 32) .
                      \substr($linha, 4, 5) .

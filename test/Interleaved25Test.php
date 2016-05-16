@@ -22,6 +22,7 @@ class Interleaved25Test extends \PHPUnit_Framework_TestCase
             '01234567'  => [false, false],
             '1234567'   => [false, true],
             '123456w'   => [false, false],
+            '2'         => [false, true]
         ];
         
         foreach ($dataArr as $data => &$info) {

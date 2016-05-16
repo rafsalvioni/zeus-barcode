@@ -39,6 +39,18 @@ trait BarcodeTrait
             return false;
         }
     }
+    
+    /**
+     * Padding zeros left to necessary length.
+     * 
+     * @param string $data
+     * @param int $length
+     * @return string
+     */
+    protected static function zeroLeftPadding($data, $length)
+    {
+        return \str_pad($data, $length, '0', \STR_PAD_LEFT);
+    }
 
     /**
      * Extract the checksum from a data.
@@ -94,7 +106,7 @@ trait BarcodeTrait
      */
     public function withDataPart($value, $start, $length)
     {
-        $value = \str_pad($value, $length, '0', \STR_PAD_LEFT);
+        $value = self::zeroLeftPadding($value, $length);
         if (\strlen($value) == $length) {
             $data = \substr_replace($this->data, $value, $start, $length);
             $this->extractChecksum($data, $data);

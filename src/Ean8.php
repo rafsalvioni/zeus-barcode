@@ -24,6 +24,18 @@ class Ean8 extends AbstractBarcode
     ];
 
     /**
+     * Padding zeros left on $data to complete the necessary length.
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     */
+    public function __construct($data, $hasChecksum = true)
+    {
+        $data = self::zeroLeftPadding($data, $hasChecksum ? 8 : 7);
+        parent::__construct($data, $hasChecksum);
+    }
+    
+    /**
      * 
      * @param string $data
      * @return int

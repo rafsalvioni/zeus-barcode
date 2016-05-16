@@ -19,6 +19,20 @@ abstract class AbstractBarcode implements BarcodeInterface
     protected $encoded;
     
     /**
+     * Create a barcode exception using current class. The class name formatted
+     * will be put on '%class%' mark of $message.
+     * 
+     * @param string $message
+     * @return Exception
+     */
+    protected function createException($message)
+    {
+        $class = \get_class($this);
+        $class = \str_replace(__NAMESPACE__ . '\\', '', $class);
+        return new Exception(\str_replace('%class%', $class, $message));
+    }
+
+    /**
      * Calculates a barcode's checksum with a given data.
      * 
      * @param string $data
@@ -59,12 +73,12 @@ abstract class AbstractBarcode implements BarcodeInterface
     public function __construct($data, $hasChecksum = true)
     {
         if (!$this->checkData($data, $hasChecksum)) {
-            throw new Exception(\get_class($this) . ': Invalid barcode data chars or length!');
+            throw $this->createException('Invalid "%class%" barcode data chars or length!');
         }
         if ($hasChecksum) {
             $checksum = $this->extractChecksum($data, $data);
             if ($checksum != $this->calcChecksum($data)) {
-                throw new Exception(\get_class($this) . ': Invalid barcode checksum!');
+                throw $this->createException('Invalid "%class%" barcode checksum!');
             }
         }
         else {

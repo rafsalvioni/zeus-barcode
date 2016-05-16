@@ -35,6 +35,25 @@ class Interleaved25 extends AbstractBarcode
     }
 
     /**
+     * Padding zeros left on $data to complete the necessary length.
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     */
+    public function __construct($data, $hasChecksum = true)
+    {
+        $len = \strlen($data);
+        if (($len % 2) == 0) {
+            $len += !$hasChecksum ? 1 : 0;
+        }
+        else {
+            $len +=  $hasChecksum ? 1 : 0;
+        }
+        $data = self::zeroLeftPadding($data, $len);
+        parent::__construct($data, $hasChecksum);
+    }
+    
+    /**
      * 
      * @param string $data
      * @param bool $hasChecksum
@@ -42,17 +61,9 @@ class Interleaved25 extends AbstractBarcode
      */
     protected function checkData($data, $hasChecksum = true)
     {
-        if (\preg_match('/^[0-9]+$/', $data)) {
-            $len  = \strlen($data);
-            $mod2 = ($len % 2);
-            if ($hasChecksum) {
-                return $mod2 == 0;
-            }
-            else {
-                return $mod2 > 0;
-            }
-        }
-        return false;
+        // On constructor, data length even or odd is adjusted
+        $mul = $hasChecksum ? '{2,}' : '+';
+        return \preg_match("/^[0-9]{$mul}$/", $data);
     }
 
     /**

@@ -45,6 +45,40 @@ class UpcE extends AbstractBarcode
     ];
     
     /**
+     * Padding zeros left on $data to complete the necessary length.
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     */
+    public function __construct($data, $hasChecksum = true)
+    {
+        $data = self::zeroLeftPadding($data, $hasChecksum ? 8 : 7);
+        parent::__construct($data, $hasChecksum);
+    }
+
+    /**
+     * Separates by a space the system number and checksum digit.
+     * 
+     * @return string
+     */
+    public function getPrintableData()
+    {
+        $data = parent::getPrintableData();
+        return $data{0} . ' ' . \substr($data, 1, -1) . ' ' . \substr($data, -1);
+    }
+
+    /**
+     * Converts this barcode to a UPC-A barcode.
+     * 
+     * @return UpcA
+     */
+    public function toUpcA()
+    {
+        $data = $this->toUpcaData($this->data, true);
+        return new UpcA($data, true);
+    }
+    
+    /**
      * Converts a UPC-E data to UPC-A.
      * 
      * @param string $data UPC-E data
@@ -119,27 +153,5 @@ class UpcE extends AbstractBarcode
         $encoded  = '101' . $encoded . '010101';
         
         return $encoded;
-    }
-
-    /**
-     * Separates by a space the system number and checksum digit.
-     * 
-     * @return string
-     */
-    public function getPrintableData()
-    {
-        $data = parent::getPrintableData();
-        return $data{0} . ' ' . \substr($data, 1, -1) . ' ' . \substr($data, -1);
-    }
-
-    /**
-     * Converts this barcode to a UPC-A barcode.
-     * 
-     * @return UpcA
-     */
-    public function toUpcA()
-    {
-        $data = $this->toUpcaData($this->data, true);
-        return new UpcA($data, true);
     }
 }
