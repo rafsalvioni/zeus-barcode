@@ -3,9 +3,9 @@
 namespace Zeus\Barcode;
 
 /**
- * Description of AbstractChecksumBarcode
+ * Abstract barcode that uses checksum.
  *
- * @author Rafael
+ * @author Rafael M. Salvioni
  */
 abstract class AbstractChecksumBarcode extends AbstractBarcode implements
     ChecksumBarcodeInterface

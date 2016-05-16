@@ -3,7 +3,8 @@
 namespace Zeus\Barcode;
 
 /**
- * Abstract barcode.
+ * Simple abstract barcode that implements BarcodeInterface and
+ * BarcodeTrait.
  *
  * @author Rafael M. Salvioni
  */
