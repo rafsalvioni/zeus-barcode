@@ -9,6 +9,13 @@ namespace Zeus\Barcode\Code11;
  */
 final class Code11
 {
+    /**
+     * Try to return the best Code11 instance for given parameters.
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     * @return AbstractCode11
+     */
     public static function factory($data, $hasChecksum = true)
     {
         if ($hasChecksum) {
