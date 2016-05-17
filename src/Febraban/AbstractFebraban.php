@@ -73,18 +73,6 @@ abstract class AbstractFebraban extends Interleaved implements
     }
     
     /**
-     * Insere zeros a esquerda de data até completar o tamanho necessário.
-     * 
-     * @param string $data
-     * @param bool $hasChecksum
-     */
-    public function __construct($data, $hasChecksum = true)
-    {
-        $data = self::zeroLeftPadding($data, $hasChecksum ? 44 : 43);
-        parent::__construct($data, $hasChecksum);
-    }
-    
-    /**
      * Returns 44.
      * 
      * @return int

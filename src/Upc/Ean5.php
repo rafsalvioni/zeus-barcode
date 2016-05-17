@@ -32,17 +32,6 @@ class Ean5 extends AbstractBarcode implements FixedLengthInterface
     ];
     
     /**
-     * Padding zeros left on $data to complete the necessary length.
-     * 
-     * @param string $data
-      */
-    public function __construct($data)
-    {
-        $data = self::zeroLeftPadding($data, 5);
-        parent::__construct($data);
-    }
-    
-    /**
      * Returns 5.
      * 
      * @return int

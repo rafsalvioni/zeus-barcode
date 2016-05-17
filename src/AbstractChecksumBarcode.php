@@ -20,24 +20,10 @@ abstract class AbstractChecksumBarcode extends AbstractBarcode implements
      */
     public function __construct($data, $hasChecksum = true)
     {
+        parent::__construct($hasChecksum ? $data : $data . '0');
         if (!$hasChecksum) {
-            $data = $this->insertChecksum($data, '0');
+            $this->data = \substr($this->data, 0, -1);
         }
-        parent::__construct($data);
-        
-        $check = $this->extractChecksum($this->data, $this->data);
-        $calc  = $this->calcChecksum($this->data);
-        
-        if ($hasChecksum && $check != $calc) {
-            throw $this->createException('Invalid "%class%" barcode checksum!');
-        }
-        $this->data = $this->insertChecksum($this->data, $calc);
+        $this->data = $this->checksumResolver($this->data, $hasChecksum);
     }
-    
-    /**
-     * Calculates the checksum.
-     * 
-     * @return int
-     */
-    abstract protected function calcChecksum($data);
 }

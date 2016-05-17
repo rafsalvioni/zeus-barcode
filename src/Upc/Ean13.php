@@ -45,18 +45,6 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     ];
     
     /**
-     * Padding zeros left on $data to complete the necessary length.
-     * 
-     * @param string $data
-     * @param bool $hasChecksum
-     */
-    public function __construct($data, $hasChecksum = true)
-    {
-        $data = self::zeroLeftPadding($data, $hasChecksum ? 13 : 12);
-        parent::__construct($data, $hasChecksum);
-    }
-
-    /**
      * Separates the first digit
      * 
      * @return string

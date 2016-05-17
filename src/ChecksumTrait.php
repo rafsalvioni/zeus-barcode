@@ -19,6 +19,39 @@ trait ChecksumTrait
     protected $checksum;
     
     /**
+     * Check a data with checksum or create the checksum and put it on data.
+     * 
+     * Returns the data with checksum.
+     * 
+     * If checksum is invalid, a exception will be thrown.
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     * @return string
+     * @throws Exception
+     */
+    protected function checksumResolver($data, $hasChecksum)
+    {
+        if ($hasChecksum) {
+            $check = $this->extractChecksum($data, $data);
+            if ($check != $this->calcChecksum($data)) {
+                throw $this->createException('Invalid "%class%" barcode checksum!');
+            }
+        }
+        else {
+            $check = $this->calcChecksum($data);
+        }
+        return $this->insertChecksum($data, $check);
+    }
+    
+    /**
+     * Calculates the checksum.
+     * 
+     * @return int
+     */
+    abstract protected function calcChecksum($data);
+
+    /**
      * Inserts the checksum on a data.
      * 
      * By default, checksum is put on end of data. Overload if necessary.
