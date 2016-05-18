@@ -18,15 +18,9 @@ class Msi extends AbstractBarcode
      * @var array
      */
     protected static $encodingTable = [
-        '0' => '100100100100',
-        '1' => '100100100110',
-        '2' => '100100110100',
-        '3' => '100100110110',
-        '4' => '100110100100',
-        '5' => '100110100110',
-        '6' => '100110110100',
-        '7' => '100110110110',
-        '8' => '110100100100',
+        '0' => '100100100100', '1' => '100100100110', '2' => '100100110100',
+        '3' => '100100110110', '4' => '100110100100', '5' => '100110100110',
+        '6' => '100110110100', '7' => '100110110110', '8' => '110100100100',
         '9' => '110100100110',
     ];
     
@@ -97,14 +91,7 @@ class Msi extends AbstractBarcode
      */
     public function withChecksumMod10()
     {
-        $data = null;
-        if ($this instanceof AbstractMsiChecksum) {
-            $this->extractChecksum($this->data, $data);
-        }
-        else {
-            $data = $this->data;
-        }
-        return new MsiMod10($data, false);
+        return $this->toClass(MsiMod10::class);
     }
 
     /**
@@ -114,14 +101,7 @@ class Msi extends AbstractBarcode
      */
     public function withChecksumMod11()
     {
-        $data = null;
-        if ($this instanceof AbstractMsiChecksum) {
-            $this->extractChecksum($this->data, $data);
-        }
-        else {
-            $data = $this->data;
-        }
-        return new MsiMod11($data, false);
+        return $this->toClass(MsiMod11::class);
     }
 
     /**
@@ -131,14 +111,7 @@ class Msi extends AbstractBarcode
      */
     public function withChecksum2Mod10()
     {
-        $data = null;
-        if ($this instanceof AbstractMsiChecksum) {
-            $this->extractChecksum($this->data, $data);
-        }
-        else {
-            $data = $this->data;
-        }
-        return new Msi2Mod10($data, false);
+        return $this->toClass(Msi2Mod10::class);
     }
 
     /**
@@ -148,6 +121,17 @@ class Msi extends AbstractBarcode
      */
     public function withChecksumMod1110()
     {
+        return $this->toClass(MsiMod1110::class);
+    }
+    
+    /**
+     * Converts current barcode to another barcode of MSI family.
+     * 
+     * @param string $class Msi class
+     * @return Msi
+     */
+    protected function toClass($class)
+    {
         $data = null;
         if ($this instanceof AbstractMsiChecksum) {
             $this->extractChecksum($this->data, $data);
@@ -155,7 +139,7 @@ class Msi extends AbstractBarcode
         else {
             $data = $this->data;
         }
-        return new MsiMod1110($data, false);
+        return new $class($data, false);
     }
 
     /**

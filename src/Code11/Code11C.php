@@ -8,7 +8,7 @@ namespace Zeus\Barcode\Code11;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/code11.phtml
  */
-class Code11C extends AbstractCode11
+class Code11C extends Code11
 {
     /**
      * Creates a new barcode with K check digit.

@@ -6,6 +6,7 @@ namespace Zeus\Barcode\Code39;
  * Implementation of Code39 barcode standard, with mod43 checksum.
  *
  * @author Rafael M. Salvioni
+ * @see http://www.barcodeisland.com/code39.phtml
  */
 class Code39Mod43 extends Code39 implements ChecksumInterface
 {
@@ -13,8 +14,8 @@ class Code39Mod43 extends Code39 implements ChecksumInterface
 
     /**
      * 
-     * @param type $data
-     * @param type $hasChecksum
+     * @param string $data
+     * @param bool $hasChecksum
      */
     public function __construct($data, $hasChecksum = false)
     {
@@ -23,7 +24,7 @@ class Code39Mod43 extends Code39 implements ChecksumInterface
     }
     
     /**
-     * Returns a Code39 instance basead on current barcode.
+     * Returns a Code39 instance, without checksum, basead on current barcode.
      * 
      * @return Code39
      */

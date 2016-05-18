@@ -12,6 +12,7 @@ use Zeus\Barcode\TwoWidthTrait;
  * Supports full ASCII mode.
  *
  * @author Rafael M. Salvioni
+ * @see http://www.barcodeisland.com/code39.phtml
  */
 class Code39 extends AbstractBarcode implements TwoWidthInterface
 {
