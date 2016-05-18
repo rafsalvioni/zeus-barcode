@@ -20,6 +20,7 @@ $bcs = [
     (new Zeus\Barcode\Code39\Code39Mod43('BARCODE1%P')),
     (new Zeus\Barcode\Code39\Code39Ext('BARCODE1%')),
     (new Zeus\Barcode\Code39\Code39ExtMod43('$%&b@', false)),
+    (new Zeus\Barcode\Code93("$%&b@", false)),
 ];
 
 $render = new Zeus\Barcode\Renderer\HtmlRenderer();
