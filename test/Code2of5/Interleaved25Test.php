@@ -1,6 +1,6 @@
 <?php
 
-namespace ZeusTest\Barcode;
+namespace ZeusTest\Barcode\Code2of5;
 
 use Zeus\Barcode\Code2of5\Interleaved;
 

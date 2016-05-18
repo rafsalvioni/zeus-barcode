@@ -1,14 +1,14 @@
 <?php
 
-namespace ZeusTest\Barcode;
+namespace ZeusTest\Barcode\Upc;
 
-use Zeus\Barcode\Upc\ISBN;
+use Zeus\Barcode\Upc\ISSN;
 
 /**
  * 
  * @author Rafael M. Salvioni
  */
-class ISBNTest extends \PHPUnit_Framework_TestCase
+class ISSNTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -16,13 +16,13 @@ class ISBNTest extends \PHPUnit_Framework_TestCase
     public function validationTest()
     {
         $dataArr = [
-            '9783161484100'  => [true, true],
-            '9580123456786'  => [true, false],
+            '9772049363002' => [true, true],
+            '9752049363002' => [true, false],
         ];
         
         foreach ($dataArr as $data => &$info) {
             try {
-                $bc = new ISBN($data, $info[0]);
+                $bc = new ISSN($data, $info[0]);
                 $this->assertTrue($info[1]);
                 $this->assertEquals($bc->getData(), $data);
             }
@@ -35,9 +35,9 @@ class ISBNTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function fromIsbnTest()
+    public function fromTest()
     {
-        $b = ISBN::fromISBN('0-93-7175-59-5');
-        $this->assertEquals($b->getRawData(), '978093717559');
+        $bc = ISSN::fromISSN('2049-3630');
+        $this->assertEquals($bc->getRawData(), '977204936300');
     }
 }

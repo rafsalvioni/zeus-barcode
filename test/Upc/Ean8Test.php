@@ -1,6 +1,6 @@
 <?php
 
-namespace ZeusTest\Barcode;
+namespace ZeusTest\Barcode\Upc;
 
 use Zeus\Barcode\Upc\Ean8;
 
