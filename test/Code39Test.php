@@ -126,4 +126,22 @@ class Code39Test extends \PHPUnit_Framework_TestCase
         $bc = $bc->toExtended();
         $this->assertTrue($bc->toExtended() === $bc);
     }
+    
+    /**
+     * @test
+     */
+    public function factoryTest()
+    {
+        $tests = [
+            'ABC123'     => [Code39::class, false, false],
+            'ABC123@'    => [Code39Ext::class, false, false],
+            'BARCODE1%P' => [Code39Mod43::class, true, false],
+            'BARCODE1%'  => [Code39Mod43::class, false, true],
+            '$%&b@'      => [Code39ExtMod43::class, false, true],
+        ];
+        
+        foreach ($tests as $data => $info) {
+            $this->assertInstanceOf($info[0], Code39::factory($data, $info[1], $info[2]));
+        }
+    }
 }
