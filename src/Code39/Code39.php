@@ -26,14 +26,14 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
      * @var array
      */
     protected static $encodingTable = [
-	'0' => 'NNNWWNWNN', '1' => 'WNNWNNNNW',	'2' => 'NNWWNNNNW',
-	'3' => 'WNWWNNNNN', '4' => 'NNNWWNNNW',	'5' => 'WNNWWNNNN',
-	'6' => 'NNWWWNNNN', '7' => 'NNNWNNWNW',	'8' => 'WNNWNNWNN',
-	'9' => 'NNWWNNWNN', 'A' => 'NNWWNNWNN',	'B' => 'NNWNNWNNW',
-	'C' => 'WNWNNWNNN', 'D' => 'NNNNWWNNW', 'E' => 'WNNNWWNNN',
-	'F' => 'NNWNWWNNN', 'G' => 'NNNNNWWNW', 'H' => 'WNNNNWWNN',
-	'I' => 'NNWNNWWNN', 'J' => 'NNNNWWWNN', 'K' => 'WNNNNNNWW',
-	'L' => 'NNWNNNNWW', 'M' => 'WNWNNNNWN', 'N' => 'NNNNWNNWW',
+        '0' => 'NNNWWNWNN', '1' => 'WNNWNNNNW',	'2' => 'NNWWNNNNW',
+        '3' => 'WNWWNNNNN', '4' => 'NNNWWNNNW',	'5' => 'WNNWWNNNN',
+        '6' => 'NNWWWNNNN', '7' => 'NNNWNNWNW',	'8' => 'WNNWNNWNN',
+        '9' => 'NNWWNNWNN', 'A' => 'WNNNNWNNW',	'B' => 'NNWNNWNNW',
+        'C' => 'WNWNNWNNN', 'D' => 'NNNNWWNNW', 'E' => 'WNNNWWNNN',
+        'F' => 'NNWNWWNNN', 'G' => 'NNNNNWWNW', 'H' => 'WNNNNWWNN',
+        'I' => 'NNWNNWWNN', 'J' => 'NNNNWWWNN', 'K' => 'WNNNNNNWW',
+        'L' => 'NNWNNNNWW', 'M' => 'WNWNNNNWN', 'N' => 'NNNNWNNWW',
         'O' => 'WNNNWNNWN', 'P' => 'NNWNWNNWN', 'Q' => 'NNNNNNWWW',
         'R' => 'WNNNNNWWN', 'S' => 'NNWNNNWWN', 'T' => 'NNNNWNWWN',
         'U' => 'WWNNNNNNW', 'V' => 'NWWNNNNNW', 'W' => 'WWWNNNNNN',
@@ -122,7 +122,7 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
     protected function encodeData($data)
     {
         $ext  =& self::$extendedTable;
-        $data = \preg_replace_callback('/[^A-Z0-9\\-\\. \\$\\/\\+]/', function ($m) use ($ext)
+        $data = \preg_replace_callback('/[^A-Z0-9\\-\\. ]/', function ($m) use ($ext)
         {
             return $ext[$m[0]];
         }, $data);
@@ -141,6 +141,12 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
         return $encoded;
     }
     
+    /**
+     * Encodes a single char.
+     * 
+     * @param string $char
+     * @return string
+     */
     protected function encodeChar($char)
     {
         $encChar =& self::$encodingTable[$char];
