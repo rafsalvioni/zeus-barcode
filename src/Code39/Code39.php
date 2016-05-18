@@ -85,13 +85,29 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
     ];
     
     /**
+     * Flag that indicates if instance are using full ascii
+     * 
+     * @var bool
+     */
+    protected $useExt;
+    /**
+     * Cache from converted data to full ascii
+     * 
+     * @var array
+     */
+    protected $extData;
+
+    /**
      * 
      * @param string $data
+     * @param bool $forceExtended
      */
-    public function __construct($data)
+    public function __construct($data, $forceExtended = false)
     {
         parent::__construct($data);
         $this->setWideWidth(2);
+        $this->useExt = $forceExtended ||
+                        !preg_match('/^[A-Z\d\-\. \$%\/\+]+$/', $this->data);
     }
     
     /**
@@ -102,7 +118,7 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
      */
     public function withChecksum()
     {
-        return new Code39Mod43($this->data, false);
+        return new Code39Mod43($this->data, false, $this->extData);
     }
 
     /**
@@ -114,6 +130,32 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
     {
         return preg_match('/^[\x00-\x7F]+$/', $data);
     }
+    
+    /**
+     * Converts a barcode data to full ascii.
+     * 
+     * Uses $extData property as cache.
+     * 
+     * If instance is not it extended mode, returns data without changes.
+     * 
+     * @param string $data
+     * @return string
+     */
+    protected function toExtended($data)
+    {
+        if (!$this->useExt) {
+            return $data;
+        }
+        if (empty($this->extData) && !isset($this->extData[$data])) {
+            $ext     =& self::$extendedTable;
+            $extData = \preg_replace_callback('/[^A-Z0-9\\-\\. ]/', function ($m) use ($ext)
+            {
+                return $ext[$m[0]];
+            }, $data);
+            $this->extData[$data] = $extData;
+        }
+        return $this->extData[$data];
+    }
 
     /**
      * 
@@ -122,12 +164,7 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
      */
     protected function encodeData($data)
     {
-        $ext  =& self::$extendedTable;
-        $data = \preg_replace_callback('/[^A-Z0-9\\-\\. ]/', function ($m) use ($ext)
-        {
-            return $ext[$m[0]];
-        }, $data);
-        
+        $data    = $this->toExtended($data);
         $data    = "*$data*";
         $data    = \str_split($data);
         $encoded = '';
