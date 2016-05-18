@@ -5,13 +5,12 @@ namespace Zeus\Barcode\Code39;
 use Zeus\Barcode\AbstractBarcode;
 use Zeus\Barcode\TwoWidthInterface;
 use Zeus\Barcode\TwoWidthTrait;
+use Zeus\Barcode\ChecksumInterface;
 
 /**
  * Implementation of Code39 barcode standard, without checksum.
  * 
- * Supports full ASCII mode.
- *
- * @author Rafael M. Salvioni
+  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/code39.phtml
  */
 class Code39 extends AbstractBarcode implements TwoWidthInterface
@@ -45,80 +44,120 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
     ];
     
     /**
-     * Extended table
+     * Try to return the best Code39 instance according given parameters.
      * 
-     * @var array
+     * @param string $data
+     * @param bool $hasChecksum
+     * @param bool $useChecksum If don't have checksum, you want use it?
+     * @return Code39
+     * @throws \Zeus\Barcode\Exception
      */
-    protected static $extendedTable = [
-        "\x00" => '%U', '@'  => '%V', '`' => '%W',
-        "\x01" => '$A', '!'  => '/A', 'a' => '+A',
-        "\x02" => '$B', '"'  => '/B', 'b' => '+B',
-        "\x03" => '$C', '#'  => '/C', 'c' => '+C',
-        "\x04" => '$D', '$'  => '/D', 'd' => '+D',
-        "\x05" => '$E', '%'  => '/E', 'e' => '+E',
-        "\x06" => '$F', '&'  => '/F', 'f' => '+F',
-        "\x07" => '$G', '\'' => '/G', 'g' => '+G',
-        "\x08" => '$H', '('  => '/H',
-        "\x09" => '$I', ')'  => '/I', 'i' => '+I',
-        "\x0A" => '$J', '*'  => '/J', 'j' => '+J',
-        "\x0B" => '$K', '+'  => '/K', 'k' => '+K',
-        "\x0C" => '$L', ','  => '/L', 'l' => '+L',
-        "\x0D" => '$M', 'm'  => '+M',
-        "\x0E" => '$N', 'n'  => '+N',
-        "\x0F" => '$O', '/'  => '/O', 'o' => '+O',
-        "\x10" => '$P', 'p'  => '+P',
-        "\x11" => '$Q', 'q'  => '+Q',
-        "\x12" => '$R', 'r'  => '+R',
-        "\x13" => '$S', 's'  => '+S',
-        "\x14" => '$T', 't'  => '+T',
-        "\x15" => '$U', 'u'  => '+U',
-        "\x16" => '$V', 'v'  => '+V',
-        "\x17" => '$W', 'w'  => '+W',
-        "\x18" => '$X', 'x'  => '+X',
-        "\x19" => '$Y', 'y'  => '+Y',
-        "\x1A" => '$Z', ':'  => '/Z', 'z'  => '+Z',
-        "\x1B" => '%A', ';'  => '%F', '['  => '%K', '{'    => '%P',
-        "\x1C" => '%B', '<<' => '%G', '\\' => '%L', '|'    => '%Q',
-        "\x1D" => '%C', '='  => '%H', ']'  => '%M', '}'    => '%R',
-        "\x1E" => '%D', '>'  => '%I', '^'  => '%N', '~'    => '%S',
-        "\x1F" => '%E', '?'  => '%J', '_'  => '%O', "\x7F" => '%Z',
-    ];
+    public static function factory($data, $hasChecksum = false, $useChecksum = false)
+    {
+        $classes = [];
+        if ($hasChecksum || $useChecksum) {
+            $classes = [Code39Mod43::class, Code39ExtMod43::class];
+        }
+        else {
+            $classes = [Code39::class, Code39Ext::class];
+        }
+        foreach ($classes as &$class) {
+            try {
+                return new $class($data, $hasChecksum);
+            }
+            catch (\Exception $ex) {
+                //noop
+            }
+        }
+        throw $ex;
+    }
     
     /**
-     * Flag that indicates if instance are using full ascii
+     * Helper function to calculate mod43 checksum.
      * 
-     * @var bool
+     * @param string $data
+     * @return string
      */
-    protected $useExt;
-    /**
-     * Cache from converted data to full ascii
-     * 
-     * @var array
-     */
-    protected $extData;
+    protected static function mod43($data)
+    {
+        $data = \str_split($data);
+        $enc  = \array_keys(self::$encodingTable);
+        $flip = \array_flip($enc);
+        $sum  = 0;
+        foreach ($data as &$char) {
+            $code = $flip[$char];
+            $sum += $code;
+        }
+        return $enc[($sum % 43)];
+    }
 
     /**
      * 
      * @param string $data
-     * @param bool $forceExtended
      */
-    public function __construct($data, $forceExtended = false)
+    public function __construct($data)
     {
         parent::__construct($data);
         $this->setWideWidth(2);
-        $this->useExt = $forceExtended ||
-                        !preg_match('/^[A-Z\d\-\. \$%\/\+]+$/', $this->data);
     }
     
     /**
-     * Returns a Code39 instance with addtional checksum mod 43 basead
-     * on current barcode.
+     * Return the current barcode to its version with checksum.
      * 
-     * @return Code39Mod43
+     * @return Code39Mod43|Code39ExtMod43
      */
     public function withChecksum()
     {
-        return new Code39Mod43($this->data, false, $this->extData);
+        if ($this instanceof ChecksumInterface) {
+            return $this;
+        }
+        else {
+            $class = \get_class($this) . 'Mod43';
+            return new $class($this->data, false);
+        }
+    }
+
+    /**
+     * Return the current barcode to its version without checksum.
+     * 
+     * @return Code39|Code39Ext
+     */
+    public function withoutChecksum()
+    {
+        if (!($this instanceof ChecksumInterface)) {
+            return $this;
+        }
+        else {
+            $class = \substr(\get_class($this), 0, -5);
+            return new $class($this->getRawData());
+        }
+    }
+    
+    /**
+     * Return the current barcode to its version using full ASCII mode.
+     * 
+     * @return Code39Ext|Code39ExtMod43
+     */
+    public function toExtended()
+    {
+        if ($this instanceof Code39Ext) {
+            return $this;
+        }
+        else {
+            $class = \get_class($this);
+            if (\substr($class, -5) == 'Mod43') {
+                $class = \substr_replace($class, 'Ext', -5, 0);
+            }
+            else {
+                $class .= 'Ext';
+            }
+            if ($this instanceof ChecksumInterface) {
+                return new $class($this->getRawData(), false);
+            }
+            else {
+                return new $class($this->data);
+            }
+        }
     }
 
     /**
@@ -128,35 +167,9 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
      */
     protected function checkData($data)
     {
-        return preg_match('/^[\x00-\x7F]+$/', $data);
+        return \preg_match('/^[A-Z\d\-\. \$\/\+\%]+$/', $data);
     }
     
-    /**
-     * Converts a barcode data to full ascii.
-     * 
-     * Uses $extData property as cache.
-     * 
-     * If instance is not it extended mode, returns data without changes.
-     * 
-     * @param string $data
-     * @return string
-     */
-    protected function toExtended($data)
-    {
-        if (!$this->useExt) {
-            return $data;
-        }
-        if (empty($this->extData) && !isset($this->extData[$data])) {
-            $ext     =& self::$extendedTable;
-            $extData = \preg_replace_callback('/[^A-Z0-9\\-\\. ]/', function ($m) use ($ext)
-            {
-                return $ext[$m[0]];
-            }, $data);
-            $this->extData[$data] = $extData;
-        }
-        return $this->extData[$data];
-    }
-
     /**
      * 
      * @param string $data
@@ -164,7 +177,6 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
      */
     protected function encodeData($data)
     {
-        $data    = $this->toExtended($data);
         $data    = "*$data*";
         $data    = \str_split($data);
         $encoded = '';

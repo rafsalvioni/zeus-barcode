@@ -6,12 +6,13 @@ use Zeus\Barcode\ChecksumInterface;
 use Zeus\Barcode\ChecksumTrait;
 
 /**
- * Implementation of Code39 with mod43 checksum.
+ * Implementation of Code39 barcode standard, using full ASCII mode and
+ * mod43 checksum.
  *
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/code39.phtml
  */
-class Code39Mod43 extends Code39 implements ChecksumInterface
+class Code39ExtMod43 extends Code39Ext implements ChecksumInterface
 {
     use ChecksumTrait;
 
@@ -19,6 +20,7 @@ class Code39Mod43 extends Code39 implements ChecksumInterface
      * 
      * @param string $data
      * @param bool $hasChecksum
+     * @param bool $forceExtended
      */
     public function __construct($data, $hasChecksum = true)
     {
@@ -33,6 +35,7 @@ class Code39Mod43 extends Code39 implements ChecksumInterface
      */
     protected function calcChecksum($data)
     {
+        $data = $this->resolveExtended($data);
         return self::mod43($data);
     }
 }
