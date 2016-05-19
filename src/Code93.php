@@ -49,38 +49,28 @@ class Code93 extends AbstractChecksumBarcode
      * @var array
      */
     protected static $extendedTable = [
-        "\x00" => "\x81U", '@'  => "\x81V", '`' => "\x81W",
-        "\x01" => "\x80A", '!'  => "\x82A", 'a' => "\x83A",
-        "\x02" => "\x80B", '"'  => "\x82B", 'b' => "\x83B",
-        "\x03" => "\x80C", '#'  => "\x82C", 'c' => "\x83C",
-        "\x04" => "\x80D", '&'  => "\x82F", 'd' => "\x83D",
-        "\x05" => "\x80E", '\'' => "\x82G", 'e' => "\x83E",
-        "\x06" => "\x80F", '('  => "\x82H", 'f' => "\x83F",
-        "\x07" => "\x80G", ')'  => "\x82I", 'g' => "\x83G",
-        "\x08" => "\x80H", '*'  => "\x82J",
-        "\x09" => "\x80I", ','  => "\x82L", 'i' => "\x83I",
-        "\x0A" => "\x80J",               'j' => "\x83J",
-        "\x0B" => "\x80K",               'k' => "\x83K",
-        "\x0C" => "\x80L",               'l' => "\x83L",
-        "\x0D" => "\x80M", 'm'  => "\x83M",
-        "\x0E" => "\x80N", 'n'  => "\x83N",
-        "\x0F" => "\x80O",               'o' => "\x83O",
-        "\x10" => "\x80P", 'p'  => "\x83P",
-        "\x11" => "\x80Q", 'q'  => "\x83Q",
-        "\x12" => "\x80R", 'r'  => "\x83R",
-        "\x13" => "\x80S", 's'  => "\x83S",
-        "\x14" => "\x80T", 't'  => "\x83T",
-        "\x15" => "\x80U", 'u'  => "\x83U",
-        "\x16" => "\x80V", 'v'  => "\x83V",
-        "\x17" => "\x80W", 'w'  => "\x83W",
-        "\x18" => "\x80X", 'x'  => "\x83X",
-        "\x19" => "\x80Y", 'y'  => "\x83Y",
-        "\x1A" => "\x80Z", ':'  => "\x82Z", 'z'  => "\x83Z",
-        "\x1B" => "\x81A", ';'  => "\x81F", '['  => "\x81K", '{'    => "\x81P",
-        "\x1C" => "\x81B", '<<' => "\x81G", '\\' => "\x81L", '|'    => "\x81Q",
-        "\x1D" => "\x81C", '='  => "\x81H", ']'  => "\x81M", '}'    => "\x81R",
-        "\x1E" => "\x81D", '>'  => "\x81I", '^'  => "\x81N", '~'    => "\x81S",
-        "\x1F" => "\x81E", '?'  => "\x81J", '_'  => "\x81O", "\x7F" => "\x81Z",
+        "\x00" => "\x81U", "\x01" => "\x80A", "\x02" => "\x80B", "\x03" => "\x80C",
+        "\x04" => "\x80D", "\x05" => "\x80E", "\x06" => "\x80F", "\x07" => "\x80G",
+        "\x08" => "\x80H", "\x09" => "\x80I", "\x0a" => "\x80J", "\x0b" => "\x80K",
+        "\x0c" => "\x80L", "\x0d" => "\x80M", "\x0e" => "\x80N", "\x0f" => "\x80O",
+        "\x10" => "\x80P", "\x11" => "\x80Q", "\x12" => "\x80R", "\x13" => "\x80S",
+        "\x14" => "\x80T", "\x15" => "\x80U", "\x16" => "\x80V", "\x17" => "\x80W",
+        "\x18" => "\x80X", "\x19" => "\x80Y", "\x1a" => "\x80Z", "\x1b" => "\x81A",
+        "\x1c" => "\x81B", "\x1d" => "\x81C", "\x1e" => "\x81D", "\x1f" => "\x81E",
+        '!'    => "\x82A", '"'    => "\x82B", '#'    => "\x82C", '&'    => "\x82F",
+        '\''   => "\x82G", '('    => "\x82H", ')'    => "\x82I", '*'    => "\x82J",
+        ','    => "\x82L", ':'    => "\x82Z", ';'    => "\x81F", '<'    => "\x81G",
+        '='    => "\x81H", '>'    => "\x81I", '?'    => "\x81J", '@'    => "\x81V",
+        '['    => "\x81K", '\\'   => "\x81L", ']'    => "\x81M", '^'    => "\x81N",
+        '_'    => "\x81O", '`'    => "\x81W", 'a'    => "\x83A", 'b'    => "\x83B",
+        'c'    => "\x83C", 'd'    => "\x83D", 'e'    => "\x83E", 'f'    => "\x83F",
+        'g'    => "\x83G", 'h'    => "\x83H", 'i'    => "\x83I", 'j'    => "\x83J",
+        'k'    => "\x83K", 'l'    => "\x83L", 'm'    => "\x83M", 'n'    => "\x83N",
+        'o'    => "\x83O", 'p'    => "\x83P", 'q'    => "\x83Q", 'r'    => "\x83R",
+        's'    => "\x83S", 't'    => "\x83T", 'u'    => "\x83U", 'v'    => "\x83V",
+        'w'    => "\x83W", 'x'    => "\x83X", 'y'    => "\x83Y", 'z'    => "\x83Z",
+        '{'    => "\x81P", '|'    => "\x81Q", '}'    => "\x81R", '~'    => "\x81S",
+        "\x7f" => "\x81Z",
     ];
     
     /**
@@ -90,6 +80,16 @@ class Code93 extends AbstractChecksumBarcode
      */
     protected $extData;
     
+    /**
+     * Prints only real data.
+     * 
+     * @return string
+     */
+    public function getPrintableData()
+    {
+        return $this->getRealData();
+    }
+
     /**
      * Converts a barcode data to full ascii.
      * 
@@ -102,7 +102,7 @@ class Code93 extends AbstractChecksumBarcode
     {
         if (empty($this->extData) || !isset($this->extData[$data])) {
             $ext     =& self::$extendedTable;
-            $extData = \preg_replace_callback('/[^A-Z0-9\-. \$\+\/%]/', function ($m) use ($ext)
+            $extData = \preg_replace_callback('/[^A-Z0-9\-. \$\+\/%\x80-\x83]/', function ($m) use ($ext)
             {
                 return $ext[$m[0]];
             }, $data);
@@ -128,10 +128,9 @@ class Code93 extends AbstractChecksumBarcode
         }
         
         $sum    = self::sumCrescentWeight($data, 1, 20);
-        $mod    = $sum % 47;
-        $check  = $enc[$mod];
+        $check  = (string)$enc[($sum % 47)];
         
-        $data[] = $mod;
+        $data[] = $flip[$check{0}];
         $sum    = self::sumCrescentWeight($data, 1, 15);
         $check .= $enc[($sum % 47)];
         
@@ -145,20 +144,16 @@ class Code93 extends AbstractChecksumBarcode
      */
     protected function checkData($data)
     {
-        return \preg_match('/^[\x00-\x7f]+$/', $data);
+        return \preg_match('/^[\x00-\x7f]{3,}$/', $data);
     }
-    
+
     /**
      * 
-     * @param string $data
-     * @param mixed $cleanData
-     * @return string
+     * @return int
      */
-    protected function extractChecksum($data, &$cleanData)
+    public function getCheckPosition()
     {
-        $check     = \substr_remove($data, -2);
-        $cleanData = $data;
-        return $check;
+        return -2;
     }
 
     /**
