@@ -32,18 +32,9 @@ abstract class AbstractFebraban extends Interleaved implements
      */
     protected static function modulo11($data)
     {
-        $data   = \str_split($data);
-        $sum    = 0;
-        $weight = 2;
-        
-        while (!empty($data)) {
-            $sum += $weight++ * (int)\array_pop($data);
-            if ($weight > 9) {
-                $weight = 2;
-            }
-        }
-        
-        $dac = 11 - ($sum % 11);
+        $data = \str_split($data);
+        $sum  = self::sumCrescentWeight($data, 2, 9);
+        $dac  = 11 - ($sum % 11);
         if ($dac == 0 || $dac == 1 || $dac == 10 || $dac == 11) {
             return 1;
         }

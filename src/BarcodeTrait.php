@@ -65,31 +65,6 @@ trait BarcodeTrait
     }
 
     /**
-     * Auxiliar function to calculate checksums using decrescent weights.
-     * 
-     * The order is from right to left.
-     * 
-     * Returns the sum result.
-     * 
-     * @param array $data Array of integers
-     * @param int $maxWeight
-     * @param int $minWeight
-     * @return int
-     */
-    protected static function sumDecrescentWeight(array $data, $maxWeight, $minWeight = null)
-    {
-        $sum    = 0;
-        $weight = $maxWeight;
-        while (!empty($data)) {
-            $sum += $weight-- * (int)\array_pop($data);
-            if ($minWeight !== null && $weight < $minWeight) {
-                $weight = $minWeight;
-            }
-        }
-        return $sum;
-    }
-
-    /**
      * Padding zeros on left.
      * 
      * @param string $data
