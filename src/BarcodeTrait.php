@@ -118,7 +118,6 @@ trait BarcodeTrait
         $value = self::zeroLeftPadding($value, $length);
         if (\strlen($value) == $length) {
             $data = \substr_replace($this->data, $value, $start, $length);
-            $this->extractChecksum($data, $data);
             return $data;
         }
         throw new Exception('Wrong data part length!');

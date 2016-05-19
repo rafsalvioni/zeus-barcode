@@ -338,7 +338,7 @@ class Bloqueto extends AbstractFebraban
     protected function withCampo($campo, $valor)
     {
         $data = $this->withDataPart($valor, $campo, self::$tamanhoCampos[$campo]);
-        return new self($data, false);
+        return new self($data);
     }
 }
 

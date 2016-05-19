@@ -59,6 +59,7 @@ interface BarcodeInterface
      * @param string $value Replacement
      * @param int $start Start position
      * @param int $length Part data length
+     * @return string
      */
     public function withDataPart($value, $start, $length);
     

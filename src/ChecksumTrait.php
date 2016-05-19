@@ -160,4 +160,21 @@ trait ChecksumTrait
         $this->extractChecksum($this->data, $data);
         return $data;
     }
+    
+    /**
+     * Recalculate checksum to new data.
+     * 
+     * @param string $value
+     * @param int $start
+     * @param int $length
+     * @return string
+     * @throws Exception
+     */
+    public function withDataPart($value, $start, $length)
+    {
+        $data = parent::withDataPart($value, $start, $length);
+        $this->extractChecksum($data, $data);
+        $data = $this->checksumResolver($data, false);
+        return $data;
+    }
 }
