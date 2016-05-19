@@ -45,7 +45,7 @@ class MsiTest extends \PHPUnit_Framework_TestCase
         $bc = new MsiMod10('80523');
         $this->assertEquals($bc->getData(), '80523');
         $this->assertEquals($bc->getChecksum(), '3');
-        $this->assertEquals($bc->getRawData(), '8052');
+        $this->assertEquals($bc->getRealData(), '8052');
         $this->assertEquals($bc->getEncoded(), '1101101001001001001001001001001101001101001001101001001001101101001');
     }
     
@@ -58,7 +58,7 @@ class MsiTest extends \PHPUnit_Framework_TestCase
         $bc = new MsiMod11('80523', false);
         $this->assertEquals($bc->getData(), '805238');
         $this->assertEquals($bc->getChecksum(), '8');
-        $this->assertEquals($bc->getRawData(), '80523');
+        $this->assertEquals($bc->getRealData(), '80523');
         $this->assertEquals($bc->getEncoded(), '1101101001001001001001001001001101001101001001101001001001101101101001001001001');
     }
     

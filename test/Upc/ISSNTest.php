@@ -38,6 +38,6 @@ class ISSNTest extends \PHPUnit_Framework_TestCase
     public function fromTest()
     {
         $bc = ISSN::fromISSN('2049-3630');
-        $this->assertEquals($bc->getRawData(), '977204936300');
+        $this->assertEquals($bc->getRealData(), '977204936300');
     }
 }

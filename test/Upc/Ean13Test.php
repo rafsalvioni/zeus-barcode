@@ -61,7 +61,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
         $bc = new Ean13('7501031311309');
         $this->assertEquals($bc->getData(), '7501031311309');
         $this->assertEquals($bc->getChecksum(), '9');
-        $this->assertEquals($bc->getRawData(), '750103131130');
+        $this->assertEquals($bc->getRealData(), '750103131130');
         $this->assertEquals($bc->getEncoded(), '10101100010100111001100101001110111101011001101010100001011001101100110100001011100101110100101');
     }
     
@@ -74,7 +74,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
         $bc = new Ean13('750103131130', false);
         $this->assertEquals($bc->getData(), '7501031311309');
         $this->assertEquals($bc->getChecksum(), '9');
-        $this->assertEquals($bc->getRawData(), '750103131130');
+        $this->assertEquals($bc->getRealData(), '750103131130');
         $this->assertEquals($bc->getEncoded(), '10101100010100111001100101001110111101011001101010100001011001101100110100001011100101110100101');
     }
 }

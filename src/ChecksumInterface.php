@@ -32,5 +32,5 @@ interface ChecksumInterface extends BarcodeInterface
      * 
      * @return string
      */
-    public function getRawData();
+    public function getRealData();
 }

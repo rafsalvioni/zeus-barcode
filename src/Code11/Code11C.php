@@ -17,7 +17,7 @@ class Code11C extends Code11
      */
     public function toDoubleCheck()
     {
-        return new Code11K($this->getRawData(), false);
+        return new Code11K($this->getRealData(), false);
     }
 
     /**

@@ -74,7 +74,7 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
      */
     public function isUpceCompatible()
     {
-        $data = $this->getRawData();
+        $data = $this->getRealData();
         return \preg_match('/([0-2]0{4}[0-9]{3}|0{5}[0-9]{2}|0{5}[0-9]|0{4}[5-9])$/', $data);
     }
     
@@ -86,7 +86,7 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
      */
     public function toUpce()
     {
-        $data    = $this->getRawData();
+        $data    = $this->getRealData();
         $system  = $data{0};
         $mfct    = \substr($data, 1, 5);
         $product = \substr($data, 6, 5);
