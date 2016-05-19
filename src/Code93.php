@@ -9,7 +9,7 @@ use Zeus\Barcode\AbstractChecksumBarcode;
  * 
  * Supports full ASCII mode.
  *
- * @author rafaelsalvioni
+ * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/code93.phtml
  */
 class Code93 extends AbstractChecksumBarcode
