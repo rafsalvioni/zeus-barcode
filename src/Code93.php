@@ -151,7 +151,7 @@ class Code93 extends AbstractChecksumBarcode
      * 
      * @return int
      */
-    public function getCheckPosition()
+    protected function getCheckPosition()
     {
         return -2;
     }
