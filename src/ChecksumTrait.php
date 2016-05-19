@@ -34,7 +34,7 @@ trait ChecksumTrait
     {
         if ($hasChecksum) {
             $check = $this->extractChecksum($data, $data);
-            if ($check != $this->calcChecksum($data)) {
+            if (empty($data) || $check != $this->calcChecksum($data)) {
                 throw $this->createException('Invalid "%class%" barcode checksum!');
             }
         }
@@ -50,25 +50,79 @@ trait ChecksumTrait
      * @return int
      */
     abstract protected function calcChecksum($data);
+    
+    /**
+     * Returns the checksum digit length.
+     * 
+     * By default, if checksum position is negative, returns position * -1.
+     * Else, return 1.
+     * 
+     * Overload if necessary.
+     * 
+     * @return int
+     */
+    protected function getCheckLength()
+    {
+        $pos = $this->getCheckPosition();
+        return $pos < 0 ? $pos * -1 : 1;
+    }
+    
+    /**
+     * Returns the checksum digit position.
+     * 
+     * By default, return always -1. Overload if necessary.
+     * 
+     * @return int
+     */
+    protected function getCheckPosition()
+    {
+        return -1;
+    }
+    
+    /**
+     * Checks if data have a minimal length considering the checksum digit
+     * length.
+     * 
+     * @param string $data
+     * @return bool
+     */
+    protected function checkLength($data)
+    {
+        return \strlen($data) > $this->getCheckLength();
+    }
 
     /**
      * Inserts the checksum on a data.
      * 
-     * By default, checksum is put on end of data. Overload if necessary.
+     * Using getCheckLength() to padding zeros left on checksum and
+     * getCheckPosition() to insert it.
      * 
      * @param string $data
-     * @param int $checksum
+     * @param string $checksum
      * @return string
      */
-    protected function insertChecksum($data, $checksum)
+    protected function insertChecksum($data, $checksum = null)
     {
-        return $data . $checksum;
+        $len      = $this->getCheckLength();
+        $pos      = $this->getCheckPosition();
+        $checksum = \str_pad($checksum, $len, '0', \STR_PAD_LEFT);
+        
+        if ($pos < 0) {
+            $pos += $len;
+            if ($pos == 0) {
+                return $data . $checksum;
+            }
+        }
+        else if ($pos == 0) {
+            return $checksum . $data;
+        }
+        return \substr_replace($data, $checksum, $pos, 0);
     }
     
     /**
      * Extracts the checksum of data and return it.
      * 
-     * By default, expects checksum on end of data. Overload if necessary.
+     * Using getCheckLength() and getCheckPosition() to extract it.
      * 
      * @param string $data
      * @param string $cleanData Data without checksum
@@ -76,7 +130,9 @@ trait ChecksumTrait
      */
     protected function extractChecksum($data, &$cleanData)
     {
-        $checksum  = \substr_remove($data, -1);
+        $len       = $this->getCheckLength();
+        $pos       = $this->getCheckPosition();
+        $checksum  = \substr_remove($data, $pos, $len);
         $cleanData = $data;
         return $checksum;
     }
@@ -98,7 +154,7 @@ trait ChecksumTrait
      * 
      * @return string
      */
-    public function getRawData()
+    public function getRealData()
     {
         $data = null;
         $this->extractChecksum($this->data, $data);

@@ -258,26 +258,11 @@ class Bloqueto extends AbstractFebraban
     
     /**
      * 
-     * @param string $data
-     * @param mixed $cleanData
      * @return int
      */
-    protected function extractChecksum($data, &$cleanData)
+    protected function getCheckPosition()
     {
-        $checksum = \substr_remove($data, 4, 1);
-        $cleanData = $data;
-        return $checksum;
-    }
-    
-    /**
-     * 
-     * @param string $data
-     * @param string $checksum
-     * @return string
-     */
-    protected function insertChecksum($data, $checksum)
-    {
-        return \substr_replace($data, $checksum, 4, 0);
+        return 4;
     }
 
     /**

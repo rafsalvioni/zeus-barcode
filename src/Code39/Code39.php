@@ -129,7 +129,7 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
         }
         else {
             $class = \substr(\get_class($this), 0, -5);
-            return new $class($this->getRawData());
+            return new $class($this->getRealData());
         }
     }
     
@@ -152,7 +152,7 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
                 $class .= 'Ext';
             }
             if ($this instanceof ChecksumInterface) {
-                return new $class($this->getRawData(), false);
+                return new $class($this->getRealData(), false);
             }
             else {
                 return new $class($this->data);

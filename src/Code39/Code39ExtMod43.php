@@ -38,4 +38,17 @@ class Code39ExtMod43 extends Code39Ext implements ChecksumInterface
         $data = $this->resolveExtended($data);
         return self::mod43($data);
     }
+    
+    /**
+     * 
+     * @param string $data
+     * @return bool
+     */
+    protected function checkData($data)
+    {
+        if (parent::checkData($data)) {
+            return $this->checkLength($data);
+        }
+        return false;
+    }
 }

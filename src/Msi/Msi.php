@@ -149,7 +149,7 @@ class Msi extends AbstractBarcode
      */
     protected function checkData($data)
     {
-        return \preg_match('/^[0-9]{2,}$/', $data);
+        return \preg_match('/^[0-9]+$/', $data);
     }
 
     /**

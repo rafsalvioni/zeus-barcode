@@ -37,4 +37,16 @@ abstract class AbstractMsiChecksum extends Msi implements ChecksumInterface
         $this->extractChecksum($this->data, $data);
         return new Msi($data);
     }
+    
+    /**
+     * 
+     * @param string $data
+     * @return bool
+     */
+    protected function checkData($data)
+    {
+        if (parent::checkData($data)) {
+            return $this->checkLength($data);
+        }
+    }
 }

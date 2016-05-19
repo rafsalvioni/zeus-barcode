@@ -35,4 +35,17 @@ class Code39Mod43 extends Code39 implements ChecksumInterface
     {
         return self::mod43($data);
     }
+    
+    /**
+     * 
+     * @param string $data
+     * @return bool
+     */
+    protected function checkData($data)
+    {
+        if (parent::checkData($data)) {
+            return $this->checkLength($data);
+        }
+        return false;
+    }
 }

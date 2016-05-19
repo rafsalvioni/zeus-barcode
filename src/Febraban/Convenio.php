@@ -197,29 +197,14 @@ class Convenio extends AbstractFebraban
         }
         return $this->withCampo($campo, $campoLivre);
     }
-
-    /**
-     * 
-     * @param string $data
-     * @param mixed $cleanData
-     * @return int
-     */
-    protected function extractChecksum($data, &$cleanData)
-    {
-        $checksum = \substr_remove($data, 3, 1);
-        $cleanData = $data;
-        return $checksum;
-    }
     
     /**
      * 
-     * @param string $data
-     * @param string $checksum
-     * @return string
+     * @return int
      */
-    protected function insertChecksum($data, $checksum)
+    protected function getCheckPosition()
     {
-        return \substr_replace($data, $checksum, 3, 0);
+        return 3;
     }
 
     /**

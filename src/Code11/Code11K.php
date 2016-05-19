@@ -34,14 +34,23 @@ class Code11K extends Code11
     
     /**
      * 
-     * @param string $data
-     * @param mixed $cleanData
-     * @return string
+     * @return int
      */
-    protected function extractChecksum($data, &$cleanData)
+    protected function getCheckPosition()
     {
-        $checksum  = \substr_remove($data, -2);
-        $cleanData = $data;
-        return $checksum;
+        return -2;
+    }
+    
+    /**
+     * 
+     * @param string $data
+     * @return bool
+     */
+    protected function checkData($data)
+    {
+        if (parent::checkData($data)) {
+            return $this->checkLength($data);
+        }
+        return false;
     }
 }

@@ -24,14 +24,10 @@ class Msi2Mod10 extends AbstractMsiChecksum
     
     /**
      * 
-     * @param string $data
-     * @param mixed $cleanData
-     * @return string
+     * @return int
      */
-    protected function extractChecksum($data, &$cleanData)
+    protected function getCheckPosition()
     {
-        $check     = \substr_remove($data, -2);
-        $cleanData = $data;
-        return $check;
+        return -2;
     }
 }

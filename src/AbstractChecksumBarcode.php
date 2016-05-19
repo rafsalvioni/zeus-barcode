@@ -20,9 +20,13 @@ abstract class AbstractChecksumBarcode extends AbstractBarcode implements
      */
     public function __construct($data, $hasChecksum = true)
     {
-        parent::__construct($hasChecksum ? $data : $data . '0');
         if (!$hasChecksum) {
-            $this->data = \substr($this->data, 0, -1);
+            $data = $this->insertChecksum($data, '0');
+            parent::__construct($data);
+            $this->extractChecksum($this->data, $this->data);
+        }
+        else {
+            parent::__construct($data);
         }
         $this->data = $this->checksumResolver($this->data, $hasChecksum);
     }
