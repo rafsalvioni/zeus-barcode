@@ -158,21 +158,20 @@ class Code93 extends AbstractChecksumBarcode
 
     /**
      * 
+     * @param BarSet $bars
      * @param string $data
-     * @return string
      */
-    protected function encodeData($data)
+    protected function encodeData(BarSet &$bars, $data)
     {
-        $data    = $this->resolveExtended($data);
-        $data    = "*$data*";
-        $encoded = '';
+        $data = $this->resolveExtended($data);
+        $data = "*$data*";
 
         while (!empty($data)) {
-            $char     = \substr_remove($data, 0, 1);
-            $encoded .= self::$encodingTable[$char];
+            $char    = \substr_remove($data, 0, 1);
+            $encoded = self::$encodingTable[$char];
+            $bars->addBinary($encoded);
         }
-        
-        $encoded .= '1';
-        return $encoded;
+       
+        $bars->addBar();
     }
 }

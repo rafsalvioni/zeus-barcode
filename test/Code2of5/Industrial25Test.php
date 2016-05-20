@@ -43,7 +43,7 @@ class Industrial25Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
         $this->assertEquals($bc->getRealData(), '1234567');
-        $this->assertEquals($bc->getEncoded(), '11101110101110101010111010111010101110111011101010101010111010111011101011101010101110111010101010101110111010101110111010111010111');
+        $this->assertEquals($bc->getBarSet()->getBinary(), '11101110101110101010111010111010101110111011101010101010111010111011101011101010101110111010101010101110111010101110111010111010111');
     }
     
     /**
@@ -56,6 +56,6 @@ class Industrial25Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getData(), '12345670');
         $this->assertEquals($bc->getChecksum(), '0');
         $this->assertEquals($bc->getRealData(), '1234567');
-        $this->assertEquals($bc->getEncoded(), '11101110101110101010111010111010101110111011101010101010111010111011101011101010101110111010101010101110111010101110111010111010111');
+        $this->assertEquals($bc->getBarSet()->getBinary(), '11101110101110101010111010111010101110111011101010101010111010111011101011101010101110111010101010101110111010101110111010111010111');
     }
 }

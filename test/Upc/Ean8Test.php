@@ -47,7 +47,7 @@ class Ean8Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getData(), '55123457');
         $this->assertEquals($bc->getChecksum(), '7');
         $this->assertEquals($bc->getRealData(), '5512345');
-        $this->assertEquals($bc->getEncoded(), '1010110001011000100110010010011010101000010101110010011101000100101');
+        $this->assertEquals($bc->getBarSet()->getBinary(), '1010110001011000100110010010011010101000010101110010011101000100101');
     }
     
     /**
@@ -60,6 +60,6 @@ class Ean8Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getData(), '55123457');
         $this->assertEquals($bc->getChecksum(), '7');
         $this->assertEquals($bc->getRealData(), '5512345');
-        $this->assertEquals($bc->getEncoded(), '1010110001011000100110010010011010101000010101110010011101000100101');
+        $this->assertEquals($bc->getBarSet()->getBinary(), '1010110001011000100110010010011010101000010101110010011101000100101');
     }
 }

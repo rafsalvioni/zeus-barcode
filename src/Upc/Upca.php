@@ -4,6 +4,7 @@ namespace Zeus\Barcode\Upc;
 
 use Zeus\Barcode\AbstractChecksumBarcode;
 use Zeus\Barcode\FixedLengthInterface;
+use Zeus\Barcode\BarSet;
 
 /**
  * Implements a UPC-A barcode standard.
@@ -201,12 +202,12 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
 
     /**
      * 
+     * @param BarSet $bars
      * @param string $data
-     * @return string
      */
-    protected function encodeData($data)
+    protected function encodeData(BarSet &$bars, $data)
     {
-        return $this->ean13->getEncoded();
+        $bars = $this->ean13->getBarSet();
     }
 }
 

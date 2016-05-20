@@ -25,13 +25,11 @@ interface BarcodeInterface
     public function getData();
     
     /**
-     * Returns the encoded barcode data.
+     * Returns the Bar set of current barcode.
      * 
-     * The string returned should have only 0 and 1.
-     * 
-     * @return string
+     * @return BarSet
      */
-    public function getEncoded();
+    public function getBarSet();
     
     /**
      * Returns the printable data of barcode.

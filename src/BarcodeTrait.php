@@ -16,11 +16,11 @@ trait BarcodeTrait
      */
     protected $data;
     /**
-     * Stores the encoded string. Its a cache. Use getEncoded().
+     * Stores the Bar set. Its a cache. Use getBarSet().
      * 
-     * @var string
+     * @var BarSet
      */
-    protected $encoded;
+    protected $bars;
 
     /**
      * Auxiliar function to calculate checksums alterning between weights.
@@ -104,12 +104,14 @@ trait BarcodeTrait
      * 
      * @return string
      */
-    public function getEncoded()
+    public function getBarSet()
     {
-        if (empty($this->encoded)) {
-            $this->encoded = $this->encodeData($this->data);
+        if (empty($this->bars)) {
+            $this->bars = new BarSet();
+            $this->encodeData($this->bars, $this->data);
+            $this->bars->close();
         }
-        return $this->encoded;
+        return $this->bars;
     }
     
     /**
@@ -142,9 +144,10 @@ trait BarcodeTrait
     }
     
     /**
-     * Encodes a data in a binary string, using only 1 or 0.
+     * Encodes a data and put them on Bar set given.
      * 
-     * @return string
+     * @param BarSet $bars
+     * @param string $data
      */
-    abstract protected function encodeData($data);
+    abstract protected function encodeData(BarSet &$bars, $data);
 }

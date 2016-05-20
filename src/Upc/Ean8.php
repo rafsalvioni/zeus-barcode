@@ -4,6 +4,7 @@ namespace Zeus\Barcode\Upc;
 
 use Zeus\Barcode\AbstractChecksumBarcode;
 use Zeus\Barcode\FixedLengthInterface;
+use Zeus\Barcode\BarSet;
 
 /**
  * Implements a EAN-8 barcode standard.
@@ -27,10 +28,10 @@ class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
 
     /**
      * 
+     * @param BarSet $bars
      * @param string $data
-     * @return string
      */
-    protected function encodeData($data)
+    protected function encodeData(BarSet &$bars, $data)
     {
         $encoded   = '';
         
@@ -39,12 +40,10 @@ class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
             $encoded .= self::$encodingTable[$data{$i}][$parity];
         }
         
-        $encoded  = '101' .
-                    \substr($encoded, 0, 28) .
-                    '01010' .
-                    \substr($encoded, 28) .
-                    '101';
-        
-        return $encoded;
+        $bars->addBinary('101')
+             ->addBinary(\substr($encoded, 0, 28))
+             ->addBinary('01010')
+             ->addBinary(\substr($encoded, 28))
+             ->addBinary('101');
     }
 }

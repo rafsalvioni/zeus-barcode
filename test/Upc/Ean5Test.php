@@ -27,7 +27,7 @@ class Ean5Test extends \PHPUnit_Framework_TestCase
             try {
                 $bc = new Ean5($data, $info[0]);
                 $this->assertTrue($info[1]);
-                $this->assertStringEndsWith($info[2], $bc->getEncoded());
+                $this->assertStringEndsWith($info[2], $bc->getBarSet()->getBinary());
             }
             catch (\Exception $ex) {
                 $this->assertFalse($info[1]);

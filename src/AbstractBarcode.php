@@ -42,13 +42,11 @@ abstract class AbstractBarcode implements BarcodeInterface
     public function render(Renderer\RendererInterface $renderer)
     {
         $renderer->resetDraw();
-        $encoded = $this->getEncoded();
+        $this->getBarSet();
         $renderer->setText($this->getPrintableData());
         
-        while (\preg_match('/^(0+|1+)/', $encoded, $match)) {
-            $width   = \strlen($match[1]);
-            $encoded = \substr($encoded, $width);
-            $renderer->drawBar($match[1]{0} == '1', $width);
+        foreach ($this->bars as $bar) {
+            $renderer->drawBar($bar->b, $bar->w);
         }
         
         return $renderer;

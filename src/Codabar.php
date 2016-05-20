@@ -79,10 +79,10 @@ class Codabar extends AbstractBarcode
 
     /**
      * 
+     * @param BarSet $bars
      * @param string $data
-     * @return string
      */
-    protected function encodeData($data)
+    protected function encodeData(BarSet &$bars, $data)
     {
         $encoded = '';
         $data    = \str_split($data);
@@ -95,7 +95,6 @@ class Codabar extends AbstractBarcode
         }
         
         $encoded = \substr($encoded, 0, -1);
-        
-        return $encoded;
+        $bars->addBinary($encoded);
     }
 }

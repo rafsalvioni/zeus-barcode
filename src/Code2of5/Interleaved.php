@@ -2,6 +2,8 @@
 
 namespace Zeus\Barcode\Code2of5;
 
+use Zeus\Barcode\BarSet;
+
 /**
  * Implements a Interleaved 2 of 5 barcode standard.
  * 
@@ -35,25 +37,27 @@ class Interleaved extends AbstractCode2of5
 
     /**
      * 
+     * @param BarSet $bars
      * @param string $data
-     * @return string
      */
-    protected function encodeData($data)
+    protected function encodeData(BarSet &$bars, $data)
     {
-        $encoded = $this->widthToBinary('NNNN');
         $data    = \str_split($data);
+        $encoded = $this->widthToBinary('NNNN');
+        $bars->addBinary($encoded);
         
         while (!empty($data)) {
             $nwChar1 =& self::$encodingTable[\array_shift($data)];
             $nwChar2 =& self::$encodingTable[\array_shift($data)];
             
             for ($i = 0; $i < 5; $i++) {
-                $encoded .= $this->encodeWithWidth($nwChar1{$i} == 'N', true);
+                $encoded  = $this->encodeWithWidth($nwChar1{$i} == 'N', true);
                 $encoded .= $this->encodeWithWidth($nwChar2{$i} == 'N', false);
+                $bars->addBinary($encoded);
             }
         }
         
-        $encoded .= $this->widthToBinary('WNN');
-        return $encoded;
+        $encoded = $this->widthToBinary('WNN');
+        $bars->addBinary($encoded);
     }
 }

@@ -2,8 +2,9 @@
 
 namespace Zeus\Barcode\Upc;
 
-use Zeus\Barcode\AbstractChecksumBarcode;
-use Zeus\Barcode\FixedLengthInterface;
+use Zeus\Barcode\AbstractChecksumBarcode,
+    Zeus\Barcode\FixedLengthInterface,
+    Zeus\Barcode\BarSet;
 
 /**
  * Implements a EAN13 barcode standard.
@@ -114,10 +115,10 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
 
     /**
      * 
+     * @param BarSet $bars
      * @param string $data
-     * @return string
      */
-    protected function encodeData($data)
+    protected function encodeData(BarSet &$bars, $data)
     {
         $encoded   = '';
         $parityTab =& self::$parityTable[$data{0}];
@@ -127,13 +128,11 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
             $encoded .= self::$encodingTable[$data{$i}][$parity];
         }
         
-        $encoded  = '101' .
-                    \substr($encoded, 0, 42) .
-                    '01010' .
-                    \substr($encoded, 42) .
-                    '101';
-        
-        return $encoded;
+        $bars->addBinary('101')
+             ->addBinary(\substr($encoded, 0, 42))
+             ->addBinary('01010')
+             ->addBinary(\substr($encoded, 42))
+             ->addBinary('101');
     }
 }
 

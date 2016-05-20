@@ -4,6 +4,7 @@ namespace Zeus\Barcode\Upc;
 
 use Zeus\Barcode\AbstractChecksumBarcode;
 use Zeus\Barcode\FixedLengthInterface;
+use Zeus\Barcode\BarSet;
 
 /**
  * Implements a UPC-E barcode standard.
@@ -127,22 +128,22 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
 
     /**
      * 
+     * @param BarSet $bars
      * @param string $data
-     * @return string
      */
-    protected function encodeData($data)
+    protected function encodeData(BarSet &$bars, $data)
     {
-        $encoded   = '';
         $check     = $this->extractChecksum($data, $data);
         $parityTab =& self::$parityTable[$check][$data{0}];
+        $encoded   = '';
         
         for ($i = 1; $i < 7; $i++) {
             $parity   = $parityTab[$i - 1];
             $encoded .= self::$encodingTable[$data{$i}][$parity];
         }
         
-        $encoded  = '101' . $encoded . '010101';
-        
-        return $encoded;
+        $bars->addBinary('101')
+             ->addBinary($encoded)
+             ->addBinary('010101');
     }
 }

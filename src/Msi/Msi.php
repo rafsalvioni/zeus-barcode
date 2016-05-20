@@ -3,6 +3,7 @@
 namespace Zeus\Barcode\Msi;
 
 use Zeus\Barcode\AbstractBarcode;
+use Zeus\Barcode\BarSet;
 
 /**
  * Implements a MSI barcode standard, without checksum.
@@ -154,19 +155,21 @@ class Msi extends AbstractBarcode
 
     /**
      * 
+     * @param BarSet $bars
      * @param string $data
-     * @return string
      */
-    protected function encodeData($data)
+    protected function encodeData(BarSet &$bars, $data)
     {
-        $encoded = '110';
         $n       = \strlen($data);
+        $encoded = '110';
+        $bars->addBinary($encoded);
         
         for ($i = 0; $i < $n; $i++) {
-            $encoded .= self::$encodingTable[$data{$i}];
+            $encoded = self::$encodingTable[$data{$i}];
+            $bars->addBinary($encoded);
         }
         
-        $encoded .= '1001';
-        return $encoded;
+        $encoded = '1001';
+        $bars->addBinary($encoded);
     }
 }
