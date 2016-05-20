@@ -14,7 +14,7 @@ class HtmlRenderer implements RendererInterface
     public function drawBar($black, $width = 1, $height = 1)
     {
         $this->bars[] = \sprintf(
-            '<td style="width: %dpx; height: %dpx; background-color: %s"></td>',
+            '<div style="width:%dpx; height:%dpx; background-color:%s; float:left"></div>',
             $width * $this->barWidth,
             $height * $this->barHeight,
             $black ? '#000' : '#FFF'
@@ -23,17 +23,13 @@ class HtmlRenderer implements RendererInterface
 
     public function getResource()
     {
-        $tableOpen = '<table cellspacing="0" cellpadding="0" border="0">';
-        
         $resource  = \sprintf(
-            '<tr height="%d">%s</tr>',
-            $this->barHeight,
+            '<div style="height:auto;display:block">%s</div>',
             \implode("\n", $this->bars)
         );
         
         $textLine = \sprintf(
-            '<tr><td colspan="%d" align="%s">%s</td></tr>',
-            \count($this->bars),
+            '<p style="width:500px;text-align:%s">%s</p>',
             $this->textAlign,
             $this->text
         );
@@ -46,8 +42,6 @@ class HtmlRenderer implements RendererInterface
                 $resource .= $textLine;
             }
         }
-        
-        $resource = $tableOpen . $resource . '</table>';
         
         return $resource;
     }

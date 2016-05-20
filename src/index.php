@@ -26,6 +26,7 @@ $bcs = [
     (new Zeus\Barcode\Code39\Code39Ext('BARCODE1%')),
     (new Zeus\Barcode\Code39\Code39ExtMod43('$%&b@', false)),
     (new Zeus\Barcode\Code93('TEST93', false)),
+    (new Zeus\Barcode\Postnet('801221905', false)),
 ];
 
 $render = new Zeus\Barcode\Renderer\HtmlRenderer();
@@ -33,6 +34,7 @@ $render->setTextPosition(\Zeus\Barcode\Renderer\RendererInterface::TEXT_POSITION
 
 foreach ($bcs as &$bc) {
     echo "<p>" . get_class($bc) . "</p>";
+    echo "<p>" . $bc->getBarSet()->getBinary() . "</p>";
     if ($bc instanceof \Zeus\Barcode\ChecksumInterface) {
         echo "<p>Checksum: " . $bc->getChecksum() . "</p>";
     }

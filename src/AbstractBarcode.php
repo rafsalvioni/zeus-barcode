@@ -46,7 +46,7 @@ abstract class AbstractBarcode implements BarcodeInterface
         $renderer->setText($this->getPrintableData());
         
         foreach ($this->bars as $bar) {
-            $renderer->drawBar($bar->b, $bar->w);
+            $renderer->drawBar($bar->b, $bar->w, $bar->h);
         }
         
         return $renderer;
