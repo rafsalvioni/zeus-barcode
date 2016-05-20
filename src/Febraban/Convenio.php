@@ -276,7 +276,7 @@ class Convenio extends AbstractFebraban
     protected function withCampo($campo, $valor)
     {
         $data = $this->withDataPart($valor, $campo, self::$tamanhoCampos[$campo]);
-        return new self($data);
+        return new self($data, false);
     }
 }
 

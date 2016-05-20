@@ -162,7 +162,7 @@ trait ChecksumTrait
     }
     
     /**
-     * Recalculate checksum to new data.
+     * Extracts checksum from new data.
      * 
      * @param string $value
      * @param int $start
@@ -174,7 +174,6 @@ trait ChecksumTrait
     {
         $data = parent::withDataPart($value, $start, $length);
         $this->extractChecksum($data, $data);
-        $data = $this->checksumResolver($data, false);
         return $data;
     }
 }

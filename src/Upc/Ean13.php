@@ -84,7 +84,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     public function withProductCode($code)
     {
         $data = $this->withDataPart($code, self::PRODUCT, 5);
-        return new self($data);
+        return new self($data, false);
     }
     
     /**

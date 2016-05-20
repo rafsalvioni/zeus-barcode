@@ -142,7 +142,7 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
     public function withManufacturerCode($code)
     {
         $data = $this->withDataPart($code, self::MANUFACTURER, 5);
-        return new self($data);
+        return new self($data, false);
     }
 
     /**
@@ -164,7 +164,7 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
     public function withProductCode($code)
     {
         $data = $this->withDataPart($code, self::PRODUCT, 5);
-        return new self($data);
+        return new self($data, false);
     }
     
     /**
