@@ -40,7 +40,7 @@ class Interleaved extends AbstractCode2of5
      */
     protected function encodeData($data)
     {
-        $encoded = '1010';
+        $encoded = $this->widthToBinary('NNNN');
         $data    = \str_split($data);
         
         while (!empty($data)) {
@@ -48,12 +48,36 @@ class Interleaved extends AbstractCode2of5
             $encodedChar2 =& self::$encodingTable[\array_shift($data)];
             
             for ($i = 0; $i < 5; $i++) {
-                $encoded .= $this->encodeWithWidth($encodedChar1{$i} == 'N', true);
-                $encoded .= $this->encodeWithWidth($encodedChar2{$i} == 'N', false);
+                $encoded .= $this->widthToBinary(
+                                $encodedChar1{$i} . $encodedChar2{$i}
+                            );
             }
         }
         
-        $encoded .= '1101';
+        $encoded .= $this->widthToBinary('WNN');
+        return $encoded;
+    }
+    
+    /**
+     * Encodes a width char (ex. NWNWW) to a binary string using
+     * the defined wide and narrow width.
+     * 
+     * Encode each char alternating bar and spaces.
+     * 
+     * @param string $nwChar
+     * @return string
+     */
+    protected function widthToBinary($nwChar)
+    {
+        $encoded = '';
+        $bar     = true;
+        
+        while (!empty($nwChar)) {
+            $nw       = \substr_remove($nwChar, 0, 1);
+            $encoded .= $this->encodeWithWidth($nw == 'N', $bar);
+            $bar      = !$bar;
+        }
+        
         return $encoded;
     }
 }
