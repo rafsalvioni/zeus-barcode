@@ -22,9 +22,11 @@ class Standard extends AbstractCode2of5
         $data    = \str_split($data);
         
         foreach ($data as &$char) {
-            $nwChar   = self::$encodingTable[$char];
-            $nwChar   = \implode('N', \str_split($nwChar));
-            $encoded .= $this->widthToBinary($nwChar . 'N');
+            $nwChar =& self::$encodingTable[$char];
+            for ($i = 0; $i < 5; $i++) {
+                $encoded .= $this->encodeWithWidth($nwChar{$i} == 'N', true);
+                $encoded .= $this->encodeWithWidth(true, false);
+            }
         }
         
         $encoded .= $this->widthToBinary('WNNNW');

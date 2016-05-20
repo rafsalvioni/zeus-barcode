@@ -182,32 +182,12 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
         $encoded = '';
         
         foreach ($data as &$char) {
-            $encoded .= $this->encodeChar($char);
-            $encoded .= $this->encodeWithWidth(true, false);
+            $nwChar   =& self::$encodingTable[$char];
+            $encoded .= $this->widthToBinary($nwChar . 'N');
         }
         
         $encoded = \substr($encoded, 0, $this->narrowWidth * -1);
         
         return $encoded;
-    }
-    
-    /**
-     * Encodes a single char.
-     * 
-     * @param string $char
-     * @return string
-     */
-    protected function encodeChar($char)
-    {
-        $encChar =& self::$encodingTable[$char];
-        $bar     = true;
-        $return  = '';
-        
-        for ($i = 0; $i < 9; $i++) {
-            $return .= $this->encodeWithWidth($encChar{$i} == 'N', $bar);
-            $bar     = !$bar;
-        }
-        
-        return $return;
     }
 }

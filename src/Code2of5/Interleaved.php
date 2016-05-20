@@ -48,7 +48,8 @@ class Interleaved extends AbstractCode2of5
             $nwChar2 =& self::$encodingTable[\array_shift($data)];
             
             for ($i = 0; $i < 5; $i++) {
-                $encoded .= $this->widthToBinary($nwChar1{$i} . $nwChar2{$i});
+                $encoded .= $this->encodeWithWidth($nwChar1{$i} == 'N', true);
+                $encoded .= $this->encodeWithWidth($nwChar2{$i} == 'N', false);
             }
         }
         
