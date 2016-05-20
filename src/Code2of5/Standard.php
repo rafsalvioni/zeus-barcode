@@ -17,35 +17,17 @@ class Standard extends AbstractCode2of5
      */
     protected function encodeData($data)
     {
-        $encoded = $this->widthToBinary('WWN');
+        $encoded = $this->widthToBinary('WNWNNN');
         $i       = 0;
         $data    = \str_split($data);
         
         foreach ($data as &$char) {
-            $encodedChar =& self::$encodingTable[$char];
-            $encoded    .= $this->widthToBinary($encodedChar);
+            $nwChar   = self::$encodingTable[$char];
+            $nwChar   = \implode('N', \str_split($nwChar));
+            $encoded .= $this->widthToBinary($nwChar . 'N');
         }
         
-        $encoded .= $this->widthToBinary('WNW');
-        $encoded  = \substr_remove($encoded, 0, -$this->narrowWidth);
-        return $encoded;
-    }
-    
-    /**
-     * Encodes a width char (ex. NWNWW) to a binary string using
-     * the defined wide and narrow width.
-     * 
-     * @param string $nwChar
-     * @return string
-     */
-    protected function widthToBinary($nwChar)
-    {
-        $encoded = '';
-        while (!empty($nwChar)) {
-            $nw       = \substr_remove($nwChar, 0, 1);
-            $encoded .= $this->encodeWithWidth($nw == 'N', true);
-            $encoded .= $this->encodeWithWidth(true, false);
-        }
+        $encoded .= $this->widthToBinary('WNNNW');
         return $encoded;
     }
 }

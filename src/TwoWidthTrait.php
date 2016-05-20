@@ -70,4 +70,30 @@ trait TwoWidthTrait
             $narrow ? $this->narrowWidth : $this->wideWidth
         );
     }
+    
+    /**
+     * Encodes a width char (ex. NWNWW) to a binary string using
+     * the defined wide and narrow width.
+     * 
+     * Encode each char alternating bar and spaces, begin with bar from left
+     * to right.
+     * 
+     * Assuming a "N" as a narrow bar/space and "W" as a wide bar/space.
+     * 
+     * @param string $nwString narrow/wide encode string
+     * @return string
+     */
+    protected function widthToBinary($nwString)
+    {
+        $encoded = '';
+        $bar     = true;
+        
+        while (!empty($nwString)) {
+            $nw       = \substr_remove($nwString, 0, 1);
+            $encoded .= $this->encodeWithWidth($nw == 'N', $bar);
+            $bar      = !$bar;
+        }
+        
+        return $encoded;
+    }
 }
