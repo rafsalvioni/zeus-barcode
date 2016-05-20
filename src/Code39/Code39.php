@@ -6,7 +6,7 @@ use Zeus\Barcode\AbstractBarcode;
 use Zeus\Barcode\TwoWidthInterface;
 use Zeus\Barcode\TwoWidthTrait;
 use Zeus\Barcode\ChecksumInterface;
-use Zeus\Barcode\BarSet;
+use Zeus\Barcode\Encoder\BarSpace;
 
 /**
  * Implementation of Code39 barcode standard, without checksum.
@@ -171,7 +171,12 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
         return \preg_match('/^[A-Z\d\-\. \$\/\+\%]+$/', $data);
     }
     
-    protected function encodeData(BarSet &$bars, $data)
+    /**
+     * 
+     * @param BarSpace $encoder
+     * @param string $data
+     */
+    protected function encodeData(BarSpace &$encoder, $data)
     {
         $data    = "*$data*";
         $data    = \str_split($data);
@@ -183,6 +188,6 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
         }
         
         $encoded = \substr($encoded, 0, $this->narrowWidth * -1);
-        $bars->addBinary($encoded);
+        $encoder->addBinary($encoded);
     }
 }

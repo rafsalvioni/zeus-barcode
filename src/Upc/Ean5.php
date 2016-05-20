@@ -4,7 +4,7 @@ namespace Zeus\Barcode\Upc;
 
 use Zeus\Barcode\AbstractBarcode;
 use Zeus\Barcode\FixedLengthInterface;
-use Zeus\Barcode\BarSet;
+use Zeus\Barcode\Encoder\BarSpace;
 
 /**
  * Implements a EAN-5 supplemental barcode standard.
@@ -44,10 +44,10 @@ class Ean5 extends AbstractBarcode implements FixedLengthInterface
 
     /**
      * 
-     * @param BarSet $bars
+     * @param BarSpace $encoder
      * @param string $data
      */
-    protected function encodeData(BarSet &$bars, $data)
+    protected function encodeData(BarSpace &$encoder, $data)
     {
         $data      = \str_split($data);
         $check     = \substr(self::sumAlternateWeight($data, 3, 9), -1);
@@ -60,6 +60,6 @@ class Ean5 extends AbstractBarcode implements FixedLengthInterface
         }
         
         $encoded   = \substr($encoded, 0, -2);
-        $bars->addBinary($encoded);
+        $encoder->addBinary($encoded);
     }
 }

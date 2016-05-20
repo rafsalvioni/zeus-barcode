@@ -27,9 +27,9 @@ interface BarcodeInterface
     /**
      * Returns the Bar set of current barcode.
      * 
-     * @return BarSet
+     * @return Encoder\EncoderInterface
      */
-    public function getBarSet();
+    public function getEncoded();
     
     /**
      * Returns the printable data of barcode.

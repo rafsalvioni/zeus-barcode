@@ -61,20 +61,19 @@ class Postnet extends AbstractChecksumBarcode
      * @param BarSet $bars
      * @param string $data
      */
-    protected function encodeData(BarSet &$bars, $data)
+    protected function encodeData(Encoder\EncoderInterface &$bars, $data)
     {
-        $bars->addBar()->addSpace();
+        $bars = new Encoder\HalfBar();
+        $bars->addFull();
         $data = \str_split($data);
         
         foreach ($data as &$char) {
             $encoded =& self::$encodingTable[$char];
             for ($i = 0; $i < 5; $i++) {
-                $height = $encoded{$i} == '1' ? 1 : 0.5;
-                $bars->addBar(1, $height);
-                $bars->addSpace();
+                $bars->addBinary($encoded{$i});
             }
         }
         
-        $bars->addBar();
+        $bars->addFull();
     }
 }

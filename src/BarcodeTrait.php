@@ -2,6 +2,9 @@
 
 namespace Zeus\Barcode;
 
+use Zeus\Barcode\Encoder\EncoderInterface;
+use Zeus\Barcode\Encoder\BarSpace;
+
 /**
  * Trait to implements some methods of BarcodeInterface.
  *
@@ -16,11 +19,11 @@ trait BarcodeTrait
      */
     protected $data;
     /**
-     * Stores the Bar set. Its a cache. Use getBarSet().
+     * Stores the encoded object. Its a cache. Use getEncoded().
      * 
-     * @var BarSet
+     * @var EncoderInterface
      */
-    protected $bars;
+    protected $encoded;
 
     /**
      * Auxiliar function to calculate checksums alterning between weights.
@@ -102,16 +105,16 @@ trait BarcodeTrait
     
     /**
      * 
-     * @return string
+     * @return EncoderInterface
      */
-    public function getBarSet()
+    public function getEncoded()
     {
-        if (empty($this->bars)) {
-            $this->bars = new BarSet();
-            $this->encodeData($this->bars, $this->data);
+        if (empty($this->encoded)) {
+            $this->encoded = new BarSpace();
+            $this->encodeData($this->encoded, $this->data);
             $this->bars->close();
         }
-        return $this->bars;
+        return $this->encoded;
     }
     
     /**
@@ -144,10 +147,10 @@ trait BarcodeTrait
     }
     
     /**
-     * Encodes a data and put them on Bar set given.
+     * Encodes a data and put them on Encoder given.
      * 
-     * @param BarSet $bars
+     * @param EncoderInterface $encoder
      * @param string $data
      */
-    abstract protected function encodeData(BarSet &$bars, $data);
+    abstract protected function encodeData(EncoderInterface &$encoder, $data);
 }

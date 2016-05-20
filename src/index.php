@@ -34,7 +34,7 @@ $render->setTextPosition(\Zeus\Barcode\Renderer\RendererInterface::TEXT_POSITION
 
 foreach ($bcs as &$bc) {
     echo "<p>" . get_class($bc) . "</p>";
-    echo "<p>" . $bc->getBarSet()->getBinary() . "</p>";
+    echo "<p>" . $bc->getEncoded()->getBinary() . "</p>";
     if ($bc instanceof \Zeus\Barcode\ChecksumInterface) {
         echo "<p>Checksum: " . $bc->getChecksum() . "</p>";
     }

@@ -42,10 +42,10 @@ abstract class AbstractBarcode implements BarcodeInterface
     public function render(Renderer\RendererInterface $renderer)
     {
         $renderer->resetDraw();
-        $this->getBarSet();
+        $this->getEncoded();
         $renderer->setText($this->getPrintableData());
         
-        foreach ($this->bars as $bar) {
+        foreach ($this->encoded as $bar) {
             $renderer->drawBar($bar->b, $bar->w, $bar->h);
         }
         
