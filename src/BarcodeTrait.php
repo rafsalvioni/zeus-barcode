@@ -102,6 +102,18 @@ trait BarcodeTrait
     
     /**
      * 
+     * @return string
+     */
+    public function getEncoded()
+    {
+        if (empty($this->encoded)) {
+            $this->encoded = $this->encodeData($this->data);
+        }
+        return $this->encoded;
+    }
+    
+    /**
+     * 
      * @param int $start
      * @param int $length
      * @return string

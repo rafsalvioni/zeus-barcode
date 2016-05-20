@@ -36,18 +36,6 @@ abstract class AbstractBarcode implements BarcodeInterface
 
     /**
      * 
-     * @return string
-     */
-    public function getEncoded()
-    {
-        if (empty($this->encoded)) {
-            $this->encoded = $this->encodeData($this->data);
-        }
-        return $this->encoded;
-    }
-    
-    /**
-     * 
      * @param Renderer\RendererInterface $renderer
      * @return Renderer\RendererInterface
      */
