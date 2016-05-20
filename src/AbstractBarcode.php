@@ -12,26 +12,12 @@ abstract class AbstractBarcode implements BarcodeInterface
     use BarcodeTrait;
     
     /**
-     * Stores the encoded string. Its a cache. Use getEncoded().
-     * 
-     * @var string
-     */
-    protected $encoded;
-
-    /**
      * Checks if a data is compatible with barcode specification.
      * 
      * @return bool
      */
     abstract protected function checkData($data);
     
-    /**
-     * Encodes a data in a binary string, using only 1 or 0.
-     * 
-     * @return string
-     */
-    abstract protected function encodeData($data);
-
     /**
      * 
      * @param string $data
