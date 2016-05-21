@@ -3,7 +3,7 @@
 namespace Zeus\Barcode;
 
 use Zeus\Barcode\AbstractChecksumBarcode;
-use Zeus\Barcode\Encoder\BarSpace;
+use Zeus\Barcode\Encoder\EncoderInterface;
 
 /**
  * Implements a Code93 barcode standard.
@@ -159,10 +159,10 @@ class Code93 extends AbstractChecksumBarcode
 
     /**
      * 
-     * @param BarSpace $encoder
+     * @param EncoderInterface $encoder
      * @param string $data
      */
-    protected function encodeData(BarSpace &$encoder, $data)
+    protected function encodeData(EncoderInterface &$encoder, $data)
     {
         $data = $this->resolveExtended($data);
         $data = "*$data*";
@@ -173,6 +173,6 @@ class Code93 extends AbstractChecksumBarcode
             $encoder->addBinary($encoded);
         }
        
-        $encoder->addBar();
+        $encoder->addBinary('1');
     }
 }

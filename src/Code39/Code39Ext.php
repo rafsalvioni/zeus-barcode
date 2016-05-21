@@ -2,7 +2,7 @@
 
 namespace Zeus\Barcode\Code39;
 
-use Zeus\Barcode\Encoder\BarSpace;
+use Zeus\Barcode\Encoder\EncoderInterface;
 
 /**
  * Implementation of Code39 using full ascii mode.
@@ -84,10 +84,10 @@ class Code39Ext extends Code39
 
     /**
      * 
-     * @param BarSpace $encoder
+     * @param EncoderInterface $encoder
      * @param string $data
      */
-    protected function encodeData(BarSpace &$encoder, $data)
+    protected function encodeData(EncoderInterface &$encoder, $data)
     {
         $data = $this->resolveExtended($data);
         parent::encodeData($encoder, $data);

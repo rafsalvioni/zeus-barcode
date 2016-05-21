@@ -2,7 +2,7 @@
 
 namespace Zeus\Barcode;
 
-use Zeus\Barcode\Encoder\BarSpace;
+use Zeus\Barcode\Encoder\EncoderInterface;
 
 /**
  * Implements a Codabar barcode standard.
@@ -81,10 +81,10 @@ class Codabar extends AbstractBarcode
 
     /**
      * 
-     * @param BarSpace $encoder
+     * @param EncoderInterface $encoder
      * @param string $data
      */
-    protected function encodeData(BarSpace &$encoder, $data)
+    protected function encodeData(EncoderInterface &$encoder, $data)
     {
         $encoded = '';
         $data    = \str_split($data);

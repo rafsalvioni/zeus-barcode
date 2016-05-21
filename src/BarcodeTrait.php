@@ -112,7 +112,7 @@ trait BarcodeTrait
         if (empty($this->encoded)) {
             $this->encoded = new BarSpace();
             $this->encodeData($this->encoded, $this->data);
-            $this->bars->close();
+            $this->encoded->close();
         }
         return $this->encoded;
     }

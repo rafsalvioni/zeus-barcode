@@ -3,7 +3,7 @@
 namespace Zeus\Barcode\Code11;
 
 use Zeus\Barcode\AbstractChecksumBarcode;
-use Zeus\Barcode\Encoder\BarSpace;
+use Zeus\Barcode\Encoder\EncoderInterface;
 
 /**
  * Abstract implementation of Code11 barcode standard.
@@ -114,10 +114,10 @@ abstract class Code11 extends AbstractChecksumBarcode
 
     /**
      * 
-     * @param BarSpace $encoder
+     * @param EncoderInterface $encoder
      * @param string $data
      */
-    protected function encodeData(BarSpace &$encoder, $data)
+    protected function encodeData(EncoderInterface &$encoder, $data)
     {
         $encoder->addBinary('10110010');
         

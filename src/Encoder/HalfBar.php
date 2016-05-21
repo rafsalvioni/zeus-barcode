@@ -3,25 +3,67 @@
 namespace Zeus\Barcode\Encoder;
 
 /**
- * Description of BarSpace
+ * Encodes barcodes using the height of bars.
+ * 
+ * Using 1 to represent full bars and 0 for half bars. Spaces between bars
+ * are inserted automatically.
  *
- * @author rafaelsalvioni
+ * @author Rafael M. Salvioni
  */
 class HalfBar extends AbstractEncoder
 {
+    /**
+     * Add a full bar.
+     * 
+     * @param int $width
+     * @return self
+     */
     public function addFull($width = 1)
     {
-        $this->append('1', $width, 1, true);
-        return $this->append('0', 1, 1, false);
+        for ($i = 0; $i < $width; $i++) {
+            $this->append('1', 1, 1, true);
+            $this->append('0', 1, 1, false);
+        }
+        return $this;
     }
     
+    /**
+     * Add a half bar
+     * 
+     * @param int $width
+     * @return self
+     */
     public function addHalf($width = 1)
     {
-        $this->append('1', $width, 0.5, false);
-        return $this->append('0', $width, 1, true);
+        for ($i = 0; $i < $width; $i++) {
+            $this->append('1', 1, 0.5, false);
+            $this->append('0', 1, 1, true);
+        }
+        return $this;
+    }
+    
+    /**
+     * 
+     * @return HalfBar
+     */
+    public function close()
+    {
+        parent::close();
+        if (!empty($this->bars)) {
+            unset($this->bars[$this->last]);
+            $this->last--;
+        }
+        return $this;
     }
 
-    protected function processBinary($bin, $width)
+    /**
+     * 
+     * @param string $bin
+     * @param int $width
+     * @param number $height
+     * @return HalfBar
+     */
+    protected function processBinary($bin, $width, $height)
     {
         if ($bin == '1') {
             $this->addFull($width);

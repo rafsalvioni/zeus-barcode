@@ -4,7 +4,7 @@ namespace Zeus\Barcode\Upc;
 
 use Zeus\Barcode\AbstractBarcode;
 use Zeus\Barcode\FixedLengthInterface;
-use Zeus\Barcode\Encoder\BarSpace;
+use Zeus\Barcode\Encoder\EncoderInterface;
 
 /**
  * Implements a EAN-2 supplemental barcode standard.
@@ -40,10 +40,10 @@ class Ean2 extends AbstractBarcode implements FixedLengthInterface
 
     /**
      * 
-     * @param BarSpace $bars
+     * @param EncoderInterface $bars
      * @param string $data
      */
-    protected function encodeData(BarSpace &$encoder, $data)
+    protected function encodeData(EncoderInterface &$encoder, $data)
     {
         $encoded   = '';
         $parityTab =& self::$parityTable[($data % 4)];
