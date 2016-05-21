@@ -44,6 +44,6 @@ class CodabarTest extends \PHPUnit_Framework_TestCase
     {
         $bc = new Codabar('A40156B');
         $this->assertEquals($bc->getData(), '40156');
-        $this->assertEquals($bc->getBarSet()->getBinary(), '10110010010101101001010101001101010110010110101001010010101101001001011');
+        $this->assertEquals($bc->getEncoded()->getBinary(), '10110010010101101001010101001101010110010110101001010010101101001001011');
     }
 }

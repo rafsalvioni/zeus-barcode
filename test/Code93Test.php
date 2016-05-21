@@ -49,6 +49,6 @@ class Code93Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getData(), 'TEST93+6');
         $this->assertEquals($bc->getRealData(), 'TEST93');
         $this->assertEquals($bc->getChecksum(), '+6');
-        $this->assertEquals($bc->getBarSet()->getBinary(), '1010111101101001101100100101101011001101001101000010101010000101011101101001000101010111101');
+        $this->assertEquals($bc->getEncoded()->getBinary(), '1010111101101001101100100101101011001101001101000010101010000101011101101001000101010111101');
     }
 }

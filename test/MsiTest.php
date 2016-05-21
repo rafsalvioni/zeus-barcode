@@ -46,7 +46,7 @@ class MsiTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getData(), '80523');
         $this->assertEquals($bc->getChecksum(), '3');
         $this->assertEquals($bc->getRealData(), '8052');
-        $this->assertEquals($bc->getBarSet()->getBinary(), '1101101001001001001001001001001101001101001001101001001001101101001');
+        $this->assertEquals($bc->getEncoded()->getBinary(), '1101101001001001001001001001001101001101001001101001001001101101001');
     }
     
     /**
@@ -59,7 +59,7 @@ class MsiTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getData(), '805238');
         $this->assertEquals($bc->getChecksum(), '8');
         $this->assertEquals($bc->getRealData(), '80523');
-        $this->assertEquals($bc->getBarSet()->getBinary(), '1101101001001001001001001001001101001101001001101001001001101101101001001001001');
+        $this->assertEquals($bc->getEncoded()->getBinary(), '1101101001001001001001001001001101001101001001101001001001101101101001001001001');
     }
     
     /**
