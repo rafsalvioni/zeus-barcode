@@ -79,7 +79,7 @@ class Code93 extends AbstractChecksumBarcode
      * 
      * @var array
      */
-    protected $extData;
+    protected static $extData = [];
     
     /**
      * Prints only real data.
@@ -101,15 +101,16 @@ class Code93 extends AbstractChecksumBarcode
      */
     protected function resolveExtended($data)
     {
-        if (empty($this->extData) || !isset($this->extData[$data])) {
+        $idx = \crc32($data);
+        if (!isset(self::$extData[$idx])) {
             $ext     =& self::$extendedTable;
             $extData = \preg_replace_callback('/[^A-Z0-9\-. \$\+\/%\x80-\x83]/', function ($m) use ($ext)
             {
                 return $ext[$m[0]];
             }, $data);
-            $this->extData[$data] = $extData;
+            self::$extData[$idx] = $extData;
         }
-        return $this->extData[$data];
+        return self::$extData[$idx];
     }
     
     /**
