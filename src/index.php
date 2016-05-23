@@ -27,6 +27,7 @@ $bcs = [
     (new Zeus\Barcode\Code39\Code39ExtMod43('$%&b@', false)),
     (new Zeus\Barcode\Code93('TEST93', false)),
     (new Zeus\Barcode\Postnet('801221905', false)),
+    (new Zeus\Barcode\Code128('234Raf153', false)),
 ];
 
 $render = new Zeus\Barcode\Renderer\HtmlRenderer();
