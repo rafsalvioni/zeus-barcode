@@ -131,8 +131,8 @@ class Code128 extends AbstractBarcode
         $tests = [
             '/^\d{2,3}$/'                     => !$curCharset ? 'C' : $curCharset,
             '/^\d{4,}/'                       => 'C',
-            '/^\d{0,3}[\x00-\x2f\x40-\x60]+/' => 'A',
             '/^\d{0,3}[\x20-\x2f\x40-\xff]+/' => 'B',
+            '/^\d{0,3}[\x00-\x2f\x40-\x60]+/' => 'A',
             '/^\d/'                           => $curCharset && $curCharset != 'C'
                                                 ? $curCharset
                                                 : 'B',
