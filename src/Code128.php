@@ -10,6 +10,8 @@ use Zeus\Barcode\AbstractBarcode;
  * Provides a automatic and optimized switching for A, B and C charsets
  * to use.
  * 
+ * Support caracters for ASCII extended too.
+ * 
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/code128.phtml
  */
@@ -130,7 +132,7 @@ class Code128 extends AbstractBarcode
             '/^\d{2,3}$/'                     => !$curCharset ? 'C' : $curCharset,
             '/^\d{4,}/'                       => 'C',
             '/^\d{0,3}[\x00-\x2f\x40-\x60]+/' => 'A',
-            '/^\d{0,3}[\x20-\x2f\x40-\x7f]+/' => 'B',
+            '/^\d{0,3}[\x20-\x2f\x40-\xff]+/' => 'B',
             '/^\d/'                           => $curCharset && $curCharset != 'C'
                                                 ? $curCharset
                                                 : 'B',
@@ -205,7 +207,12 @@ class Code128 extends AbstractBarcode
             else {
                 $part  = \str_split($part, 1);
                 foreach ($part as &$char) {
-                    $code    = \array_search($char, $table);
+                    $ord = \ord($char);
+                    if ($ord > 127) {
+                        $codes[] = \array_search('FNC4', $table);
+                        $char    = \chr($ord - 128);
+                    }
+                    $code = \array_search($char, $table);
                     $codes[] = $code;
                 }
             }
@@ -235,7 +242,7 @@ class Code128 extends AbstractBarcode
      */
     protected function checkData($data)
     {
-        return \preg_match('/^[\x00-\x7f]{2,}$/', $data);
+        return \preg_match('/^[\x00-\xff]+$/', $data);
     }
 
     /**
