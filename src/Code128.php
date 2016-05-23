@@ -7,6 +7,9 @@ use Zeus\Barcode\AbstractBarcode;
 /**
  * Implements a Code128 barcode standard.
  * 
+ * Provides a automatic and optimized switching for A, B and C charsets
+ * to use.
+ * 
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/code128.phtml
  */
@@ -101,11 +104,11 @@ class Code128 extends AbstractBarcode
     ];
     
     /**
-     * Cache of converted strings
-     * 
+     * Cache of converted data
+     *
      * @var array
      */
-    protected $converted = [];
+    protected static $converted = [];
 
     /**
      * Choose the better charset for $data.
@@ -118,35 +121,43 @@ class Code128 extends AbstractBarcode
      * 
      * @param string $data
      * @param string $part
+     * @param string $curCharset Current charset in use, if there was one
      * @return string
      */
-    protected function chooseCharset(&$data, &$part, $currentCharset = null)
+    protected function chooseCharset(&$data, &$part, $curCharset = null)
     {
-        $regex   = [
-            '/^\d{2,}/'                   => 'C',
-            '/^\d?[\x00-\x2f\x40-\x60]+/' => 'A',
-            '/^\d?[\x20-\x2f\x40-\x7f]+/' => 'B',
-            '/^\d/'                       => $currentCharset && $currentCharset != 'C'
-                                          ? $currentCharset
-                                          : 'A',
+        $tests = [
+            '/^\d{2,3}$/'                     => !$curCharset ? 'C' : $curCharset,
+            '/^\d{4,}/'                       => 'C',
+            '/^\d{0,3}[\x00-\x2f\x40-\x60]+/' => 'A',
+            '/^\d{0,3}[\x20-\x2f\x40-\x7f]+/' => 'B',
+            '/^\d/'                           => $curCharset && $curCharset != 'C'
+                                                ? $curCharset
+                                                : 'B',
         ];
         
-        $charset = '';
+        $charset = $match = null;
         $length  = 0;
         
-        foreach ($regex as $re => $group) {
-            if (!\preg_match($re, $data, $match)) {
+        foreach ($tests as $regex => $testCharset) {
+            if (!\preg_match($regex, $data, $match)) {
                 continue;
             }
-            
             $n = \strlen($match[0]);
-            
-            if ($group == 'C' && ($n % 2) > 0) {
+            if ($testCharset == 'C' && ($n % 2) > 0) {
                 $n--;
+                if ($curCharset && $curCharset != 'C') {
+                    $charset = $curCharset;
+                    $length  = 1;
+                    break;
+                }
             }
             if ($n > $length) {
-                $charset = $group;
+                $charset = $testCharset;
                 $length  = $n;
+                if ($match[0] == $data) {
+                    break;
+                }
             }
         }
         
@@ -165,27 +176,28 @@ class Code128 extends AbstractBarcode
     protected function convertToCodes($data)
     {
         $idx = \crc32($data);
-        if (isset($this->converted[$idx])) {
-            return $this->converted[$idx];
+        if (isset(self::$converted[$idx])) {
+            return self::$converted[$idx];
         }
         
-        $codes   = [];
-        $charset = '';
+        $codes      = [];
+        $curCharset = '';
+        $part       = '';
         
-        while (!empty($data) && ($group = $this->chooseCharset($data, $part, $charset)) != '') {
-            if ($charset != $group) {
+        while (!empty($data) && ($charset = $this->chooseCharset($data, $part, $curCharset)) != '') {
+            if ($curCharset != $charset) {
                 if (empty($codes)) {
-                    $codes[] = \array_search("START $group", self::$charSets['C']);
+                    $codes[] = \array_search("START $charset", self::$charSets['C']);
                 }
                 else {
-                    $codes[] = \array_search("Code $group", self::$charSets[$charset]);
+                    $codes[] = \array_search("Code $charset", self::$charSets[$curCharset]);
                 }
-                $charset = $group;
+                $curCharset = $charset;
             }
             
-            $table =& self::$charSets[$charset];
+            $table =& self::$charSets[$curCharset];
             
-            if ($charset == 'C'){
+            if ($curCharset == 'C'){
                 $part  = \str_split($part, 2);
                 $part  = \array_map('\\intval', $part);
                 $codes = \array_merge($codes, $part);
@@ -199,7 +211,7 @@ class Code128 extends AbstractBarcode
             }
         }
         
-        $this->converted[$idx] = $codes;
+        self::$converted[$idx] = $codes;
         return $codes;
     }
     
