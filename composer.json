@@ -5,7 +5,7 @@
     "keywords": [
         "barcode", "zeus", "standard25", "interleaved25", "codabar", "code11", "upc", "ean13", "ean8",
         "isbn", "issn", "ismn", "jan", "upca", "upce", "febraban", "boleto", "bloqueto", "convenio",
-        "code39", "msi", "code93"
+        "code39", "msi", "code93", "code128", "ean128", "itf14"
     ],
     "homepage": "https://github.com/rafsalvioni/zeus-barcode",
     "autoload": {
