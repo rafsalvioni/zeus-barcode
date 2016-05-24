@@ -6,6 +6,7 @@ namespace Zeus\Barcode;
  * Implementantion of UCC/EAN-128 barcode standard.
  *
  * @author Rafael M. Salvioni
+ * @see http://www.barcodeisland.com/uccean128.phtml
  */
 class Ean128 extends Code128
 {
