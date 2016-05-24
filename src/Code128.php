@@ -223,16 +223,15 @@ class Code128 extends AbstractBarcode
     }
     
     /**
-     * Calcs the checksum code.
+     * Calcs the checksum code using the array of codes and insert it on
+     * the of array.
      * 
-     * @param string $data
-     * @return int
+     * @param int[] $codes Data's codes
      */
-    protected function calcChecksumCode($data)
+    protected function insertChecksumCode(array &$codes)
     {
-        $codes = $this->convertToCodes($data);
-        $sum   = self::sumDecrescentWeight($codes, \count($codes) - 1, 0) + $codes[0];
-        return ($sum % 103);
+        $sum     = self::sumDecrescentWeight($codes, \count($codes) - 1, 0) + $codes[0];
+        $codes[] = ($sum % 103);
     }
 
     /**
@@ -252,8 +251,8 @@ class Code128 extends AbstractBarcode
      */
     protected function encodeData(Encoder\EncoderInterface &$encoder, $data)
     {
-        $codes   = $this->convertToCodes($data);
-        $codes[] = $this->calcChecksumCode($data);
+        $codes = $this->convertToCodes($data);
+        $this->insertChecksumCode($codes);
         
         foreach ($codes as &$code) {
             $encoded = self::$encodingTable[$code];
