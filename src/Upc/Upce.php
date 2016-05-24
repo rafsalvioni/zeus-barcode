@@ -41,6 +41,41 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
     ];
     
     /**
+     * 
+     * @param string $bin
+     * @return self
+     * @throws UpceException
+     */
+    public static function fromBinary($bin)
+    {
+        if (\preg_match('/^101([01]{42})010101$/', $bin, $match)) {
+            $bin = $match[1];
+            unset($match);
+        }
+        else {
+            throw new UpceException('Invalid binary string!');
+        }
+        
+        $bin  = \str_split($bin, 7);
+        $data = '';
+        $ptab = [];
+        
+        foreach ($bin as &$binChar) {
+            $data .= self::decode($binChar, $ptab, [0, 1]);
+        }
+        
+        $class = \get_called_class();
+        foreach (self::$parityTable as $check => &$parityTab) {
+            for ($i = 0; $i < 2; $i++) {
+                if ($parityTab[$i] == $ptab) {
+                    return new $class($i . $data . $check);
+                }
+            }
+        }
+        throw new UpceException('Invalid binary encode!');
+    }
+
+    /**
      * Returns 8.
      * 
      * @return int
@@ -147,3 +182,9 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
                 ->addBinary('010101');
     }
 }
+
+/**
+ * Class' exception
+ * 
+ */
+class UpceException extends Exception {}

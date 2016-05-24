@@ -33,6 +33,40 @@ class Ean5 extends AbstractBarcode implements FixedLengthInterface
     ];
     
     /**
+     * 
+     * @param string $bin
+     * @return self
+     * @throws Ean5Exception
+     */
+    public static function fromBinary($bin)
+    {
+        if (\preg_match('/^1011([01]{43})$/', $bin, $match)) {
+            $bin = $match[1];
+            unset($match);
+        }
+        else {
+            throw new Ean5Exception('Invalid binary string!');
+        }
+        
+        $bin  = \str_split($bin, 9);
+        $data = '';
+        $ptab = [];
+        
+        foreach ($bin as &$binChar) {
+            $binChar = \substr($binChar, 0, 7);
+            $data   .= self::decode($binChar, $ptab, [0, 1]);
+        }
+        
+        $p       = \array_search($ptab, self::$parityTable);
+        $dataArr = \str_split($data);
+        if ($p !== false && $p == \substr(self::sumAlternateWeight($dataArr, 3, 9), -1)) {
+            $class = \get_called_class();
+            return new $class($data);
+        }
+        throw new Ean5Exception('Invalid binary encode');
+    }
+    
+    /**
      * Returns 5.
      * 
      * @return int
@@ -63,3 +97,9 @@ class Ean5 extends AbstractBarcode implements FixedLengthInterface
         $encoder->addBinary($encoded);
     }
 }
+
+/**
+ * Class' exception
+ * 
+ */
+class Ean5Exception extends Exception {}

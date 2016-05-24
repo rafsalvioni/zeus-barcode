@@ -56,6 +56,37 @@ class Msi extends AbstractBarcode
     }
     
     /**
+     * 
+     * @param string $bin
+     * @return Msi Msi class or subclass
+     * @throws MsiException
+     */
+    public static function fromBinary($bin)
+    {
+        if (\preg_match('/^110((?:[01]{12})+)1001$/', $bin, $match)) {
+            $bin = $match[1];
+            unset($match);
+        }
+        else {
+            throw new MsiException('Invalid binary string!');
+        }
+        
+        $bin  = \str_split($bin, 12);
+        $data = '';
+        
+        foreach ($bin as &$encChar) {
+            $char = \array_search($encChar, self::$encodingTable);
+            if ($char === false) {
+                throw new MsiException('Unknown binary char: ' . $encChar);
+            }
+            $data .= $char;
+        }
+        
+        $class = \get_called_class();
+        return new $class($data);
+    }
+
+    /**
      * Checksum mod10.
      * 
      * @param string $data
@@ -171,3 +202,9 @@ class Msi extends AbstractBarcode
         $encoder->addBinary('1001');
     }
 }
+
+/**
+ * Class' exception
+ * 
+ */
+class MsiException extends Exception {}
