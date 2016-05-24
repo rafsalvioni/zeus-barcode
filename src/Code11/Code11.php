@@ -28,42 +28,6 @@ abstract class Code11 extends AbstractChecksumBarcode
     ];
     
     /**
-     * 
-     * @param string $bin
-     * @return self
-     * @throws Code11Exception
-     */
-    public static function fromBinary($bin)
-    {
-        $data   = '';
-        
-        if (\substr($bin, 0, 8) == '10110010' && \substr($bin, -7) == '1011001') {
-            $bin = \substr($bin, 8, -7);
-        }
-        else {
-            throw new Code11Exception('Invalid binary string!');
-        }
-        
-        while (\preg_match('/^(1[01]{5})/', $bin, $match)) {
-            for ($i = 1; $i >= 0; $i--) {
-                $char = \array_search($match[0] . \substr($bin, 6, $i), self::$encodingTable);
-                if ($char !== false) {
-                    $data .= $char;
-                    $bin   = \substr($bin, 7 + $i);
-                    continue 2;
-                }
-            }
-            throw new Code11Exception('Unknown binary char: ' . $match[0]);
-        }
-        if (!empty($bin)) {
-            throw new Code11Exception('Invalid binary string!');
-        }
-        
-        $class = \get_called_class();
-        return new $class($data);
-    }
-
-    /**
      * Try to return the best Code11 instance for given parameters.
      * 
      * @param string $data
@@ -166,9 +130,3 @@ abstract class Code11 extends AbstractChecksumBarcode
         $encoder->addBinary('1011001');
     }
 }
-
-/**
- * Class' exception
- * 
- */
-class Code11Exception extends Exception {}

@@ -44,40 +44,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
         '8' => [0, 1, 0, 1, 1, 0],
         '9' => [0, 1, 1, 0, 1, 0],
     ];
-
-    /**
-     * 
-     * @param string $bin
-     * @return Ean13 Or its subclasses...
-     * @throws Ean13Exception
-     */
-    public static function fromBinary($bin)
-    {
-        if (\preg_match('/^101([01]{42})01010([01]{42})101$/', $bin, $match)) {
-            $bin = $match[1] . $match[2];
-        }
-        else {
-            throw new Ean13Exception('Invalid binary string!');
-        }
-        
-        $bin  = \str_split($bin, 7);
-        $data = '';
-        $ptab = [];
-        
-        foreach ($bin as $i => &$binChar) {
-            $p     = $i < 6 ? [0, 1] : [2];
-            $data .= self::decode($binChar, $ptab, $p);
-        }
-        
-        $p = \array_search($ptab, self::$parityTable);
-        if ($p !== false) {
-            $data = $p . $data;
-            $class = \get_called_class();
-            return new $class($data);
-        }
-        throw new Ean13Exception('Invalid binary encode');
-    }
-
+    
     /**
      * Separates the first digit
      * 

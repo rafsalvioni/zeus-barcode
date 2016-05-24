@@ -82,49 +82,6 @@ class Code93 extends AbstractChecksumBarcode
     protected static $extData = [];
     
     /**
-     * 
-     * @param string $bin
-     * @return self
-     * @throws Code93Exception
-     */
-    public static function fromBinary($bin)
-    {
-        if (\preg_match('/^101011110((?:[01]{9}){3,})1010111101$/', $bin, $match)) {
-            $bin = $match[1];
-            unset($match);
-        }
-        else {
-            throw new Code93Exception('Invalid binary string!');
-        }
-        
-        $decode = function($bin, &$table)
-        {
-            $char = \array_search($bin, $table);
-            if ($char !== false) {
-                return $char;
-            }
-            throw new Code93Exception('Unknown binary char: ' . $bin);
-        };
-        
-        $bin  = \str_split($bin, 9);
-        $data = $char = '';
-        foreach ($bin as &$binChar) {
-            $char .= $decode($binChar, self::$encodingTable);
-            if (\strlen($char) > 1) {
-                $char = $decode($char, self::$extendedTable);
-            }
-            else if (\ord($char{0}) > 127) {
-                continue;
-            }
-            $data .= $char;
-            $char  = '';
-        }
-        
-        $class = \get_called_class();
-        return new $class($data);
-    }
-
-    /**
      * Prints only real data.
      * 
      * @return string
@@ -220,9 +177,3 @@ class Code93 extends AbstractChecksumBarcode
         $encoder->addBinary('1');
     }
 }
-
-/**
- * Class' exception
- * 
- */
-class Code93Exception extends Exception {}

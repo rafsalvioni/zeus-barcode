@@ -23,36 +23,6 @@ class Postnet extends AbstractChecksumBarcode
         '6' => '01100', '7' => '10001', '8' => '10010',
         '9' => '10100',
     ];
-    
-    /**
-     * 
-     * @param string $bin
-     * @return self
-     * @throws PostnetException
-     */
-    public static function fromBinary($bin)
-    {
-        $data = '';
-        
-        if (\substr($bin, 0, 1) == '1' && \substr($bin, -1) == '1') {
-            $bin = \substr($bin, 1, -1);
-        }
-        else {
-            throw new PostnetException('Invalid binary!');
-        }
-        
-        while (!empty($bin)) {
-            $encChar = \substr_remove($bin, 0, 5);
-            $char    = \array_search($encChar, self::$encodingTable);
-            if ($char === false) {
-                throw new PostnetException('Unknown binary char: ' . $encChar);
-            }
-            $data .= $char;
-        }
-        
-        $class = \get_called_class();
-        return new $class($data);
-    }
 
     /**
      * 
@@ -105,9 +75,3 @@ class Postnet extends AbstractChecksumBarcode
         $encoder->addFull();
     }
 }
-
-/**
- * Class' exception
- * 
- */
-class PostnetException extends Exception {}

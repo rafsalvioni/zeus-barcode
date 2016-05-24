@@ -32,32 +32,6 @@ trait EanHelperTrait
     ];
     
     /**
-     * Helper function to decode binary strings to digits.
-     * 
-     * @param string $binChar Binary string
-     * @param array $ptab Parity table to feed
-     * @param array $ptest Parities to test
-     * @return int
-     * @throws Exception If the binary was unknown
-     */
-    protected static function decode($binChar, array &$ptab, array $ptest)
-    {
-        while (!empty($ptest)) {
-            $p = \array_shift($ptest);
-            for ($i = 0; $i < 10; $i++) {
-                $i = \strval($i);
-                if (self::$encodingTable[$i][$p] == $binChar) {
-                    if ($p < 2) {
-                        $ptab[] = $p;
-                    }
-                    return $i;
-                }
-            }
-        }
-        throw new Exception('Invalid binary char: ' . $binChar);
-    }
-
-    /**
      * 
      * @param string $data
      * @return int

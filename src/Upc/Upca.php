@@ -31,23 +31,6 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
      * @var Ean13
      */
     private $ean13;
-
-    /**
-     * 
-     * @param string $bin
-     * @return self
-     * @throws UpcaException
-     */
-    public static function fromBinary($bin)
-    {
-        try {
-            $ean13 = Ean13::fromBinary($bin);
-            return $ean13->toUpca();
-        }
-        catch (Ean13Exception $ex) {
-            throw new UpcaException($ex->getMessage());
-        }
-    }
     
     /**
      * Builder to create a UPC-A instance.

@@ -29,30 +29,6 @@ class Ean2 extends AbstractBarcode implements FixedLengthInterface
     ];
     
     /**
-     * 
-     * @param string $bin
-     * @return self
-     * @throws Ean2Exception
-     */
-    public static function fromBinary($bin)
-    {
-        if (!\preg_match('/^1011([01]{7})01([01]{7})$/', $bin, $match)) {
-            throw new Ean2Exception('Invalid binary string!');
-        }
-        
-        $ptab = [];
-        $data = self::decode($match[1], $ptab, [0, 1]) .
-                self::decode($match[2], $ptab, [0, 1]);
-        
-        $p = \array_search($ptab, self::$parityTable);
-        if ($p !== false && ($data % 4) == $p) {
-            $class = \get_called_class();
-            return new $class($data);
-        }
-        throw new Ean2Exception('Invalid binary encode');
-    }
-
-    /**
      * Returns 2.
      * 
      * @return int
@@ -80,10 +56,3 @@ class Ean2 extends AbstractBarcode implements FixedLengthInterface
         $encoder->addBinary($encoded);
     }
 }
-
-/**
- * Class' exception
- * 
- */
-class Ean2Exception extends Exception {}
-

@@ -106,85 +106,6 @@ class Code128 extends AbstractBarcode
     ];
     
     /**
-     * 
-     * @param string $bin
-     * @return Code128
-     * @throws Code128Exception
-     */
-    public static function fromBinary($bin)
-    {
-        if (\substr($bin, -13) == '1100011101011' && \strlen($bin) >= 35) {
-            $bin = \substr($bin, 0, -13);
-        }
-        else {
-            throw new Code128Exception('Invalid binary string');
-        }
-        
-        $table  =& self::$encodingTable;
-        
-        $decode = function($bin, &$charTable) use (&$table)
-        {
-            $char = \array_search($bin, $table);
-            if ($char !== false) {
-                return $charTable[$char];
-            }
-            throw new Code128Exception('Unknown binary char: ' . $bin);
-        };
-        
-        $getCharset = function($char)
-        {
-            return \substr($char, -1);
-        };
-        
-        $charset = $decode(\substr_remove($bin, 0, 11), self::$charSets['C']);
-        if (!\preg_match('/^START [ABC]$/', $charset)) {
-            throw new Code128Exception('Unable to determine start charset!');
-        }
-        $charset = $getCharset($charset);
-        
-        $data    = '';
-        $fnc     = false;
-        
-        while (!empty($bin)) {
-            $encChar   = \substr_remove($bin, 0, 11);
-            $charTable =& self::$charSets[$charset];
-            $char      = $decode($encChar, $charTable);
-            
-            if (\strpos($char, 'Code ') === 0) {
-                $charset = $getCharset($char);
-                continue;
-            }
-            else if ($char == 'SHIFT') {
-                if ($charset == 'C') {
-                    throw new Code128Exception('Wrong use for SHIFT');
-                }
-                $charset = $charset == 'A' ? 'B' : 'A';
-                continue;
-            }
-            else if ($char == 'FNC4') {
-                $fnc = !$fnc;
-                continue;
-            }
-            else if (($charset == 'C' && !\is_numeric($char)) || ($charset != 'C' && \strlen($char) > 1)) {
-                throw new Code128Exception("Invalid char for charset $charset: $char");
-            }
-            if ($fnc) {
-                $fnc  = false;
-                $char = \chr(\ord($char) + 128);
-            }
-            
-            $data .= $char;
-        }
-        if ($fnc) {
-            throw new Code128Exception('Bad use for FNC4');
-        }
-        
-        \substr_remove($data, -1);
-        $class = \get_called_class();
-        return new $class($data);
-    }
-
-    /**
      * Cache of converted data
      *
      * @var array
@@ -342,9 +263,3 @@ class Code128 extends AbstractBarcode
         $encoder->addBinary('1100011101011');
     }
 }
-
-/**
- * Class' exception
- * 
- */
-class Code128Exception extends Exception {}
