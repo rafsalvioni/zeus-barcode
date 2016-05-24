@@ -29,6 +29,7 @@ $bcs = [
     (new Zeus\Barcode\Postnet('801221905', false)),
     (new Zeus\Barcode\Code128(utf8_decode("Eça de Queirós"))),
     (new Zeus\Barcode\Ean128('010123456789012815051231')),
+    (new Zeus\Barcode\Itf14('00012345678905')),
 ];
 
 $render = new Zeus\Barcode\Renderer\HtmlRenderer();
