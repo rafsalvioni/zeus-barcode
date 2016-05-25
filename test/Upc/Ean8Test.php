@@ -62,4 +62,49 @@ class Ean8Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getRealData(), '5512345');
         $this->assertEquals($bc->getEncoded()->getBinary(), '1010110001011000100110010010011010101000010101110010011101000100101');
     }
+    
+    /**
+     * @test
+     * @depends validationTest
+     */
+    public function fieldsTest()
+    {
+        $bc = new Ean8('7501031', false);
+        $this->assertEquals($bc->getSystemCode(), '750');
+        $this->assertEquals($bc->getItemCode(), '1031');
+        
+        $bc = new Ean8('9900103', false);
+        $this->assertEquals($bc->getSystemCode(), '99');
+        $this->assertEquals($bc->getItemCode(), '00103');
+    }
+    
+    /**
+     * @test
+     * @depends fieldsTest
+     */
+    public function withTest()
+    {
+        $bc = new Ean8('7501031', false);
+        
+        $bc = $bc->withSystemCode('99');
+        $this->assertEquals($bc->getSystemCode(), '99');
+        $bc = $bc->withItemCode('104');
+        $this->assertEquals($bc->getItemCode(), '00104');
+        
+        $bc = $bc->withSystemCode('750');
+        $this->assertEquals($bc->getSystemCode(), '750');
+        $bc = $bc->withItemCode('154');
+        $this->assertEquals($bc->getItemCode(), '0154');
+    }
+    
+    /**
+     * @test
+     * @depends withTest
+     * @expectedException \Zeus\Barcode\Upc\Ean8Exception
+     */
+    public function systemCodeErrorTest()
+    {
+        $bc = new Ean8('9911031', false);
+        $bc = $bc->withSystemCode('750');
+    }
 }
