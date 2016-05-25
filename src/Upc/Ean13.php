@@ -23,6 +23,17 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
      * 
      */
     const PRODUCT = 7;
+    /**
+     * System digits field
+     * 
+     */
+    const SYSTEM  = 0;
+    /**
+     * Stores the lenght of system digits
+     * 
+     * @var int
+     */
+    protected $systemLength;
 
     /**
      * Parity table
@@ -46,6 +57,47 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     ];
     
     /**
+     * Returns the system digit of a Ean13 data.
+     * 
+     * @param string $data
+     * @return string
+     */
+    protected static function getSystemDigits($data)
+    {
+        if (\preg_match('/^([024]\d|1[0-3]|3[0-7]|5[047]|64|7[036]|8[0-47]|9[01349])/', $data, $match)) {
+            return $match[1];
+        }
+        return \substr($data, 0, 3);
+    }
+
+    /**
+     * Create a instance using given parameters.
+     * 
+     * @param string|int $systemCode
+     * @param string|int $mfgCode
+     * @param string|int $prodCode
+     * @return Ean13
+     */
+    public static function builder($systemCode, $mfgCode, $prodCode)
+    {
+        $me = new self('', false);
+        return $me->withSystemCode($systemCode)
+                  ->withManufacurerCode($mfgCode)
+                  ->withProductCode($prodCode);
+    }
+
+    /**
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     */
+    public function __construct($data, $hasChecksum = true)
+    {
+        parent::__construct($data, $hasChecksum);
+        $this->systemLength = \strlen(self::getSystemDigits($this->data));
+    }
+
+        /**
      * Separates the first digit
      * 
      * @return string
@@ -66,6 +118,69 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
         return 13;
     }
     
+    /**
+     * Returns the Ean13 system code.
+     * 
+     * @return string
+     */
+    public function getSystemCode()
+    {
+        return $this->getDataPart(self::SYSTEM, $this->systemLength);
+    }
+    
+    /**
+     * Creates a new instance using another system code.
+     * 
+     * @param string|int $code
+     * @return Ean13
+     * @throws Ean13Exception If $code can't be changed
+     */
+    public function withSystemCode($code)
+    {
+        $mfg = $this->getManufacturerCode();
+        $n   = \strlen($code);
+        
+        if ($n == $this->systemLength) {
+            $len = $n;
+        }
+        else if ($n > $this->systemLength && $mfg{0} == '0') {
+            $len = 3;
+        }
+        else if ($n < $this->systemLength) {
+            $len   = 3;
+            $code .= '0';
+        }
+        else {
+            throw new Ean13Exception("Unable to define \"$code\" as system code");
+        }
+        $data = $this->withDataPart($code, self::SYSTEM, $len);
+        return new self($data, false);
+    }
+    
+    /**
+     * Returns the manufacturer code.
+     * 
+     * @return string
+     */
+    public function getManufacturerCode()
+    {
+        $len = $this->systemLength == 2 ? 5 : 4;
+        return $this->getDataPart($this->systemLength, $len);
+    }
+    
+    /**
+     * Creates a new instance using another system code.
+     * 
+     * @param string|int $code
+     * @return Ean13
+     */
+    public function withManufacurerCode($code)
+    {
+        $len  = $this->systemLength == 2 ? 5 : 4;
+        $data = $this->withDataPart($code, $this->systemLength, $len);
+        return new self($data, false);
+    }
+
     /**
      * Returns the product code.
      * 

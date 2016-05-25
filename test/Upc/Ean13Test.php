@@ -77,4 +77,53 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getRealData(), '750103131130');
         $this->assertEquals($bc->getEncoded()->getBinary(), '10101100010100111001100101001110111101011001101010100001011001101100110100001011100101110100101');
     }
+    
+    /**
+     * @test
+     * @depends validationTest
+     */
+    public function fieldsTest()
+    {
+        $bc = new Ean13('750103131130', false);
+        $this->assertEquals($bc->getSystemCode(), '750');
+        $this->assertEquals($bc->getManufacturerCode(), '1031');
+        $this->assertEquals($bc->getProductCode(), '31130');
+        
+        $bc = new Ean13('840010313113', false);
+        $this->assertEquals($bc->getSystemCode(), '84');
+        $this->assertEquals($bc->getManufacturerCode(), '00103');
+        $this->assertEquals($bc->getProductCode(), '13113');
+    }
+    
+    /**
+     * @test
+     * @depends fieldsTest
+     */
+    public function withTest()
+    {
+        $bc = new Ean13('750103131130', false);
+        
+        $bc = $bc->withSystemCode('84');
+        $this->assertEquals($bc->getSystemCode(), '84');
+        $bc = $bc->withManufacurerCode('104');
+        $this->assertEquals($bc->getManufacturerCode(), '00104');
+        $this->assertEquals($bc->getProductCode(), '31130');
+        
+        $bc = $bc->withSystemCode('750');
+        $this->assertEquals($bc->getSystemCode(), '750');
+        $bc = $bc->withManufacurerCode('154');
+        $this->assertEquals($bc->getManufacturerCode(), '0154');
+        $this->assertEquals($bc->getProductCode(), '31130');
+    }
+    
+    /**
+     * @test
+     * @depends withTest
+     * @expectedException \Zeus\Barcode\Upc\Ean13Exception
+     */
+    public function systemCodeErrorTest()
+    {
+        $bc = new Ean13('841103131130', false);
+        $bc = $bc->withSystemCode('750');
+    }
 }
