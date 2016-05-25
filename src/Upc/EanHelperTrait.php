@@ -52,10 +52,10 @@ trait EanHelperTrait
      */
     protected function calcChecksum($data)
     {
-        $data = \str_split($data);
-        $sum  = self::sumAlternateWeight($data, 3, 1);
-        $d    = 10 - ($sum % 10);
-        return $d == 10 ? 0 : $d;
+        $data  = \str_split($data);
+        $sum   = self::sumAlternateWeight($data, 3, 1);
+        $check = (10 - ($sum % 10)) % 10;
+        return $check;
     }
     
     /**

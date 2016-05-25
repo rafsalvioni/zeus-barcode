@@ -63,12 +63,11 @@ class Msi extends AbstractBarcode
      */
     protected static function mod10($data)
     {
-        $data = \str_split($data);
-        $last = \array_pop($data) * 2;
-        $sum  = \array_sum($data) + $last;
-        $mod  = ($sum % 10);
-        $cd   = 10 - $mod;
-        return $cd == 10 ? 0 : $cd;
+        $data  = \str_split($data);
+        $last  = \array_pop($data) * 2;
+        $sum   = \array_sum($data) + $last;
+        $check = (10 - ($sum % 10)) % 10;
+        return $check;
     }
 
     /**
@@ -79,10 +78,10 @@ class Msi extends AbstractBarcode
      */
     protected static function mod11($data)
     {
-        $data = \str_split($data);
-        $sum  = self::sumCrescentWeight($data, 2);
-        $cd   = 11 - ($sum % 11);
-        return $cd == 11 ? 0 : $cd;
+        $data  = \str_split($data);
+        $sum   = self::sumCrescentWeight($data, 2);
+        $check = (11 - ($sum % 11)) % 11;
+        return $check;
     }
     
     /**

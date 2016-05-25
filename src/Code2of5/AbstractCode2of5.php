@@ -44,10 +44,10 @@ abstract class AbstractCode2of5 extends AbstractChecksumBarcode implements
      */
     protected function calcChecksum($data)
     {
-        $data = \str_split($data);
-        $sum  = self::sumAlternateWeight($data, 3, 1);
-        $dv   = 10 - ($sum % 10);
-        return $dv == 10 ? 0 : $dv;
+        $data  = \str_split($data);
+        $sum   = self::sumAlternateWeight($data, 3, 1);
+        $check = (10 - ($sum % 10)) % 10;
+        return $check;
     }
 
     /**

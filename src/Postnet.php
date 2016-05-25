@@ -31,10 +31,9 @@ class Postnet extends AbstractChecksumBarcode
      */
     protected function calcChecksum($data)
     {
-        $data  = \str_split($data);
-        $sum   = self::sumAlternateWeight($data, 1, 1);
-        $check = 10 - ($sum % 10);
-        return $check == 10 ? 0 : $check;
+        $sum   = \array_sum(\str_split($data));
+        $check = (10 - ($sum % 10)) % 10;
+        return $check;
     }
 
     /**
