@@ -11,6 +11,12 @@ namespace Zeus\Barcode\Upc;
 class ISMN extends Ean13
 {
     /**
+     * EAN-13 ISBN system digits
+     * 
+     */
+    const SYSTEM = '979';
+    
+    /**
      * ISMN's barcodes is a EAN-13 beggining with 979.
      * 
      * @param string $data
@@ -18,7 +24,7 @@ class ISMN extends Ean13
      */
     protected function checkData($data)
     {
-        if (\strpos($data, '979') === 0) {
+        if (\strpos($data, self::SYSTEM) === 0) {
             return parent::checkData($data);
         }
         return false;

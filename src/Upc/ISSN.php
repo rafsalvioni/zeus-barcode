@@ -11,6 +11,12 @@ namespace Zeus\Barcode\Upc;
 class ISSN extends Ean13
 {
     /**
+     * EAN-13 ISSN system digits
+     * 
+     */
+    const SYSTEM = '977';
+
+    /**
      * Create a instance using a ISSN number.
      * 
      * ISSN has a format like be XXXX-XXXX
@@ -21,7 +27,7 @@ class ISSN extends Ean13
     public static function fromISSN($issn)
     {
         $issn = \preg_replace('/[^\d]/', '', $issn);
-        $issn = '977' . \substr($issn, 0, -1) . '00';
+        $issn = self::SYSTEM . \substr($issn, 0, -1) . '00';
         return new self($issn, false);
     }
 
@@ -33,7 +39,7 @@ class ISSN extends Ean13
      */
     protected function checkData($data)
     {
-        if (\strpos($data, '977') === 0) {
+        if (\strpos($data, self::SYSTEM) === 0) {
             return parent::checkData($data);
         }
         return false;

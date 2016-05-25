@@ -11,6 +11,12 @@ namespace Zeus\Barcode\Upc;
 class ISBN extends Ean13
 {
     /**
+     * EAN-13 ISBN system digits
+     * 
+     */
+    const SYSTEM = '978';
+    
+    /**
      * Create a barcode instance from a ISBN code.
      * 
      * @param string $isbn
@@ -20,7 +26,7 @@ class ISBN extends Ean13
     {
         $isbn = \preg_replace('/[^\d]/', '', $isbn);
         $isbn = \substr($isbn, 0, -1);
-        return new self('978' . $isbn, false);
+        return new self(self::SYSTEM . $isbn, false);
     }
 
     /**
@@ -31,7 +37,7 @@ class ISBN extends Ean13
      */
     protected function checkData($data)
     {
-        if (\strpos($data, '978') === 0) {
+        if (\strpos($data, self::SYSTEM) === 0) {
             return parent::checkData($data);
         }
         return false;

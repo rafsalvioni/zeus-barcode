@@ -13,6 +13,12 @@ namespace Zeus\Barcode\Upc;
 class JAN extends Ean13
 {
     /**
+     * EAN-13 JAN system digits
+     * 
+     */
+    const SYSTEM = '49';
+    
+    /**
      * JAN's barcodes is a EAN-13 beggining with 49.
      * 
      * @param string $data
@@ -20,7 +26,7 @@ class JAN extends Ean13
      */
     protected function checkData($data)
     {
-        if (\strpos($data, '49') === 0) {
+        if (\strpos($data, self::SYSTEM) === 0) {
             return parent::checkData($data);
         }
         return false;
