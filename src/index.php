@@ -3,7 +3,7 @@
 require 'vendor/autoload.php';
 
 $bcs = [
-    new Zeus\Barcode\Febraban\Bloqueto('03399.72101 20500.000110 04833.601018 4 67000000039211'),
+    /*new Zeus\Barcode\Febraban\Bloqueto('03399.72101 20500.000110 04833.601018 4 67000000039211'),
     new \Zeus\Barcode\Febraban\Convenio('83600000000-7 83970048100-6 20047123681-6 00100993938-8'),
     new \Zeus\Barcode\Code2of5\Standard('12345670'),
     new \Zeus\Barcode\Code2of5\Interleaved('12345670'),
@@ -26,22 +26,21 @@ $bcs = [
     (new Zeus\Barcode\Code39\Code39Ext('BARCODE1%')),
     (new Zeus\Barcode\Code39\Code39ExtMod43('$%&b@', false)),
     (new Zeus\Barcode\Code93('TEST93', false)),
-    (new Zeus\Barcode\Postnet('801221905', false)),
+    (new Zeus\Barcode\Postnet('801221905', false)),*/
     (new Zeus\Barcode\Code128("\xab\xac\x00")),
-    (new Zeus\Barcode\Ean128('010123456789012815051231')),
-    (new Zeus\Barcode\Itf14('00012345678905')),
+    //(new Zeus\Barcode\Ean128('010123456789012815051231')),
+    //(new Zeus\Barcode\Itf14('00012345678905')),
 ];
 
-$render = new Zeus\Barcode\Renderer\HtmlRenderer(2, 60);
+$render = new Zeus\Barcode\Renderer\HtmlRenderer();
+$render->setTextPosition(\Zeus\Barcode\Renderer\RendererInterface::TEXT_POSITION_BOTTOM);
 
 foreach ($bcs as &$bc) {
-    echo "<p style=\"clear:both\">###################" . get_class($bc) . "###################</p>";
+    echo "<p>" . get_class($bc) . "</p>";
     echo "<p>" . $bc->getEncoded()->getBinary() . "</p>";
     if ($bc instanceof \Zeus\Barcode\ChecksumInterface) {
         echo "<p>Checksum: " . $bc->getChecksum() . "</p>";
     }
-    $bc->render($render, [
-        'text' => 'bottom'
-    ])->show() . '<br><br>';
+    echo $bc->render($render)->getResource() . '<br><br>';
 }
 

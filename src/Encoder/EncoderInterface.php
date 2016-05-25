@@ -19,9 +19,10 @@ interface EncoderInterface extends \Iterator, \Countable
      * Adds a binary string to encode.
      * 
      * @param string $bin
+     * @param number $height
      * @return self
      */
-    public function addBinary($bin);
+    public function addBinary($bin, $height = 1);
     
     /**
      * Returns the binary representation from encoded bars.
@@ -29,6 +30,13 @@ interface EncoderInterface extends \Iterator, \Countable
      * @return string
      */
     public function getBinary();
+    
+    /**
+     * Returns the height factor from this bar set.
+     * 
+     * @return number
+     */
+    public function getHeightFactor();
     
     /**
      * Returns the width factor from this bar set.

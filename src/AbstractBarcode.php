@@ -37,38 +37,16 @@ abstract class AbstractBarcode implements BarcodeInterface
     /**
      * 
      * @param Renderer\RendererInterface $renderer
-     * @param array $options
      * @return Renderer\RendererInterface
      */
-    public function render(Renderer\RendererInterface $renderer, array $options = [])
+    public function render(Renderer\RendererInterface $renderer)
     {
+        $renderer->resetDraw();
         $this->getEncoded();
-        
-        $text     = \array_get($options, 'text', false);
-        $textSize = \array_get($options, 'font-size', 16);
-        $ydiff    = 0;
-        
-        if ($text) {
-            $height = 1.5;
-            if ($text == 'top') {
-                $ydiff = 0.5;
-            }
-        }
-        else {
-            $height = 1;
-        }
-        
-        $renderer->startResource($this->encoded->getWidthFactor(), $height);
+        $renderer->setText($this->getPrintableData());
         
         foreach ($this->encoded as $bar) {
-            $renderer->drawBar($bar->b, $bar->w, $bar->h, $bar->y + $ydiff);
-        }
-        
-        if ($text == 'top') {
-            $renderer->writeText($this->getPrintableData(), $textSize);
-        }
-        else {
-            $renderer->writeText($this->getPrintableData(), $textSize, 1.1);
+            $renderer->drawBar($bar->b, $bar->w, $bar->h);
         }
         
         return $renderer;

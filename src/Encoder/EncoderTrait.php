@@ -28,6 +28,12 @@ trait EncoderTrait
      */
     protected $width  = 0;
     /**
+     * Height factor
+     * 
+     * @var number
+     */
+    protected $height = 0;
+    /**
      * Index of last bar added
      * 
      * @var int
@@ -43,14 +49,15 @@ trait EncoderTrait
     /**
      * 
      * @param string $bin
+     * @param number $height
      * @return self
      */
-    public function addBinary($bin)
+    public function addBinary($bin, $height = 1)
     {
         while (\preg_match('/^(0+|1+)/', $bin, $match)) {
             $width = \strlen($match[1]);
             $bin   = \substr($bin, $width);
-            $this->processBinary($match[1]{0}, $width);
+            $this->processBinary($match[1]{0}, $width, $height);
         }
         return $this;
     }
@@ -81,6 +88,15 @@ trait EncoderTrait
     public function getBinary()
     {
         return $this->binary;
+    }
+
+    /**
+     * 
+     * @return number
+     */
+    public function getHeightFactor()
+    {
+        return $this->height;
     }
 
     /**
@@ -150,11 +166,10 @@ trait EncoderTrait
      * @param string $bin 0 or 1
      * @param number $width
      * @param number $height
-     * @param number $y Vertical position
      * @param bool $registerBin Register as binary data??
      * @return self
      */
-    protected function append($bin, $width, $height, $y = 0, $registerBin = true)
+    protected function append($bin, $width, $height, $registerBin = true)
     {
         if ($this->closed || $width <= 0 || $height <= 0) {
             return $this;
@@ -164,13 +179,12 @@ trait EncoderTrait
         $bar    = [
             'b' => $bin == '1',
             'w' => $width,
-            'h' => $height,
-            'y' => $y
+            'h' => $height
         ];
         
         if ($this->last >= 0) {
             $last =& $this->bars[$this->last];
-            if ($bar['b'] && $last['b'] && $bar['h'] == $last['h'] && $bar['y'] == $bar['y']) {
+            if ($bar['b'] && $last['b'] && $bar['h'] == $last['h']) {
                 $last['w'] += $bar['w'];
                 $append = false;
             }
@@ -178,6 +192,7 @@ trait EncoderTrait
         
         if ($append) {
             $this->bars[] = $bar;
+            $this->height = \max($this->height, $bar['h']);
             $this->last++;
         }
         $this->width += $bar['w'];
@@ -194,7 +209,8 @@ trait EncoderTrait
      * 
      * @param string $bin 0 or 1
      * @param number $width Length of 0 or 1 finded
+     * @param number $height Given barcode
      * @return self
      */
-    abstract protected function processBinary($bin, $width);
+    abstract protected function processBinary($bin, $width, $height);
 }

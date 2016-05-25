@@ -121,11 +121,11 @@ class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
             $encoded .= self::$encodingTable[$data{$i}][$parity];
         }
         
-        $encoder->addBinary('101')
+        $encoder->addBinary('101', 1.3)
                 ->addBinary(\substr($encoded, 0, 28))
-                ->addBinary('01010')
+                ->addBinary('01010', 1.3)
                 ->addBinary(\substr($encoded, 28))
-                ->addBinary('101');
+                ->addBinary('101', 1.3);
     }
 }
 

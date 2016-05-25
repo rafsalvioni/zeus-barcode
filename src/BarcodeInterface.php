@@ -67,8 +67,7 @@ interface BarcodeInterface
      * Returns the own renderer.
      * 
      * @param Renderer\RendererInterface $renderer
-     * @param array $options
      * @return Renderer\RendererInterface
      */
-    public function render(Renderer\RendererInterface $renderer, array $options = []);
+    public function render(Renderer\RendererInterface $renderer);
 }
