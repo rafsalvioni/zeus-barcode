@@ -166,10 +166,11 @@ trait EncoderTrait
      * @param string $bin 0 or 1
      * @param number $width
      * @param number $height
-     * @param bool $registerBin Register as binary data??
+     * @param number $posY
+     * @param bool $isData Sets if the bin is part of barcode data
      * @return self
      */
-    protected function append($bin, $width, $height, $registerBin = true)
+    protected function append($bin, $width = 1, $height = 1, $posY = 0, $isData = true)
     {
         if ($this->closed || $width <= 0 || $height <= 0) {
             return $this;
@@ -178,13 +179,14 @@ trait EncoderTrait
         $append = true;
         $bar    = [
             'b' => $bin == '1',
-            'w' => $width,
-            'h' => $height
+            'w' => (int)$width,
+            'h' => (float)$height,
+            'y' => (float)$posY
         ];
         
         if ($this->last >= 0) {
             $last =& $this->bars[$this->last];
-            if ($bar['b'] && $last['b'] && $bar['h'] == $last['h']) {
+            if ($bar['b'] && $last['b'] && $bar['h'] == $last['h'] && $bar['y'] == $last['y']) {
                 $last['w'] += $bar['w'];
                 $append = false;
             }
@@ -197,7 +199,7 @@ trait EncoderTrait
         }
         $this->width += $bar['w'];
         
-        if ($registerBin) {
+        if ($isData) {
             $this->binary .= \str_repeat($bin, $width);
         }
         

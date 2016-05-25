@@ -20,7 +20,7 @@ class BarSpace extends AbstractEncoder
      */
     public function addBar($width = 1, $height = 1)
     {
-        return $this->append('1', (int)$width, $height, true);
+        return $this->append('1', (int)$width, $height);
     }
     
     /**
@@ -31,7 +31,7 @@ class BarSpace extends AbstractEncoder
      */
     public function addSpace($width = 1)
     {
-        return $this->append('0', (int)$width, 1, true);
+        return $this->append('0', (int)$width);
     }
 
     /**
