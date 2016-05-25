@@ -32,6 +32,20 @@ trait EanHelperTrait
     ];
     
     /**
+     * Returns the system digit of a Ean13 data.
+     * 
+     * @param string $data
+     * @return string
+     */
+    protected static function getSystemDigits($data)
+    {
+        if (\strpos($data, '99') === 0) {
+            return '99';
+        }
+        return \substr($data, 0, 3);
+    }
+
+    /**
      * 
      * @param string $data
      * @return int

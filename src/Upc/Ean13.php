@@ -57,20 +57,6 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     ];
     
     /**
-     * Returns the system digit of a Ean13 data.
-     * 
-     * @param string $data
-     * @return string
-     */
-    protected static function getSystemDigits($data)
-    {
-        if (\preg_match('/^([024]\d|1[0-3]|3[0-7]|5[047]|64|7[036]|8[0-47]|9[01349])/', $data, $match)) {
-            return $match[1];
-        }
-        return \substr($data, 0, 3);
-    }
-
-    /**
      * Create a instance using given parameters.
      * 
      * @param string|int $systemCode
@@ -131,7 +117,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     /**
      * Creates a new instance using another system code.
      * 
-     * @param string|int $code
+     * @param string|int $code Code, 1-3 digits
      * @return Ean13
      * @throws Ean13Exception If $code can't be changed
      */
@@ -171,7 +157,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     /**
      * Creates a new instance using another system code.
      * 
-     * @param string|int $code
+     * @param string|int $code Code, 1-5 digits (depending of system code)
      * @return Ean13
      */
     public function withManufacurerCode($code)
@@ -194,7 +180,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     /**
      * Creates a new instance with another product code.
      * 
-     * @param string|int $code
+     * @param string|int $code Code, 1-5 digits
      * @return Ean13
      */
     public function withProductCode($code)
