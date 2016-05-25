@@ -3,31 +3,66 @@
 namespace Zeus\Barcode\Renderer;
 
 /**
- *
+ * Identifies a barcode renderer.
+ * 
  * @author Rafael M. Salvioni
  */
 interface RendererInterface
 {
-    const TEXT_POSITION_TOP    = 'top';
-    const TEXT_POSITION_BOTTOM = 'bottom';
-    const TEXT_POSITION_NONE   = '';
-    const TEXT_ALIGN_LEFT      = 'left';
-    const TEXT_ALIGN_RIGHT     = 'right';
-    const TEXT_ALIGN_CENTER    = 'center';
-    
-    public function resetDraw();
+    /**
+     * Notifies the renderer that a draw will start.
+     * 
+     * @param int $width Width of barcode draw
+     * @param int $height Height of barcode draw
+     * @return self
+     */
+    public function startResource($width, $height = 1);
 
-    public function drawBar($black, $width = 1, $height = 1);
+    /**
+     * Draws a bar/space.
+     * 
+     * @param bool $bar Is a bar?
+     * @param number $width Bar's width factor
+     * @param number $height Bar's height factor
+     * @param number $posy Vertical position factor
+     * @return self
+     */
+    public function drawBar($bar, $width = 1, $height = 1, $posy = 0);
     
-    public function setText($text);
+    /**
+     * Writes a text.
+     * 
+     * @param string $text
+     * @param int $size
+     * @param number $posy Vertical position factor
+     * @return self
+     */
+    public function writeText($text, $size = 1, $posy = 0);
     
-    public function setTextPosition($position);
+    /**
+     * Returns the bar width used by renderer.
+     * 
+     * @return int 
+     */
+    public function getBarWidth();
     
-    public function setTextAlign($align);
-    
-    public function setBarWidth($width);
-    
-    public function setBarHeight($height);
+    /**
+     * Returns the bar height used by renderer.
+     * 
+     * @return int
+     */
+    public function getBarHeight();
 
+    /**
+     * Returns the draw's resource.
+     * 
+     * @return mixed
+     */
     public function getResource();
+    
+    /**
+     * Shows the barcode's draw
+     * 
+     */
+    public function show();
 }

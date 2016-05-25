@@ -21,8 +21,8 @@ class HalfBar extends AbstractEncoder
     public function addFull($width = 1)
     {
         for ($i = 0; $i < $width; $i++) {
-            $this->append('1', 1, 1, true);
-            $this->append('0', 1, 1, false);
+            $this->append('1', 1, 1, 0, true);
+            $this->append('0', 1, 1, 0, false);
         }
         return $this;
     }
@@ -36,8 +36,8 @@ class HalfBar extends AbstractEncoder
     public function addHalf($width = 1)
     {
         for ($i = 0; $i < $width; $i++) {
-            $this->append('1', 1, 0.5, false);
-            $this->append('0', 1, 1, true);
+            $this->append('1', 1, 0.5, 0.5, false);
+            $this->append('0', 1, 1, 0, true);
         }
         return $this;
     }
@@ -60,10 +60,9 @@ class HalfBar extends AbstractEncoder
      * 
      * @param string $bin
      * @param int $width
-     * @param number $height
      * @return HalfBar
      */
-    protected function processBinary($bin, $width, $height)
+    protected function processBinary($bin, $width)
     {
         if ($bin == '1') {
             $this->addFull($width);

@@ -9,47 +9,22 @@ namespace Zeus\Barcode\Renderer;
  */
 trait RendererTrait
 {
-    protected $bars      = [];
-    protected $text;
-    protected $textAlign = RendererInterface::TEXT_ALIGN_CENTER;
-    protected $textPosition;
-    protected $barHeight = 60;
-    protected $barWidth  = 2;
-
-    public function resetDraw()
+    protected $barHeight;
+    protected $barWidth;
+    
+    public function __construct($barWidth = 2, $barHeight = 60)
     {
-        $this->bars = [];
-        $this->text = null;
-        return $this;
+        $this->barHeight = $barHeight;
+        $this->barWidth  = $barWidth;
     }
 
-    public function setText($text)
+    public function getBarWidth()
     {
-        $this->text = (string)$text;
-        return $this;
-    }
-
-    public function setTextAlign($align)
-    {
-        $this->textAlign = (string)$align;
-        return $this;
-    }
-
-    public function setTextPosition($position)
-    {
-        $this->textPosition = (string)$position;
-        return $this;
+        return $this->barWidth;
     }
     
-    public function setBarWidth($width)
+    public function getBarHeight()
     {
-        $this->barWidth = (int)$width;
-        return $this;
-    }
-    
-    public function setBarHeight($height)
-    {
-        $this->barHeight = (int)$height;
-        return $this;
+        return $this->barHeight;
     }
 }

@@ -229,11 +229,11 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
             $encoded .= self::$encodingTable[$data{$i}][$parity];
         }
         
-        $encoder->addBinary('101', 1.3)
+        $encoder->addBinary('101')
                 ->addBinary(\substr($encoded, 0, 42))
-                ->addBinary('01010', 1.3)
+                ->addBinary('01010')
                 ->addBinary(\substr($encoded, 42))
-                ->addBinary('101', 1.3);
+                ->addBinary('101');
     }
 }
 
