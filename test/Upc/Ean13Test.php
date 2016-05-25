@@ -89,8 +89,8 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
         $this->assertEquals($bc->getManufacturerCode(), '1031');
         $this->assertEquals($bc->getProductCode(), '31130');
         
-        $bc = new Ean13('840010313113', false);
-        $this->assertEquals($bc->getSystemCode(), '84');
+        $bc = new Ean13('990010313113', false);
+        $this->assertEquals($bc->getSystemCode(), '99');
         $this->assertEquals($bc->getManufacturerCode(), '00103');
         $this->assertEquals($bc->getProductCode(), '13113');
     }
@@ -103,8 +103,8 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
     {
         $bc = new Ean13('750103131130', false);
         
-        $bc = $bc->withSystemCode('84');
-        $this->assertEquals($bc->getSystemCode(), '84');
+        $bc = $bc->withSystemCode('99');
+        $this->assertEquals($bc->getSystemCode(), '99');
         $bc = $bc->withManufacurerCode('104');
         $this->assertEquals($bc->getManufacturerCode(), '00104');
         $this->assertEquals($bc->getProductCode(), '31130');
@@ -123,7 +123,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
      */
     public function systemCodeErrorTest()
     {
-        $bc = new Ean13('841103131130', false);
+        $bc = new Ean13('991103131130', false);
         $bc = $bc->withSystemCode('750');
     }
 }
