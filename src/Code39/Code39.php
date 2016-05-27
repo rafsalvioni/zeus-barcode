@@ -93,16 +93,6 @@ class Code39 extends AbstractBarcode implements TwoWidthInterface
     }
 
     /**
-     * 
-     * @param string $data
-     */
-    public function __construct($data)
-    {
-        parent::__construct($data);
-        $this->setWideWidth(2);
-    }
-    
-    /**
      * Return the current barcode to its version with checksum.
      * 
      * @return Code39Mod43|Code39ExtMod43

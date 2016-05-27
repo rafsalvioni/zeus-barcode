@@ -55,9 +55,9 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
      * 
      * @return string
      */
-    public function getPrintableData()
+    public function getDataToDisplay()
     {
-        $data = parent::getPrintableData();
+        $data = parent::getDataToDisplay();
         return $data{0} . ' ' . \substr($data, 1, -1) . ' ' . \substr($data, -1);
     }
 

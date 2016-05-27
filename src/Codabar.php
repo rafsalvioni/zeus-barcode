@@ -63,9 +63,9 @@ class Codabar extends AbstractBarcode
      * 
      * @return string
      */
-    public function getPrintableData()
+    public function getDataToDisplay()
     {
-        $string = parent::getPrintableData();
+        $string = parent::getDataToDisplay();
         return $this->start . $string . $this->stop;
     }
 

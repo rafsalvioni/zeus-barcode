@@ -32,26 +32,9 @@ abstract class AbstractBarcode implements BarcodeInterface
             throw $this->createException('Invalid "%class%" barcode data chars or length!');
         }
         $this->data = $data;
+        $this->setDefaultOptions();
     }
 
-    /**
-     * 
-     * @param Renderer\RendererInterface $renderer
-     * @return Renderer\RendererInterface
-     */
-    public function render(Renderer\RendererInterface $renderer)
-    {
-        $renderer->resetDraw();
-        $this->getEncoded();
-        $renderer->setText($this->getPrintableData());
-        
-        foreach ($this->encoded as $bar) {
-            $renderer->drawBar($bar->b, $bar->w, $bar->h);
-        }
-        
-        return $renderer;
-    }
-    
     /**
      * Serializes only $data property.
      * 
@@ -74,5 +57,13 @@ abstract class AbstractBarcode implements BarcodeInterface
         $class = \get_class($this);
         $class = \str_replace(__NAMESPACE__ . '\\', '', $class);
         return new Exception(\str_replace('%class%', $class, $message));
+    }
+    
+    /**
+     * Handler to set default options on construct.
+     * 
+     */
+    protected function setDefaultOptions()
+    {
     }
 }

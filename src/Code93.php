@@ -86,7 +86,7 @@ class Code93 extends AbstractChecksumBarcode
      * 
      * @return string
      */
-    public function getPrintableData()
+    public function getDataToDisplay()
     {
         return $this->getRealData();
     }

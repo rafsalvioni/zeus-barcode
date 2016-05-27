@@ -54,6 +54,15 @@ class Postnet extends AbstractChecksumBarcode
     {
         return -1;
     }
+    
+    /**
+     * 
+     */
+    protected function setDefaultOptions()
+    {
+        $this->setOption('barwidth', 2);
+        $this->setOption('barheight', 30);
+    }
 
     /**
      * 

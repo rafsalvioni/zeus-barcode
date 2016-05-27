@@ -2,54 +2,88 @@
 
 namespace Zeus\Barcode\Renderer;
 
+use Zeus\Barcode\BarcodeInterface;
+
 /**
- * Description of RendererTrait
+ * Trait to implement default methods and features of RendererInterface.
  *
- * @author rafaelsalvioni
+ * @author Rafael M. Salvioni
  */
 trait RendererTrait
 {
-    protected $bars      = [];
-    protected $text;
-    protected $textAlign = RendererInterface::TEXT_ALIGN_CENTER;
-    protected $textPosition;
-    protected $barHeight = 60;
-    protected $barWidth  = 2;
+    /**
+     * Draw resource
+     * 
+     * @var mixed
+     */
+    protected $resource;
+    /**
+     * Barcode
+     * 
+     * @var BarcodeInterface
+     */
+    protected $barcode;
 
-    public function resetDraw()
+    /**
+     * 
+     * @return mixed
+     */
+    public function getResource()
     {
-        $this->bars = [];
-        $this->text = null;
-        return $this;
+        return $this->resource;
     }
 
-    public function setText($text)
+    /**
+     * Sets the barcode and call draw() method.
+     * 
+     * @param BarcodeInterface $barcode
+     * @return self
+     */
+    public function setBarcode(BarcodeInterface $barcode)
     {
-        $this->text = (string)$text;
-        return $this;
-    }
-
-    public function setTextAlign($align)
-    {
-        $this->textAlign = (string)$align;
-        return $this;
-    }
-
-    public function setTextPosition($position)
-    {
-        $this->textPosition = (string)$position;
+        if ($this->barcode !== $barcode) {
+            $this->barcode = $barcode;
+            $this->draw();
+        }
         return $this;
     }
     
-    public function setBarWidth($width)
+    /**
+     * Draws the barcode to resource
+     * 
+     */
+    abstract protected function draw();
+    
+    /**
+     * Calculates the barcode width.
+     * 
+     * @return int
+     */
+    protected function calcBarcodeWidth()
     {
-        $this->barWidth = (int)$width;
-        return $this;
+        $barcode =& $this->barcode;
+        $width = $barcode->offsetLeft   +
+                 $barcode->offsetRight  +
+                 ($barcode->border * 2) +
+                 $barcode->getWidth()   +
+                 ($barcode->quietZone * 2);
+        
+        return (int)$width;
     }
     
-    public function setBarHeight($height)
+    /**
+     * Calculates the barcode height.
+     * 
+     * @return int
+     */
+    protected function calcBarcodeHeight()
     {
-        $this->barHeight = (int)$height;
-        return $this;
+        $barcode =& $this->barcode;
+        $height = $barcode->offsetTop +
+                  $barcode->offsetBottom +
+                  ($barcode->border * 2) +
+                  $barcode->getHeight();
+        
+        return (int)$height;
     }
 }

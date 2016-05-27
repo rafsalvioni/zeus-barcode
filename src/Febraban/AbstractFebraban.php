@@ -64,6 +64,14 @@ abstract class AbstractFebraban extends Interleaved implements
     }
     
     /**
+     * 
+     */
+    protected function setDefaultOptions()
+    {
+        $this->setOption('barheight', 50);
+    }
+
+        /**
      * Returns 44.
      * 
      * @return int
@@ -98,7 +106,7 @@ abstract class AbstractFebraban extends Interleaved implements
      * 
      * @return string
      */
-    public function getPrintableData()
+    public function getDataToDisplay()
     {
         if (empty($this->linhaDigitavel)) {
             $this->linhaDigitavel = $this->montaLinhaDigitavel();

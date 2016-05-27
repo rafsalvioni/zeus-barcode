@@ -92,7 +92,7 @@ class Convenio extends AbstractFebraban
             parent::__construct($data, true);
             $linha = \implode(' ', $linha);
             
-            if ($this->getPrintableData() != $linha) {
+            if ($this->getDataToDisplay() != $linha) {
                 throw new ConvenioException('Linha inválida!');
             }
         }
@@ -251,6 +251,16 @@ class Convenio extends AbstractFebraban
         return \implode(' ', $linha);
     }
     
+    /**
+     * 
+     */
+    protected function setDefaultOptions()
+    {
+        parent::setDefaultOptions();
+        $this->setOption('textposition', 'top');
+        $this->setOption('fontsize', 3);
+    }
+
     /**
      * Retorna um valor de campo contido nos dados do código de barras.
      * 

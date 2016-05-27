@@ -32,7 +32,6 @@ class Interleaved extends AbstractCode2of5
         }
         $data = self::zeroLeftPadding($data, $len);
         parent::__construct($data, $hasChecksum);
-        $this->wideWidth = 2;
     }
 
     /**

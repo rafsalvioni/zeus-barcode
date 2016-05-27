@@ -88,10 +88,10 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
      * 
      * @return string
      */
-    public function getPrintableData()
+    public function getDataToDisplay()
     {
         $data = $this->getData();
-        return $data{0} . ' ' . \substr($data, 1);
+        return $data{0} . ' ' . \substr($data, 1, 6) . ' ' .  \substr($data, 7);
     }
     
     /**
@@ -229,11 +229,11 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
             $encoded .= self::$encodingTable[$data{$i}][$parity];
         }
         
-        $encoder->addBinary('101', 1.3)
+        $encoder->addBinary('101', 1.2)
                 ->addBinary(\substr($encoded, 0, 42))
-                ->addBinary('01010', 1.3)
+                ->addBinary('01010', 1.2)
                 ->addBinary(\substr($encoded, 42))
-                ->addBinary('101', 1.3);
+                ->addBinary('101', 1.2);
     }
 }
 

@@ -104,7 +104,7 @@ class Bloqueto extends AbstractFebraban
             
             parent::__construct($data, true);
             
-            if (\preg_replace('/[^\d]+/', '', $this->getPrintableData()) != $linha) {
+            if (\preg_replace('/[^\d]+/', '', $this->getDataToDisplay()) != $linha) {
                 throw new BloquetoException('Linha inválida!');
             }
         }
@@ -311,6 +311,15 @@ class Bloqueto extends AbstractFebraban
                       \substr($this->data, 9, 10);
         
         return \implode(' ', $linha);
+    }
+    
+    /**
+     * 
+     */
+    protected function setDefaultOptions()
+    {
+        parent::setDefaultOptions();
+        $this->setOption('showtext', false);
     }
     
     /**

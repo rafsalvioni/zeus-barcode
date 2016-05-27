@@ -47,7 +47,7 @@ class ConvenioFebrabanTest extends \PHPUnit_Framework_TestCase
     {
         $linha = '836700000000 901500481006 880413517918 001009939388';
         $bc = new Convenio($linha);
-        $this->assertEquals($bc->getPrintableData(), $linha);
+        $this->assertEquals($bc->getDataToDisplay(), $linha);
         $this->assertEquals($bc->getSegmento(), '3');
         $this->assertEquals($bc->getValor(), 90.15);
         $this->assertEquals($bc->getChecksum(), 7);

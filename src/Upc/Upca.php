@@ -116,9 +116,9 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
      * 
      * @return string
      */
-    public function getPrintableData()
+    public function getDataToDisplay()
     {
-        $data = parent::getPrintableData();
+        $data = parent::getDataToDisplay();
         $data = \substr_replace($data, ' ', 1, 0);
         $data = \substr_replace($data, ' ', -1, 0);
         return $data;

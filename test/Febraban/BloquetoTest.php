@@ -47,7 +47,7 @@ class BloquetoTest extends \PHPUnit_Framework_TestCase
     {
         $linha = '03399.72101 20500.000110 04833.601018 4 67000000039211';
         $bc = new Bloqueto($linha);
-        $this->assertEquals($bc->getPrintableData(), $linha);
+        $this->assertEquals($bc->getDataToDisplay(), $linha);
         $this->assertEquals($bc->getCodigoBanco(), '033');
         $this->assertEquals($bc->getCodigoMoeda(), '9');
         $this->assertEquals($bc->getFatorVecto(), '6700');

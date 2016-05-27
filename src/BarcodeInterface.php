@@ -36,7 +36,7 @@ interface BarcodeInterface
      * 
      * @return string
      */
-    public function getPrintableData();
+    public function getDataToDisplay();
     
     /**
      * Returns a part of barcode data.
@@ -62,12 +62,50 @@ interface BarcodeInterface
     public function withDataPart($value, $start, $length);
     
     /**
-     * Render the barcode to a renderer object.
+     * Sets a draw option.
+     * 
+     * @param string $option
+     * @param value $value
+     * @return self
+     */
+    public function setOption($option, $value);
+    
+    /**
+     * Returns a draw option.
+     * 
+     * @param string $option
+     * @return mixed
+     */
+    public function getOption($option);
+    
+    /**
+     * Returns the barcode's draw options.
+     * 
+     * @return array
+     */
+    public function getOptions();
+    
+    /**
+     * Returns the width of barcode area.
+     * 
+     * @return number
+     */
+    public function getWidth();
+    
+    /**
+     * Returns the height of barcode area.
+     * 
+     * @return number
+     */
+    public function getHeight();
+    
+    /**
+     * Draw the barcode to a renderer object.
      * 
      * Returns the own renderer.
      * 
      * @param Renderer\RendererInterface $renderer
      * @return Renderer\RendererInterface
      */
-    public function render(Renderer\RendererInterface $renderer);
+    public function draw(Renderer\RendererInterface $renderer);
 }

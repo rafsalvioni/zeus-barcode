@@ -24,6 +24,28 @@ trait BarcodeTrait
      * @var EncoderInterface
      */
     protected $encoded;
+    /**
+     * Options to draw barcode
+     * 
+     * @var array
+     */
+    protected $drawOptions = [
+        'barwidth'     => 1,
+        'barheight'    => 50,
+        'forecolor'    => 0x000,
+        'backcolor'    => 0xffffff,
+        'border'       => 0,
+        'showtext'     => true,
+        'textalign'    => 'center',
+        'textposition' => 'bottom',
+        'font'         => '',
+        'fontsize'     => 3,
+        'quietzone'    => 30,
+        'offsettop'    => 0,
+        'offsetleft'   => 0,
+        'offsetright'  => 0,
+        'offsetbottom' => 0,
+    ];
 
     /**
      * Auxiliar function to calculate checksums alterning between weights.
@@ -123,7 +145,7 @@ trait BarcodeTrait
      * 
      * @return string
      */
-    public function getPrintableData()
+    public function getDataToDisplay()
     {
         return $this->getData();
     }
@@ -169,6 +191,125 @@ trait BarcodeTrait
             return $data;
         }
         throw new Exception('Wrong data part length!');
+    }
+    
+    /**
+     * 
+     * @param Renderer\RendererInterface $renderer
+     * @return Renderer\RendererInterface
+     */
+    public function draw(Renderer\RendererInterface $renderer)
+    {
+        $renderer->setBarcode($this);
+        return $renderer;
+    }
+
+    /**
+     * 
+     * @param string $option
+     * @return mixed
+     */
+    public function getOption($option)
+    {
+        $option = \strtolower($option);
+        return isset($this->drawOptions[$option]) ?
+               $this->drawOptions[$option] :
+               null;
+    }
+
+    /**
+     * 
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->drawOptions;
+    }
+
+    /**
+     * 
+     * @param string $option
+     * @param mixed $value
+     * @return self
+     * @throws Exception
+     */
+    public function setOption($option, $value)
+    {
+        $option = \strtolower($option);
+        if (\array_key_exists($option, $this->drawOptions)) {
+            $type = \gettype($this->drawOptions[$option]);
+            if (\gettype($value) == $type) {
+                $this->drawOptions[$option] = $value;
+                return $this;
+            }
+            throw new Exception("Option \"$option\" should be a $type value");
+        }
+        throw new Exception("Unknown option \"$option\"");
+    }
+    
+    /**
+     * 
+     * @return number
+     */
+    public function getWidth()
+    {
+        return round(
+               $this->drawOptions['barwidth'] *
+               $this->getEncoded()->getWidthFactor()
+            );
+    }
+    
+    /**
+     * Returns the height of barcode area.
+     * 
+     * @return number
+     */
+    public function getHeight()
+    {
+        return round(
+               $this->drawOptions['barheight'] *
+               $this->getEncoded()->getHeightFactor()
+            );
+    }
+    
+    /**
+     * Allows set draw options using a object property notation.
+     * 
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value)
+    {
+        $method = "set$name";
+        if (\method_exists($this, $method)) {
+            $this->$method($value);
+        }
+        else {
+            $this->setOption($name, $value);
+        }
+    }
+    
+    /**
+     * Gets draw options as object property.
+     * 
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        return $this->getOption($name);
+    }
+    
+    /**
+     * Checks if a draw options is set using object property notation.
+     * 
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        $name = \strtolower($name);
+        return isset($this->drawOptions[$name]);
     }
     
     /**
