@@ -70,8 +70,8 @@ class ImageRenderer implements RendererInterface
             \imagesetthickness($this->resource, 1);
         }
 
-        $barX = $options['offsetleft'] + $options['border'] + $options['quietzone'];
-        $barY = $options['offsettop'] + $options['border'];
+        $barX = $options['border'] + $options['quietzone'];
+        $barY = $options['border'];
         if ($options['textposition'] == 'top') {
             $barY += $textHeight;
         }
@@ -98,10 +98,10 @@ class ImageRenderer implements RendererInterface
         if ($options['showtext']) {
             switch ($options['textalign']) {
                 case 'center':
-                    $x1 = $barX + \round(($this->barcode->getWidth() - $textWidth) / 2) + 2;
+                    $x1 = $barX + self::calcCenter($this->barcode->getWidth(), $textWidth) + 2;
                     break;
                 case 'right':
-                    $x1 = $barX + $this->barcode->getWidth() - $textWidth;
+                    $x1 = $barX + self::calcRight($this->barcode->getWidth(), $textWidth);
                     break;
                 default:
                     $x1 = $barX;

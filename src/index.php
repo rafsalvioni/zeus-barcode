@@ -7,7 +7,7 @@ $bcs = [
     //new \Zeus\Barcode\Febraban\Convenio('836000000007 839700481006 200471236816 001009939388'),
     //new \Zeus\Barcode\Code2of5\Standard('12345670'),
     //new \Zeus\Barcode\Code2of5\Interleaved('12345670'),
-    new Zeus\Barcode\Codabar('A12345670C'),
+    //new Zeus\Barcode\Codabar('A12345670C'),
     //new Zeus\Barcode\Upc\Ean13('7501031311309'),
     //new Zeus\Barcode\Upc\Ean8('55123457'),
     //new Zeus\Barcode\Upc\Ean2('34'),
@@ -28,7 +28,7 @@ $bcs = [
     //(new Zeus\Barcode\Code93('TEST93', false)),
     //(new Zeus\Barcode\Postnet('801221905', false)),
     //(new Zeus\Barcode\Code128("\xab\xac\x00")),
-    //(new Zeus\Barcode\Ean128('010123456789012815051231')),
+    (new Zeus\Barcode\Ean128('010123456789012815051231')),
     //(new Zeus\Barcode\Itf14('1234567890123', false)),
 ];
 
@@ -39,10 +39,6 @@ $render = new Zeus\Barcode\Renderer\ImageRenderer();
 //$bcs[0]->border = 5;
 $bcs[0]->barwidth = 2;
 //$bcs[0]->barheight = 50;
-//$bcs[0]->offsetLeft = 10;
-//$bcs[0]->offsetTop = 10;
-//$bcs[0]->offsetRight = 10;
-//$bcs[0]->offsetBottom = 10;
 //$bcs[0]->quietZone = 25;
 //$bcs[0]->backColor = 0xffff99;
 //$bcs[0]->backColor = 0xffffff;
