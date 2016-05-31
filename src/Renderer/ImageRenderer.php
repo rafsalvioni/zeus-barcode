@@ -2,126 +2,26 @@
 
 namespace Zeus\Barcode\Renderer;
 
-use Zeus\Barcode\Encoder\EncoderInterface;
-
 /**
  * Renderer to draw barcodes as images.
  *
  * @author Rafael M. Salvioni
  */
-class ImageRenderer implements RendererInterface
+class ImageRenderer extends AbstractRenderer
 {
-    use RendererTrait;
-    
     /**
+     * Stores the registered fonts. Its a cache. Use resolveFont()
      * 
-     * @param EncoderInterface $encoder
-     * @param array $options
+     * @var array
      */
-    protected function draw()
-    {
-        $encoder   = $this->barcode->getEncoded();
-        $options   = $this->barcode->getOptions();
-        $text      = $this->barcode->getDataToDisplay();
-        
-        $textWidth = $textHeight = 0;
-        if ($options['showtext']) {
-            if (empty($options['font'])) {
-                $options['font'] = $options['fontsize'] % 6;
-                $textWidth       = \imagefontwidth($options['font']);
-                $textHeight      = \imagefontheight($options['font']);
-            }
-            else {
-                $options['font'] = \imageloadfont($options['font']);
-                $textWidth = $textHeight = $options['fontsize'];
-            }
-        }
-        $textWidth *= \strlen($text);
-        
-        $width         = $this->calcBarcodeWidth();
-        $height        = $this->calcBarcodeHeight() + $textHeight;
-        
-        $this->resource = \imagecreatetruecolor($width, $height);
-        $bgColor  = \imagecolorallocate(
-                        $this->resource,
-                        ($options['backcolor'] & 0xff0000) >> 16,
-                        ($options['backcolor'] & 0x00ff00) >> 8,
-                        ($options['backcolor'] & 0x0000ff)
-                    );
-        $foreColor = \imagecolorallocate(
-                        $this->resource,
-                        ($options['forecolor'] & 0xff0000) >> 16,
-                        ($options['forecolor'] & 0x00ff00) >> 8,
-                        ($options['forecolor'] & 0x0000ff)
-                     );
-        \imagefill($this->resource, 0, 0, $bgColor);
-        
-        if ($options['border'] > 0) {
-            $borderOffset = $options['border'] / 2;
-            \imagesetthickness($this->resource, $options['border']);
-            \imagerectangle(
-                $this->resource,
-                $borderOffset,
-                $borderOffset,
-                $width - $borderOffset,
-                $height - $borderOffset,
-                $foreColor
-            );
-            \imagesetthickness($this->resource, 1);
-        }
-
-        $barX = $options['border'] + $options['quietzone'];
-        $barY = $options['border'];
-        if ($options['textposition'] == 'top') {
-            $barY += $textHeight;
-        }
-        
-        $x1 = $barX + 1;
-
-        foreach ($encoder as $bar) {
-            $x2 = $x1 + ($options['barwidth'] * $bar->w) - 1;
-            $y1 = $barY + ($options['barheight'] * $bar->y) - 1;
-            $y2 = $y1 + ($options['barheight'] * $bar->h);
-            if ($bar->b) {
-                \imagefilledrectangle(
-                    $this->resource,
-                    $x1,
-                    $y1,
-                    $x2,
-                    $y2,
-                    $foreColor
-                );
-            }
-            $x1 = $x2 + 1;
-        }
-        
-        if ($options['showtext']) {
-            switch ($options['textalign']) {
-                case 'center':
-                    $x1 = $barX + self::calcCenter($this->barcode->getWidth(), $textWidth) + 2;
-                    break;
-                case 'right':
-                    $x1 = $barX + self::calcRight($this->barcode->getWidth(), $textWidth);
-                    break;
-                default:
-                    $x1 = $barX;
-            }
-            $x1++;
-            if ($options['textposition'] == 'top') {
-                $y1 = $barY - $textHeight - 2;
-            }
-            else {
-                $y1 = $barY + $this->barcode->getHeight();
-            }
-            if (\is_int($options['font'])){
-                \imagestring($this->resource, $options['font'], $x1, $y1, $text, $foreColor);
-            }
-            else {
-                \imagettftext($this->resource, $options['fontsize'], 180, $x1, $y1, $foreColor, $options['font'], $text);
-            }
-        }
-    }
-
+    private static $fonts = [];    
+    /**
+     * Stores the allocated colors. Its a cache. Use getColorId()
+     * 
+     * @var array
+     */
+    private $colors = [];
+    
     /**
      * Render as PNG
      * 
@@ -130,5 +30,191 @@ class ImageRenderer implements RendererInterface
     {
         \header('Content-Type: image/png');
         \imagepng($this->resource);
+    }
+
+    /**
+     * 
+     * @param array $points
+     * @param int $color
+     * @param bool $filled
+     */
+    public function drawPolygon(array $points, $color, $filled = true)
+    {
+        $color = $this->getColorId($color);
+        $ps    = [];
+        $n     = \count($points);
+        
+        $offsetX =& $this->options['offsetleft'];
+        $offsetY =& $this->options['offsettop'];
+        
+        foreach ($points as &$point) {
+            $point['x'] += $offsetX;
+            $point['y'] += $offsetY;
+            $ps = \array_merge($ps, \array_values($point));
+        }
+            
+        if ($n > 3) {
+            $f = $filled ? '\\imagefilledpolygon' : '\\imagepolygon';
+            $f($this->resource, $ps, \count($points), $color);
+        }
+        else if ($n == 2) {
+            \imageline($this->resource, $points[0]['x'], $points[0]['y'], $points[1]['x'], $points[1]['y'], $color);
+        }
+        else if ($n == 1) {
+            \imagesetpixel($this->resource, $points[0]['x'], $points[0]['y'], $color);
+        }
+    }
+
+    /**
+     * 
+     * @param array $point
+     * @param string $text
+     * @param int $color
+     * @param string $font
+     * @param int $fontSize
+     */
+    public function drawText(array $point, $text, $color, $font, $fontSize)
+    {
+        $color = $this->getColorId($color);
+        $font  = $this->resolveFont($font, $fontSize);
+        
+        $point['x'] += $this->options['offsetleft'];
+        $point['y'] += $this->options['offsettop'];
+        
+        if (\is_int($font)) {
+            \imagestring($this->resource, $font, $point['x'], $point['y'], $text, $color);
+        }
+        else {
+            \imagettftext($this->resource, $fontSize, 0, $point['x'], $point['y'], $color, $font, $text);
+        }
+    }
+    
+    /**
+     * 
+     * @return int
+     */
+    public function getTextHeight()
+    {
+        $font = $this->resolveFont($this->barcode->font, $this->barcode->fontSize);
+        if (\is_int($font)) {
+            return \imagefontheight($font);
+        }
+        else {
+            $box = \imagettfbbox($this->barcode->fontSize, 0, $this->barcode->font, 'M');
+            return $box[7] - $box[1] + 1;
+        }
+    }
+
+    /**
+     * 
+     * @param string $text
+     * @return int
+     */
+    public function getTextWidth($text = null)
+    {
+        $font = $this->resolveFont($this->barcode->font, $this->barcode->fontSize);
+        $text = \coalesce($text, $this->barcode->getDataToDisplay());
+        
+        if (\is_int($font)) {
+            return \imagefontwidth($font) * \strlen($text);
+        }
+        else {
+            $box = \imagettfbbox($this->barcode->fontSize, 0, $this->barcode->font, $text);
+            return $box[2] - $box[0] + 1;
+        }
+    }
+
+    /**
+     * Allows use a another image where barcode will be drawed.
+     * 
+     * $source can be a GD resource or a image file path.
+     * 
+     * @param mixed $source
+     * @return ImageRenderer
+     */
+    public function setSource($source)
+    {
+        if (\is_resource($source) && \strpos('gd', \get_resource_type($source)) !== false) {
+            $this->resource = $source;
+        }
+        else if (\file_exists($source)) {
+            $this->resource = \imagecreatefromstring(\file_get_contents($source));
+        }
+        else {
+            $this->resource = null;
+        }
+        $this->options['source'] = $this->resource;
+        return $this;
+    }
+
+    /**
+     * 
+     */
+    protected function initResource()
+    {
+        if (!$this->options['source']) {
+            $width          = $this->getTotalWidth();
+            $height         = $this->getTotalHeight();
+            $this->resource = \imagecreatetruecolor($width, $height);
+            $this->colors   = [];
+        }
+    }
+    
+    /**
+     * Returns the color index to be used. If a color is not allocated, it will be.
+     * 
+     * @param int $color
+     * @return int
+     */
+    protected function getColorId($color)
+    {
+        if (isset($this->colors[$color])) {
+            return $this->colors[$color];
+        }
+        
+        $r = ($color & 0xff0000) >> 16;
+        $g = ($color & 0x00ff00) >> 8;
+        $b = ($color & 0x0000ff);
+        $i = \imagecolorexact($this->resource, $r, $g, $b);
+        if ($i == -1) {
+            $i = \imagecolorallocate($this->resource, $r, $g, $b);
+        }
+        
+        $this->colors[$color] = $i;
+        return $i;
+    }
+    
+    /**
+     * Returns the font to be used by GD.
+     * 
+     * If a integer, use a internal (or loaded) GD font. If a string,
+     * use a TTF font.
+     * 
+     * @param string $font
+     * @param int $fontSize
+     * @return int
+     */
+    protected function resolveFont($font, $fontSize)
+    {
+        if (!$font) {
+            if (\in_array($fontSize, self::$fonts)) {
+                return $fontSize;
+            }
+            return $fontSize % 6;
+        }
+        else if (\substr($font, -4) == '.ttf') {
+            return $font;
+        }
+        else if (\substr($font, -4) == '.gdf') {
+            $font = \realpath($font);
+            $idx  = \crc32($font);
+            if (!isset(self::$fonts[$idx])) {
+                self::$fonts[$idx] = \imageloadfont($font);
+            }
+            return self::$fonts[$idx];
+        }
+        else {
+            return 0;
+        }
     }
 }

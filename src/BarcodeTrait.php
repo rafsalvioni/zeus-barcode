@@ -181,6 +181,22 @@ trait BarcodeTrait
     public function draw(Renderer\RendererInterface $renderer)
     {
         $renderer->setBarcode($this);
+        
+        $width  = $renderer->getTotalWidth() - 1;
+        $height = $renderer->getTotalHeight() - 1;
+        
+        // Fill barcode
+        $renderer->drawPolygon([
+            ['x' => 0, 'y' => 0],
+            ['x' => $width, 'y' => 0],
+            ['x' => $width, 'y' => $height],
+            ['x' => 0, 'y' => $height],
+        ], $this->backColor, true);
+        
+        $this->drawBorder($renderer, $width, $height);
+        $this->drawBarcode($renderer);
+        $this->drawText($renderer);
+        
         return $renderer;
     }
     
@@ -215,4 +231,97 @@ trait BarcodeTrait
      * @param string $data
      */
     abstract protected function encodeData(EncoderInterface &$encoder, $data);
+    
+    /**
+     * Draws the barcode border.
+     * 
+     * @param Renderer\RendererInterface $renderer
+     * @param int $width
+     * @param int $height
+     */
+    protected function drawBorder(Renderer\RendererInterface &$renderer, $width, $height)
+    {
+        // Draws the border
+        $border = $this->border;
+        
+        for ($i = 0; $i < $border; $i++) {
+            $renderer->drawPolygon([
+                ['x' => 0 + $i, 'y' => 0 + $i], ['x' => $width - $i, 'y' => $i],
+                ['x' => $width - $i, 'y' => $height - $i], ['x' => $i, 'y' => $height - $i],
+            ], $this->options['forecolor'], false);
+        }
+    }
+    
+    /**
+     * Draws the bars.
+     * 
+     * @param Renderer\RendererInterface $renderer
+     */
+    protected function drawBarcode(Renderer\RendererInterface &$renderer)
+    {
+        $barOffsetX = $this->border + $this->quietZone + 1;
+        $barOffsetY = $this->border;
+        $barX       = $barOffsetX;
+        $barY       = $barOffsetY;
+        
+        if ($this->showText && $this->textPosition == 'top') {
+            $barOffsetY += $renderer->getTextHeight();
+        }
+        
+        foreach ($this->getEncoded() as $bar) {
+            $barWidth  = ($bar->w * $this->options['barwidth']) - 1;
+            $barHeight = ($bar->h * $this->options['barheight']) - 1;
+            $barY      = $barOffsetY + ($bar->y * $this->options['barheight']);
+            if ($bar->b) {
+                $renderer->drawPolygon([
+                    ['x' => $barX, 'y' => $barY], ['x' => $barX + $barWidth, 'y' => $barY],
+                    ['x' => $barX + $barWidth, 'y' => $barY + $barHeight], ['x' => $barX, 'y' => $barY + $barHeight],
+                ], $this->options['forecolor'], true);
+            }
+            $barX += $barWidth + 1;
+        }
+        unset($barOffsetX, $barX, $barY, $barWidth, $barHeight, $bar);
+    }
+    
+    /**
+     * Draws the barcode text, if can.
+     * 
+     * @param Renderer\RendererInterface $renderer
+     */
+    protected function drawText(Renderer\RendererInterface &$renderer)
+    {
+        if (!$this->options['showtext']) {
+            return;
+        }
+        
+        $totalWidth = $renderer->getTotalWidth();
+        $text       = $text = $this->getDataToDisplay();
+        $textWidth  = $renderer->getTextWidth($text);
+        
+        switch ($this->options['textalign']) {
+            case 'center':
+                $x = \round(($totalWidth - $textWidth) / 2);
+                break;
+            case 'right':
+                $x = \round($totalWidth - $textWidth - $this->border);
+                break;
+            default:
+                $x = $this->border;
+        }
+        switch ($this->options['textposition']) {
+            case 'top':
+                $y = $this->border + 1;
+                break;
+            default:
+                $y = $this->border + 1 + $this->getHeight();
+        }
+        
+        $renderer->drawText(
+            ['x' => $x, 'y' => $y],
+            $text,
+            $this->options['forecolor'],
+            $this->options['font'],
+            $this->options['fontsize']
+        );
+    }
 }

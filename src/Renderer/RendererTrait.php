@@ -3,6 +3,7 @@
 namespace Zeus\Barcode\Renderer;
 
 use Zeus\Barcode\BarcodeInterface;
+use Zeus\Barcode\OptionsTrait;
 
 /**
  * Trait to implement default methods and features of RendererInterface.
@@ -11,6 +12,8 @@ use Zeus\Barcode\BarcodeInterface;
  */
 trait RendererTrait
 {
+    use OptionsTrait;
+    
     /**
      * Draw resource
      * 
@@ -43,28 +46,20 @@ trait RendererTrait
     {
         if ($this->barcode !== $barcode) {
             $this->barcode = $barcode;
-            $this->draw();
+            $this->initResource();
         }
         return $this;
     }
-    
-    /**
-     * Draws the barcode to resource
-     * 
-     */
-    abstract protected function draw();
     
     /**
      * Calculates the barcode width.
      * 
      * @return int
      */
-    protected function calcBarcodeWidth()
+    public function getTotalWidth()
     {
         $barcode =& $this->barcode;
-        $width = $barcode->offsetLeft   +
-                 $barcode->offsetRight  +
-                 ($barcode->border * 2) +
+        $width = ($barcode->border * 2) +
                  $barcode->getWidth()   +
                  ($barcode->quietZone * 2);
         
@@ -76,14 +71,22 @@ trait RendererTrait
      * 
      * @return int
      */
-    protected function calcBarcodeHeight()
+    public function getTotalHeight()
     {
         $barcode =& $this->barcode;
-        $height = $barcode->offsetTop +
-                  $barcode->offsetBottom +
-                  ($barcode->border * 2) +
+        $height = ($barcode->border * 2) +
                   $barcode->getHeight();
+        
+        if ($barcode->showText) {
+            $height += $this->getTextHeight();
+        }
         
         return (int)$height;
     }
+    
+    /**
+     * Initializes the barcode to resource
+     * 
+     */
+    abstract protected function initResource();
 }
