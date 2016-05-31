@@ -128,18 +128,17 @@ class ImageRenderer extends AbstractRenderer
      * @param mixed $source
      * @return ImageRenderer
      */
-    public function setSource($source)
+    public function setResource($source)
     {
         if (\is_resource($source) && \strpos('gd', \get_resource_type($source)) !== false) {
-            $this->resource = $source;
+            $this->external = $source;
         }
         else if (\file_exists($source)) {
-            $this->resource = \imagecreatefromstring(\file_get_contents($source));
+            $this->external = \imagecreatefromstring(\file_get_contents($source));
         }
         else {
-            $this->resource = null;
+            $this->external = null;
         }
-        $this->options['source'] = $this->resource;
         return $this;
     }
 
@@ -148,11 +147,14 @@ class ImageRenderer extends AbstractRenderer
      */
     protected function initResource()
     {
-        if (!$this->options['source']) {
+        if (!$this->external) {
             $width          = $this->getTotalWidth();
             $height         = $this->getTotalHeight();
             $this->resource = \imagecreatetruecolor($width, $height);
             $this->colors   = [];
+        }
+        else {
+            $this->resource =& $this->external;
         }
     }
     

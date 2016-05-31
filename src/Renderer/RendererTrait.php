@@ -21,6 +21,12 @@ trait RendererTrait
      */
     protected $resource;
     /**
+     * Stores the external resource
+     * 
+     * @var mixed
+     */
+    protected $external;
+    /**
      * Barcode
      * 
      * @var BarcodeInterface

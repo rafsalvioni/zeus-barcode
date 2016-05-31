@@ -89,4 +89,12 @@ interface RendererInterface
      * 
      */
     public function getResource();
+    
+    /**
+     * Sets the initial resource. Depends of renderer.
+     * 
+     * @param mixed $resource
+     * @return self
+     */
+    public function setResource($resource);
 }
