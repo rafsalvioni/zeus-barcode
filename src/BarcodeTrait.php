@@ -265,7 +265,7 @@ trait BarcodeTrait
         $barY       = $barOffsetY;
         
         if ($this->showText && $this->textPosition == 'top') {
-            $barOffsetY += $renderer->getTextHeight();
+            $barOffsetY += $renderer->getTextHeight() + 3;
         }
         
         foreach ($this->getEncoded() as $bar) {
@@ -313,7 +313,7 @@ trait BarcodeTrait
                 $y = $this->border + 1;
                 break;
             default:
-                $y = $this->border + 1 + $this->getHeight();
+                $y = $this->border + 2 + $this->getHeight();
         }
         
         $renderer->drawText(

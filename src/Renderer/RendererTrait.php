@@ -78,7 +78,7 @@ trait RendererTrait
                   $barcode->getHeight();
         
         if ($barcode->showText) {
-            $height += $this->getTextHeight();
+            $height += $this->getTextHeight() + 3;
         }
         
         return (int)$height;

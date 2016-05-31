@@ -44,12 +44,8 @@ class ImageRenderer extends AbstractRenderer
         $ps    = [];
         $n     = \count($points);
         
-        $offsetX =& $this->options['offsetleft'];
-        $offsetY =& $this->options['offsettop'];
-        
         foreach ($points as &$point) {
-            $point['x'] += $offsetX;
-            $point['y'] += $offsetY;
+            $this->applyOffsets($point);
             $ps = \array_merge($ps, \array_values($point));
         }
             
@@ -78,13 +74,13 @@ class ImageRenderer extends AbstractRenderer
         $color = $this->getColorId($color);
         $font  = $this->resolveFont($font, $fontSize);
         
-        $point['x'] += $this->options['offsetleft'];
-        $point['y'] += $this->options['offsettop'];
+        $this->applyOffsets($point);
         
         if (\is_int($font)) {
             \imagestring($this->resource, $font, $point['x'], $point['y'], $text, $color);
         }
         else {
+            $point['y'] += $this->getTextHeight();
             \imagettftext($this->resource, $fontSize, 0, $point['x'], $point['y'], $color, $font, $text);
         }
     }
@@ -101,7 +97,7 @@ class ImageRenderer extends AbstractRenderer
         }
         else {
             $box = \imagettfbbox($this->barcode->fontSize, 0, $this->barcode->font, 'M');
-            return $box[7] - $box[1] + 1;
+            return \abs($box[7] - $box[1]);
         }
     }
 
@@ -120,7 +116,7 @@ class ImageRenderer extends AbstractRenderer
         }
         else {
             $box = \imagettfbbox($this->barcode->fontSize, 0, $this->barcode->font, $text);
-            return $box[2] - $box[0] + 1;
+            return \abs($box[2] - $box[0]);
         }
     }
 
