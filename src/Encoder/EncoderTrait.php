@@ -194,7 +194,7 @@ trait EncoderTrait
         
         if ($append) {
             $this->bars[] = $bar;
-            $this->height = \max($this->height, $bar['h']);
+            $this->height = \max($this->height, $bar['h'] + $bar['y']);
             $this->last++;
         }
         $this->width += $bar['w'];
