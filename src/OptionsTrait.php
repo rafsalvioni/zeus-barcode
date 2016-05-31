@@ -96,6 +96,6 @@ trait OptionsTrait
     public function __isset($name)
     {
         $name = \strtolower($name);
-        return isset($this->options[$name]);
+        return $this->getOption($name) !== null;
     }
 }

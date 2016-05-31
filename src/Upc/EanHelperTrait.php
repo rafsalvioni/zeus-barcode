@@ -66,6 +66,6 @@ trait EanHelperTrait
     protected function checkData($data)
     {
         $len = (int)$this->getLength();
-        return preg_match("/^[0-9]{{$len}}$/", $data);
+        return \preg_match("/^[0-9]{{$len}}$/", $data);
     }
 }

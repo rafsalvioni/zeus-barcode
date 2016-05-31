@@ -5,6 +5,7 @@ namespace Zeus\Barcode\Upc;
 use Zeus\Barcode\AbstractChecksumBarcode;
 use Zeus\Barcode\FixedLengthInterface;
 use Zeus\Barcode\Encoder\EncoderInterface;
+use Zeus\Barcode\Renderer\RendererInterface;
 
 /**
  * Implements a EAN-8 barcode standard.
@@ -108,6 +109,17 @@ class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
     }
     
     /**
+     * To Ean8, text position is always "bottom".
+     * 
+     * @param string $value
+     * @return self
+     */
+    public function setTextPosition($value)
+    {
+        return $this->setOption('textposition', 'bottom');
+    }
+
+    /**
      * 
      * @param EncoderInterface $encoder
      * @param string $data
@@ -128,6 +140,30 @@ class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
                 ->addBinary('01010', $barHeight)
                 ->addBinary(\substr($encoded, 28))
                 ->addBinary('101', $barHeight);
+    }
+    
+    /**
+     * Draw a text specifically to Ean8.
+     * 
+     * @param RendererInterface $renderer
+     */
+    protected function drawText(RendererInterface &$renderer)
+    {
+        $text = $this->getData();
+        $text = [\substr($text, 0, 4), \substr($text, 4)];
+        
+        $foreColor =& $this->options['forecolor'];
+        $font      =& $this->options['font'];
+        $fontSize  =& $this->options['fontsize'];
+        $width     = $this->options['barwidth'] * 28;
+        
+        $offX = $this->options['border'] + $this->options['quietzone'] + ($this->options['barwidth'] * 3) + 1;
+        $y    = $this->options['barheight'] + 1;
+        
+        $x = self::centerPosition($width, $renderer->getTextWidth($text[0])) + $offX;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[0], $foreColor, $font, $fontSize);
+        $x = ($this->options['barwidth'] * 32) + self::centerPosition($width, $renderer->getTextWidth($text[1])) + $offX;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[1], $foreColor, $font, $fontSize);
     }
 }
 

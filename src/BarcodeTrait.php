@@ -111,6 +111,16 @@ trait BarcodeTrait
     {
         return \str_pad($data, $length, '0', \STR_PAD_LEFT);
     }
+    
+    protected static function centerPosition($widthArea, $widthObject)
+    {
+        return \round(($widthArea - $widthObject) / 2);
+    }
+    
+    protected static function rightPosition($widthArea, $widthObject)
+    {
+        return \round($widthArea - $widthObject);
+    }
 
     /**
      * 
@@ -181,22 +191,7 @@ trait BarcodeTrait
     public function draw(Renderer\RendererInterface $renderer)
     {
         $renderer->setBarcode($this);
-        
-        $width  = $renderer->getTotalWidth() - 1;
-        $height = $renderer->getTotalHeight() - 1;
-        
-        // Fill barcode
-        $renderer->drawPolygon([
-            ['x' => 0, 'y' => 0],
-            ['x' => $width, 'y' => 0],
-            ['x' => $width, 'y' => $height],
-            ['x' => 0, 'y' => $height],
-        ], $this->backColor, true);
-        
-        $this->drawBorder($renderer, $width, $height);
-        $this->drawBarcode($renderer);
-        $this->drawText($renderer);
-        
+        $this->drawInstructions($renderer);
         return $renderer;
     }
     
@@ -231,7 +226,43 @@ trait BarcodeTrait
      * @param string $data
      */
     abstract protected function encodeData(EncoderInterface &$encoder, $data);
-    
+
+    /**
+     * Encapsulate draw routines.
+     * 
+     * @param Renderer\RendererInterface $renderer
+     */
+    protected function drawInstructions(Renderer\RendererInterface &$renderer)
+    {
+        $width  = $renderer->getTotalWidth() - 1;
+        $height = $renderer->getTotalHeight() - 1;
+        
+        $this->fillBarcodeArea($renderer, $width, $height);
+        $this->drawBorder($renderer, $width, $height);
+        $this->drawBarcode($renderer);
+        
+        if ($this->options['showtext']) {
+            $this->drawText($renderer);
+        }
+    }
+
+    /**
+     * Fill barcode area.
+     * 
+     * @param Renderer\RendererInterface $renderer
+     * @param int $width
+     * @param int $height
+     */
+    protected function fillBarcodeArea(Renderer\RendererInterface &$renderer, $width, $height)
+    {
+        $renderer->drawPolygon([
+            ['x' => 0, 'y' => 0],
+            ['x' => $width, 'y' => 0],
+            ['x' => $width, 'y' => $height],
+            ['x' => 0, 'y' => $height],
+        ], $this->options['backcolor'], true);
+    }
+
     /**
      * Draws the barcode border.
      * 
@@ -284,26 +315,22 @@ trait BarcodeTrait
     }
     
     /**
-     * Draws the barcode text, if can.
+     * Draws the barcode text.
      * 
      * @param Renderer\RendererInterface $renderer
      */
     protected function drawText(Renderer\RendererInterface &$renderer)
     {
-        if (!$this->options['showtext']) {
-            return;
-        }
-        
         $totalWidth = $renderer->getTotalWidth();
         $text       = $text = $this->getDataToDisplay();
         $textWidth  = $renderer->getTextWidth($text);
         
         switch ($this->options['textalign']) {
             case 'center':
-                $x = \round(($totalWidth - $textWidth) / 2);
+                $x = self::centerPosition($totalWidth, $textWidth);
                 break;
             case 'right':
-                $x = \round($totalWidth - $textWidth - $this->border);
+                $x = self::rightPosition($totalWidth, $textWidth);
                 break;
             default:
                 $x = $this->border;

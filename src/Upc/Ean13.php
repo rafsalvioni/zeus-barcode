@@ -4,7 +4,8 @@ namespace Zeus\Barcode\Upc;
 
 use Zeus\Barcode\AbstractChecksumBarcode,
     Zeus\Barcode\FixedLengthInterface,
-    Zeus\Barcode\Encoder\EncoderInterface;
+    Zeus\Barcode\Encoder\EncoderInterface,
+    Zeus\Barcode\Renderer\RendererInterface;
 
 /**
  * Implements a EAN13 barcode standard.
@@ -83,17 +84,6 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
         $this->systemLength = \strlen(self::getSystemDigits($this->data));
     }
 
-        /**
-     * Separates the first digit
-     * 
-     * @return string
-     */
-    public function getDataToDisplay()
-    {
-        $data = $this->getData();
-        return $data{0} . ' ' . \substr($data, 1, 6) . ' ' .  \substr($data, 7);
-    }
-    
     /**
      * Returns 13.
      * 
@@ -213,6 +203,17 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
         }
         throw new Ean13Exception('Uncompatible UPC-A barcode!');
     }
+    
+    /**
+     * To Ean13, text position is always "bottom".
+     * 
+     * @param string $value
+     * @return self
+     */
+    public function setTextPosition($value)
+    {
+        return $this->setOption('textposition', 'bottom');
+    }
 
     /**
      * 
@@ -236,6 +237,32 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
                 ->addBinary('01010', $barHeight)
                 ->addBinary(\substr($encoded, 42))
                 ->addBinary('101', $barHeight);
+    }
+    
+    /**
+     * Draw a text specifically to Ean13.
+     * 
+     * @param RendererInterface $renderer
+     */
+    protected function drawText(RendererInterface &$renderer)
+    {
+        $text = $this->getData();
+        $text = [$text{0}, \substr($text, 1, 6), \substr($text, 7)];
+        
+        $foreColor =& $this->options['forecolor'];
+        $font      =& $this->options['font'];
+        $fontSize  =& $this->options['fontsize'];
+        $width     = $this->options['barwidth'] * 42;
+        
+        $offX = $this->options['border'] + $this->options['quietzone'] + 1;
+        $y    = $this->options['barheight'] + 1;
+
+        $x = $offX - $renderer->getTextWidth($text[0]);        
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[0], $foreColor, $font, $fontSize);
+        $x = self::centerPosition($width, $renderer->getTextWidth($text[1])) + $offX + $this->options['barwidth'] * 3;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[1], $foreColor, $font, $fontSize);
+        $x = self::centerPosition($width, $renderer->getTextWidth($text[2])) + $offX + $this->options['barwidth'] * 50;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[2], $foreColor, $font, $fontSize);
     }
 }
 

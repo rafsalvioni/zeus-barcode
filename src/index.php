@@ -3,7 +3,7 @@
 require 'vendor/autoload.php';
 
 $bcs = [
-    new Zeus\Barcode\Febraban\Bloqueto('03399.72101 20500.000110 04833.601018 4 67000000039211'),
+    //new Zeus\Barcode\Febraban\Bloqueto('03399.72101 20500.000110 04833.601018 4 67000000039211'),
     //new \Zeus\Barcode\Febraban\Convenio('836000000007 839700481006 200471236816 001009939388'),
     //new \Zeus\Barcode\Code2of5\Standard('12345670'),
     //new \Zeus\Barcode\Code2of5\Interleaved('12345670'),
@@ -13,7 +13,7 @@ $bcs = [
     //new Zeus\Barcode\Upc\Ean2('34'),
     //new Zeus\Barcode\Upc\Ean5('51234'),
     //new Zeus\Barcode\Upc\Upca('075678164125'),
-    //new Zeus\Barcode\Upc\Upce('04252614'),
+    new Zeus\Barcode\Upc\Upce('04252614'),
     //new Zeus\Barcode\Code11\Code11C('123-45', false),
     //new Zeus\Barcode\Code11\Code11K('123-45', false),
     //(new Zeus\Barcode\Msi\Msi('80523')),
@@ -33,19 +33,19 @@ $bcs = [
 ];
 
 $render = new Zeus\Barcode\Renderer\ImageRenderer();
-$gd = \imagecreatefrompng('D:\\Users\\rafaelsalvioni\\Desktop\\01.png');
-$render->setSource($gd);
+//$gd = \imagecreatefrompng('D:\\Users\\rafaelsalvioni\\Desktop\\01.png');
+//$render->setSource($gd);
 $render->offsetLeft = 70;
 $render->offsetTop = 520;
 //$bcs[0]->fontSize = 3;
-//$bcs[0]->textAlign = 'right';
+$bcs[0]->textAlign = 'right';
 //$bcs[0]->textPosition = 'top';
 //$bcs[0]->border = 2;
 //$bcs[0]->barwidth = 2;
 //$bcs[0]->barheight = 50;
-$bcs[0]->quietZone = 0;
+//$bcs[0]->quietZone = 0;
 $bcs[0]->font = 'D:\\Users\\rafaelsalvioni\\Desktop\\arial.ttf';
-$bcs[0]->fontSize = 8;
+$bcs[0]->fontSize = 7;
 //$bcs[0]->backColor = 0xff0000;
 //$bcs[0]->backColor = 0xffffff;
 $bcs[0]->showText = true;

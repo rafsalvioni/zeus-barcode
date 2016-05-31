@@ -5,6 +5,7 @@ namespace Zeus\Barcode\Upc;
 use Zeus\Barcode\AbstractChecksumBarcode;
 use Zeus\Barcode\FixedLengthInterface;
 use Zeus\Barcode\Encoder\EncoderInterface;
+use Zeus\Barcode\Renderer\RendererInterface;
 
 /**
  * Implements a UPC-E barcode standard.
@@ -48,17 +49,6 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
     public function getLength()
     {
         return 8;
-    }
-
-    /**
-     * Separates by a space the system number and checksum digit.
-     * 
-     * @return string
-     */
-    public function getDataToDisplay()
-    {
-        $data = parent::getDataToDisplay();
-        return $data{0} . ' ' . \substr($data, 1, -1) . ' ' . \substr($data, -1);
     }
 
     /**
@@ -142,8 +132,39 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
             $encoded .= self::$encodingTable[$data{$i}][$parity];
         }
         
-        $encoder->addBinary('101')
+        $barHeight = $this->showText ? 1.2 : 1;
+        
+        $encoder->addBinary('101', $barHeight)
                 ->addBinary($encoded)
-                ->addBinary('010101');
+                ->addBinary('010')
+                ->addBinary('101', $barHeight);
+    }
+
+    /**
+     * Draw a text specifically to Upca.
+     * 
+     * @param RendererInterface $renderer
+     */
+    protected function drawText(RendererInterface &$renderer)
+    {
+        $text = $this->getData();
+        $text = [$text{0}, \substr($text, 1, 6), \substr($text, -1)];
+        
+        $foreColor =& $this->options['forecolor'];
+        $font      =& $this->options['font'];
+        $fontSize  =& $this->options['fontsize'];
+        $width     = $this->options['barwidth'] * 48;
+        
+        $offX = $this->options['border'] + $this->options['quietzone'];
+        $y    = $this->options['barheight'] + 1;
+
+        $x = $offX - $renderer->getTextWidth($text[0]) - 1;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[0], $foreColor, $font, $fontSize);
+        
+        $x = self::centerPosition($width, $renderer->getTextWidth($text[1])) + $offX + $this->options['barwidth'] * 3;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[1], $foreColor, $font, $fontSize);
+        
+        $x = $offX + $this->options['barwidth'] * 51 + 2;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[2], $foreColor, $font, $fontSize);
     }
 }
