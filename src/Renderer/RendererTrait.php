@@ -28,6 +28,23 @@ trait RendererTrait
     protected $barcode;
 
     /**
+     * Converts a integer to a RGB color.
+     * 
+     * Returns a array [R, G, B].
+     * 
+     * @param int $color
+     * @return int[]
+     */
+    protected static function colorToRgb($color)
+    {
+        return [
+            ($color & 0xff0000) >> 16,
+            ($color & 0x00ff00) >> 8,
+            ($color & 0x0000ff)
+        ];
+    }
+    
+    /**
      * 
      * @return mixed
      */

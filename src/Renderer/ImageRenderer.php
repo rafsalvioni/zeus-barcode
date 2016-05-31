@@ -168,9 +168,8 @@ class ImageRenderer extends AbstractRenderer
             return $this->colors[$color];
         }
         
-        $r = ($color & 0xff0000) >> 16;
-        $g = ($color & 0x00ff00) >> 8;
-        $b = ($color & 0x0000ff);
+        list($r, $g, $b) = self::colorToRgb($color);
+        
         $i = \imagecolorexact($this->resource, $r, $g, $b);
         if ($i == -1) {
             $i = \imagecolorallocate($this->resource, $r, $g, $b);
