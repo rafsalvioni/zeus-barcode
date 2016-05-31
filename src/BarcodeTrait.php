@@ -330,7 +330,7 @@ trait BarcodeTrait
                 $x = self::centerPosition($totalWidth, $textWidth);
                 break;
             case 'right':
-                $x = self::rightPosition($totalWidth, $textWidth);
+                $x = self::rightPosition($totalWidth - $this->options['border'], $textWidth);
                 break;
             default:
                 $x = $this->border;

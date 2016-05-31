@@ -255,7 +255,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
         $width     = $this->options['barwidth'] * 42;
         
         $offX = $this->options['border'] + $this->options['quietzone'] + 1;
-        $y    = $this->options['barheight'] + 1;
+        $y    = $this->options['barheight'] + 3;
 
         $x = $offX - $renderer->getTextWidth($text[0]);        
         $renderer->drawText(['x' => $x, 'y' => $y], $text[0], $foreColor, $font, $fontSize);

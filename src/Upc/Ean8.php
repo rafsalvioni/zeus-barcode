@@ -158,7 +158,7 @@ class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
         $width     = $this->options['barwidth'] * 28;
         
         $offX = $this->options['border'] + $this->options['quietzone'] + ($this->options['barwidth'] * 3) + 1;
-        $y    = $this->options['barheight'] + 1;
+        $y    = $this->options['barheight'] + 3;
         
         $x = self::centerPosition($width, $renderer->getTextWidth($text[0])) + $offX;
         $renderer->drawText(['x' => $x, 'y' => $y], $text[0], $foreColor, $font, $fontSize);
