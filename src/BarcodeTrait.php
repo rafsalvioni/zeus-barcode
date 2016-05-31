@@ -112,14 +112,28 @@ trait BarcodeTrait
         return \str_pad($data, $length, '0', \STR_PAD_LEFT);
     }
     
+    /**
+     * Calculate the position to centralize a object.
+     * 
+     * @param number $widthArea
+     * @param number $widthObject
+     * @return int
+     */
     protected static function centerPosition($widthArea, $widthObject)
     {
-        return \round(($widthArea - $widthObject) / 2);
+        return (int)\round(($widthArea - $widthObject) / 2);
     }
     
+    /**
+     * Calculate the position to align object to right.
+     * 
+     * @param number $widthArea
+     * @param number $widthObject
+     * @return int
+     */
     protected static function rightPosition($widthArea, $widthObject)
     {
-        return \round($widthArea - $widthObject);
+        return (int)\round($widthArea - $widthObject);
     }
 
     /**
@@ -321,19 +335,20 @@ trait BarcodeTrait
      */
     protected function drawText(Renderer\RendererInterface &$renderer)
     {
-        $totalWidth = $renderer->getTotalWidth();
-        $text       = $text = $this->getDataToDisplay();
-        $textWidth  = $renderer->getTextWidth($text);
+        $widthArea = $renderer->getTotalWidth();
+        $text      = $text = $this->getDataToDisplay();
+        $textWidth = $renderer->getTextWidth($text);
+        $offset    = $this->options['border'] + $this->options['quietzone'];
         
         switch ($this->options['textalign']) {
             case 'center':
-                $x = self::centerPosition($totalWidth, $textWidth);
+                $x = self::centerPosition($widthArea, $textWidth);
                 break;
             case 'right':
-                $x = self::rightPosition($totalWidth - $this->options['border'], $textWidth);
+                $x = self::rightPosition($widthArea, $textWidth) - $offset;
                 break;
             default:
-                $x = $this->border;
+                $x = $offset;
         }
         switch ($this->options['textposition']) {
             case 'top':
