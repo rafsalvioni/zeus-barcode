@@ -168,6 +168,17 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
     }
 
     /**
+     * To Upca, text position is always "bottom".
+     * 
+     * @param string $value
+     * @return self
+     */
+    public function setTextPosition($value)
+    {
+        return $this->setOption('textposition', 'bottom');
+    }
+
+    /**
      * Return the Ean-13 checksum.
      * 
      * @param string $data

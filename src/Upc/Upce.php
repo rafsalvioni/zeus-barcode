@@ -63,6 +63,17 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
     }
     
     /**
+     * To UPC-E, text position is always "bottom".
+     * 
+     * @param string $value
+     * @return self
+     */
+    public function setTextPosition($value)
+    {
+        return $this->setOption('textposition', 'bottom');
+    }
+
+    /**
      * Converts a UPC-E data to UPC-A.
      * 
      * @param string $data UPC-E data
