@@ -5,6 +5,7 @@ namespace Zeus\Barcode\Upc;
 use Zeus\Barcode\AbstractChecksumBarcode;
 use Zeus\Barcode\FixedLengthInterface;
 use Zeus\Barcode\Encoder\EncoderInterface;
+use Zeus\Barcode\Renderer\RendererInterface;
 
 /**
  * Implements a UPC-A barcode standard.
@@ -113,18 +114,6 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
     }
     
     /**
-     * 
-     * @return string
-     */
-    public function getDataToDisplay()
-    {
-        $data = parent::getDataToDisplay();
-        $data = \substr_replace($data, ' ', 1, 0);
-        $data = \substr_replace($data, ' ', -1, 0);
-        return $data;
-    }
-    
-    /**
      * Returns the manufacturer code.
      * 
      * @return string
@@ -208,6 +197,38 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
     protected function encodeData(EncoderInterface &$encoder, $data)
     {
         $encoder = $this->ean13->getEncoded();
+    }
+    
+    /**
+     * Draw a text specifically to Upca.
+     * 
+     * @param RendererInterface $renderer
+     */
+    protected function drawText(RendererInterface &$renderer)
+    {
+        $text = $this->getData();
+        $text = [$text{0}, \substr($text, 1, 5), \substr($text, 6, 5), \substr($text, -1)];
+        
+        $foreColor = $this->forecolor;
+        $font      = $this->font;
+        $fontSize  = $this->fontsize;
+        $barWidth  = $this->barwidth;
+        $width     = $barWidth * 42;
+        
+        $offX = $this->border + $this->quietzone;
+        $y    = $this->barheight + 3;
+
+        $x = $offX - $renderer->getTextWidth($text[0]) - 1;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[0], $foreColor, $font, $fontSize);
+        
+        $x = self::centerPosition($width, $renderer->getTextWidth($text[1])) + $offX + $barWidth * 3;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[1], $foreColor, $font, $fontSize);
+        
+        $x = self::centerPosition($width, $renderer->getTextWidth($text[2])) + $offX + $barWidth * 50;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[2], $foreColor, $font, $fontSize);
+        
+        $x = $offX + $barWidth * 96 + 1;
+        $renderer->drawText(['x' => $x, 'y' => $y], $text[3], $foreColor, $font, $fontSize);
     }
 }
 
