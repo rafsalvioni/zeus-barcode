@@ -186,7 +186,7 @@ trait EncoderTrait
         
         if ($this->last >= 0) {
             $last =& $this->bars[$this->last];
-            if ($bar['b'] && $last['b'] && $bar['h'] == $last['h'] && $bar['y'] == $last['y']) {
+            if ($bar['b'] === $last['b'] && $bar['h'] == $last['h'] && $bar['y'] == $last['y']) {
                 $last['w'] += $bar['w'];
                 $append = false;
             }
