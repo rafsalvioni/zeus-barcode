@@ -37,38 +37,26 @@ class SvgRenderer extends AbstractRenderer
      */
     public function drawPolygon(array $points, $color, $filled = true)
     {
-        $ps = [];
+        $n  = \count($points);
         foreach ($points as &$point) {
             $this->applyOffsets($point);
-            $ps[] = \implode(',', $point);
         }
         
-        $n       = \count($points);
-        $color   = self::formatColor($color);
-        $attribs = [
-            'stroke' => $color,
-        ];
+        $color = self::formatColor($color);
         if ($filled) {
             $attribs['fill'] = $color;
         }
-        
-        if ($n >= 3) {
-            $attribs['points'] = \implode(' ', $ps);
-            $this->appendRootElement('polygon', $attribs);
+        else {
+            $attribs['fill-opacity'] = '0';
+            $attribs['stroke'] = $color;
         }
-        else if ($n == 2) {
-            $attribs['x1'] =& $points[0]['x'];
-            $attribs['y1'] =& $points[0]['y'];
-            $attribs['x2'] =& $points[1]['x'];
-            $attribs['y2'] =& $points[1]['y'];
-            $this->appendRootElement('line', $attribs);
-        }
-        else if ($n == 1) {
-            $attribs['x1'] =& $points[0]['x'];
-            $attribs['y1'] =& $points[0]['y'];
-            $attribs['x2'] =& $points[0]['x'];
-            $attribs['y2'] =& $points[0]['y'];
-            $this->appendRootElement('line', $attribs);
+
+        if ($n == 4) {
+            $attribs['x']      = $points[0][0];
+            $attribs['y']      = $points[0][1];
+            $attribs['width']  = $points[1][0] - $points[0][0] + 1;
+            $attribs['height'] = $points[2][1] - $points[1][1] + 1;
+            $this->appendRootElement('rect', $attribs);
         }
         return $this;
     }
@@ -80,14 +68,28 @@ class SvgRenderer extends AbstractRenderer
      * @param int $color
      * @param string $font
      * @param int $fontSize
+     * @param string $align
      */
-    public function drawText(array $point, $text, $color, $font, $fontSize)
-    {
+    public function drawText(
+        array $point, $text, $color, $font, $fontSize, $align = null
+    ) {
+        $this->applyOffsets($point);
         $attribs = [
-            'x'    => $point['x'],
-            'y'    => $point['y'] + $fontSize,
+            'x'    => $point[0],
+            'y'    => $point[1] + $fontSize,
             'fill' => self::formatColor($color),
         ];
+        switch ($align) {
+            case 'center':
+                $attribs['text-anchor'] = 'middle';
+                break;
+            case 'right':
+                $attribs['text-anchor'] = 'end';
+                break;
+            case 'left':
+                $attribs['text-anchor'] = 'start';
+                break;
+        }
         if ($font) {
             $font = \preg_replace('/\.[a-z\d]{1,4}$/i', '', \basename($font));
             $attribs['font-family'] = $font;
@@ -100,27 +102,6 @@ class SvgRenderer extends AbstractRenderer
     }
     
     /**
-     * 
-     * @return int
-     */
-    public function getTextHeight()
-    {
-        $fontSize = $this->barcode->fontSize;
-        return \round($fontSize * 0.84);
-    }
-
-    /**
-     * 
-     * @param string $text
-     * @return int
-     */
-    public function getTextWidth($text = null)
-    {
-        $text = \coalesce($text, $this->barcode->getDataToDisplay());
-        return $this->getTextHeight() * 0.9 * \strlen($text);
-    }
-
-    /**
      * Allows use a another XML document where barcode will be drawed.
      * 
      * $resource can be a file path, string or DOMDocument object.
@@ -130,11 +111,15 @@ class SvgRenderer extends AbstractRenderer
      */
     public function setResource($resource)
     {
-        if (\file_exists($resource)) {
-            $resource = \DOMDocument::load($resource);
-        }
-        else if (!\is_object($resource)) {
-            $resource = \DOMDocument::loadXML((string)$resource);
+        if (!($resource instanceof \DOMDocument)) {
+            $doc = new \DOMDocument();
+            if (
+                $resource instanceof \DOMElement && $doc->appendChild($resource) ||
+                \file_exists($resource) && $doc->load($resource) ||
+                \is_scalar($resource) && $doc->loadXML((string)$resource)
+            ) {
+                $resource =& $doc;
+            }
         }
         if ($resource instanceof DOMDocument) {
             $this->external = $resource;
@@ -153,8 +138,8 @@ class SvgRenderer extends AbstractRenderer
      */
     protected static function formatColor($color)
     {
-        $rgb = self::colorToRgb($color);
-        return 'rgb(' . \implode(',', $rgb) . ')';
+        $rgb = $color & 0xffffff;
+        return '#' . \str_pad(\dechex($rgb), 6, '0', \STR_PAD_LEFT);
     }
 
     /**
@@ -162,23 +147,39 @@ class SvgRenderer extends AbstractRenderer
      */
     protected function initResource()
     {
+        $width  = $this->barcode->getTotalWidth();
+        $height = $this->barcode->getTotalHeight();
+
         if (!$this->external) {
-            $width  = $this->getTotalWidth();
-            $height = $this->getTotalHeight();
-            
-            $this->resource = new DOMDocument('1.0', 'utf-8');
-            $this->resource->formatOutput = true;
+            $this->resource = new \DOMDocument('1.0', 'utf-8');
             $this->rootElement = $this->resource->createElement('svg');
-            $this->rootElement->setAttribute('xmlns', "http://www.w3.org/2000/svg");
-            $this->rootElement->setAttribute('version', '1.1');
             $this->rootElement->setAttribute('width', $width);
             $this->rootElement->setAttribute('height', $height);
-            $this->rootElement->setAttribute('fill', self::formatColor($this->barcode->backColor));
+            $this->rootElement->setAttribute('version', '1.1');
+            $this->rootElement->setAttribute('xmlns', "http://www.w3.org/2000/svg");
             $this->resource->appendChild($this->rootElement);
         }
         else {
             $this->resource =& $this->external;
+            $this->rootElement =& $this->resource->documentElement;
+            $this->rootElement->setAttribute(
+                'width',
+                \max($this->rootElement->getAttribute('width'), $width + $this->offsetLeft)
+            );
+            $this->rootElement->setAttribute(
+                'height',
+                \max($this->rootElement->getAttribute('height'), $height + $this->offsetTop)
+            );
         }
+        $this->appendRootElement('rect', [
+            'x'      => $this->offsetLeft,
+            'y'      => $this->offsetTop,
+            'width'  => $width,
+            'height' => $height,
+            'fill'   => self::formatColor($this->barcode->backColor)
+        ]);
+        
+        $this->resource->formatOutput = true;
     }
     
     /**
@@ -209,7 +210,7 @@ class SvgRenderer extends AbstractRenderer
             $element->setAttribute($k, $v);
         }
         if ($textContent !== null) {
-            $element->appendChild(new DOMText((string) $textContent));
+            $element->appendChild(new \DOMText((string) $textContent));
         }
         return $element;
     }
