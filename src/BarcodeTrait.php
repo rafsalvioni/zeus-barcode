@@ -113,30 +113,6 @@ trait BarcodeTrait
     }
     
     /**
-     * Calculate the position to centralize a object.
-     * 
-     * @param number $widthArea
-     * @param number $widthObject
-     * @return int
-     */
-    protected static function centerPosition($widthArea, $widthObject)
-    {
-        return (int)\round(($widthArea - $widthObject) / 2);
-    }
-    
-    /**
-     * Calculate the position to align object to right.
-     * 
-     * @param number $widthArea
-     * @param number $widthObject
-     * @return int
-     */
-    protected static function rightPosition($widthArea, $widthObject)
-    {
-        return (int)\round($widthArea - $widthObject);
-    }
-
-    /**
      * 
      * @return string
      */
@@ -215,7 +191,7 @@ trait BarcodeTrait
      */
     public function getWidth()
     {
-        return (int)\round(
+        return (int)\ceil(
                     $this->options['barwidth'] *
                     $this->getEncoded()->getWidthFactor()
                  );
@@ -227,10 +203,39 @@ trait BarcodeTrait
      */
     public function getHeight()
     {
-        return (int)\round(
+        return (int)\ceil(
                     $this->options['barheight'] *
                     $this->getEncoded()->getHeightFactor()
                  );
+    }
+    
+    /**
+     * 
+     * @return int
+     */
+    public function getTotalWidth()
+    {
+        $width = ($this->options['border'] * 2) +
+                 ($this->options['quietzone'] * 2) +
+                 $this->getWidth();
+        
+        return (int)\ceil($width);
+    }
+    
+    /**
+     * 
+     * @return int
+     */
+    public function getTotalHeight()
+    {
+        $height = ($this->options['border'] * 2) +
+                   $this->getHeight();
+        
+        if ($this->options['showtext']) {
+            $height += $this->options['fontsize'] + 3;
+        }
+        
+        return (int)\ceil($height);
     }
     
     /**
@@ -248,11 +253,7 @@ trait BarcodeTrait
      */
     protected function drawInstructions(Renderer\RendererInterface &$renderer)
     {
-        $width  = $renderer->getTotalWidth() - 1;
-        $height = $renderer->getTotalHeight() - 1;
-        
-        $this->fillBarcodeArea($renderer, $width, $height);
-        $this->drawBorder($renderer, $width, $height);
+        $this->drawBorder($renderer);
         $this->drawBarcode($renderer);
         
         if ($this->options['showtext']) {
@@ -261,38 +262,23 @@ trait BarcodeTrait
     }
 
     /**
-     * Fill barcode area.
-     * 
-     * @param Renderer\RendererInterface $renderer
-     * @param int $width
-     * @param int $height
-     */
-    protected function fillBarcodeArea(Renderer\RendererInterface &$renderer, $width, $height)
-    {
-        $renderer->drawPolygon([
-            ['x' => 0, 'y' => 0],
-            ['x' => $width, 'y' => 0],
-            ['x' => $width, 'y' => $height],
-            ['x' => 0, 'y' => $height],
-        ], $this->options['backcolor'], true);
-    }
-
-    /**
      * Draws the barcode border.
      * 
      * @param Renderer\RendererInterface $renderer
-     * @param int $width
-     * @param int $height
      */
-    protected function drawBorder(Renderer\RendererInterface &$renderer, $width, $height)
+    protected function drawBorder(Renderer\RendererInterface &$renderer)
     {
         // Draws the border
+        $width  = $this->getTotalWidth() - 1;
+        $height = $this->getTotalHeight() - 1;
         $border = $this->border;
         
         for ($i = 0; $i < $border; $i++) {
             $renderer->drawPolygon([
-                ['x' => 0 + $i, 'y' => 0 + $i], ['x' => $width - $i, 'y' => $i],
-                ['x' => $width - $i, 'y' => $height - $i], ['x' => $i, 'y' => $height - $i],
+                [0 + $i, 0 + $i],
+                [$width - $i, $i],
+                [$width - $i, $height - $i],
+                [$i, $height - $i],
             ], $this->options['forecolor'], false);
         }
     }
@@ -304,13 +290,13 @@ trait BarcodeTrait
      */
     protected function drawBarcode(Renderer\RendererInterface &$renderer)
     {
-        $barOffsetX = $this->border + $this->quietZone + 1;
+        $barOffsetX = $this->border + $this->quietZone;
         $barOffsetY = $this->border;
         $barX       = $barOffsetX;
         $barY       = $barOffsetY;
         
         if ($this->showText && $this->textPosition == 'top') {
-            $barOffsetY += $renderer->getTextHeight() + 3;
+            $barOffsetY += $this->options['fontsize'] + 3;
         }
         
         foreach ($this->getEncoded() as $bar) {
@@ -319,8 +305,8 @@ trait BarcodeTrait
             $barY      = $barOffsetY + ($bar->y * $this->options['barheight']);
             if ($bar->b) {
                 $renderer->drawPolygon([
-                    ['x' => $barX, 'y' => $barY], ['x' => $barX + $barWidth, 'y' => $barY],
-                    ['x' => $barX + $barWidth, 'y' => $barY + $barHeight], ['x' => $barX, 'y' => $barY + $barHeight],
+                    [$barX, $barY], [$barX + $barWidth, $barY],
+                    [$barX + $barWidth, $barY + $barHeight], [$barX, $barY + $barHeight],
                 ], $this->options['forecolor'], true);
             }
             $barX += $barWidth + 1;
@@ -335,21 +321,8 @@ trait BarcodeTrait
      */
     protected function drawText(Renderer\RendererInterface &$renderer)
     {
-        $widthArea = $renderer->getTotalWidth();
-        $text      = $text = $this->getDataToDisplay();
-        $textWidth = $renderer->getTextWidth($text);
-        $offset    = $this->options['border'] + $this->options['quietzone'];
-        
-        switch ($this->options['textalign']) {
-            case 'center':
-                $x = self::centerPosition($widthArea, $textWidth);
-                break;
-            case 'right':
-                $x = self::rightPosition($widthArea, $textWidth) - $offset;
-                break;
-            default:
-                $x = $offset;
-        }
+        $text   = $this->getDataToDisplay();
+        $offset = $this->options['border'] + $this->options['quietzone'];
         switch ($this->options['textposition']) {
             case 'top':
                 $y = $this->border + 1;
@@ -357,13 +330,24 @@ trait BarcodeTrait
             default:
                 $y = $this->border + 2 + $this->getHeight();
         }
-        
+        switch ($this->options['textalign']) {
+            case 'center':
+                $x = $this->getTotalWidth() / 2;
+                break;
+            case 'right':
+                $x = $this->getTotalWidth() - $offset;
+                break;
+            case 'left':
+                $x = $offset;
+                break;
+        }
         $renderer->drawText(
-            ['x' => $x, 'y' => $y],
+            [$x, $y],
             $text,
             $this->options['forecolor'],
             $this->options['font'],
-            $this->options['fontsize']
+            $this->options['fontsize'],
+            $this->options['textalign']
         );
     }
 }

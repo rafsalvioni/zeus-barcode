@@ -100,6 +100,21 @@ interface BarcodeInterface
     public function getHeight();
     
     /**
+     * Returns the total barcode width, including barcode area, quietzones,
+     * border etc.
+     * 
+     * @return int
+     */
+    public function getTotalWidth();
+    
+    /**
+     * Returns the total barcode height, including barcode area, border, text etc.
+     * 
+     * @return int
+     */
+    public function getTotalHeight();
+    
+    /**
      * Draw the barcode to a renderer object.
      * 
      * Returns the own renderer.

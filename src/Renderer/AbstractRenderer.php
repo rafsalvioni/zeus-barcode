@@ -31,8 +31,8 @@ abstract class AbstractRenderer implements RendererInterface
     protected function applyOffsets(array &$point)
     {
         if ($this->external) {
-            $point['x'] += $this->options['offsetleft'];
-            $point['y'] += $this->options['offsettop'];
+            $point[0] += $this->options['offsetleft'];
+            $point[1] += $this->options['offsettop'];
         }
     }
 }

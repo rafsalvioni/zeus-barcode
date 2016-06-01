@@ -220,26 +220,25 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
         $text = $this->getData();
         $text = [$text{0}, \substr($text, 1, 5), \substr($text, 6, 5), \substr($text, -1)];
         
-        $foreColor = $this->forecolor;
-        $font      = $this->font;
-        $fontSize  = $this->fontsize;
-        $barWidth  = $this->barwidth;
-        $width     = $barWidth * 42;
+        $foreColor =& $this->options['forecolor'];
+        $font      =& $this->options['font'];
+        $fontSize  =& $this->options['fontsize'];
+        $barWidth  =& $this->options['barwidth'];
         
         $offX = $this->border + $this->quietzone;
         $y    = $this->barheight + 3;
 
-        $x = $offX - $renderer->getTextWidth($text[0]) - 1;
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[0], $foreColor, $font, $fontSize);
+        $x = $offX - 3;
+        $renderer->drawText([$x, $y], $text[0], $foreColor, $font, $fontSize, 'right');
         
-        $x = self::centerPosition($width, $renderer->getTextWidth($text[1])) + $offX + $barWidth * 3;
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[1], $foreColor, $font, $fontSize);
+        $x = $offX + $barWidth * 24;
+        $renderer->drawText([$x, $y], $text[1], $foreColor, $font, $fontSize, 'center');
         
-        $x = self::centerPosition($width, $renderer->getTextWidth($text[2])) + $offX + $barWidth * 50;
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[2], $foreColor, $font, $fontSize);
+        $x += $barWidth * 45;
+        $renderer->drawText([$x, $y], $text[2], $foreColor, $font, $fontSize, 'center');
         
-        $x = $offX + $barWidth * 96 + 1;
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[3], $foreColor, $font, $fontSize);
+        $x += $barWidth * 27;
+        $renderer->drawText([$x, $y], $text[3], $foreColor, $font, $fontSize, 'left');
     }
 }
 

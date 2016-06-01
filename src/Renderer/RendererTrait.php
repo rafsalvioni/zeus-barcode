@@ -75,39 +75,6 @@ trait RendererTrait
     }
     
     /**
-     * Calculates the barcode width.
-     * 
-     * @return int
-     */
-    public function getTotalWidth()
-    {
-        $barcode =& $this->barcode;
-        $width = ($barcode->border * 2) +
-                 $barcode->getWidth()   +
-                 ($barcode->quietZone * 2);
-        
-        return (int)$width;
-    }
-    
-    /**
-     * Calculates the barcode height.
-     * 
-     * @return int
-     */
-    public function getTotalHeight()
-    {
-        $barcode =& $this->barcode;
-        $height = ($barcode->border * 2) +
-                  $barcode->getHeight();
-        
-        if ($barcode->showText) {
-            $height += $this->getTextHeight() + 3;
-        }
-        
-        return (int)$height;
-    }
-    
-    /**
      * Initializes the barcode to resource
      * 
      */

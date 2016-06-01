@@ -164,18 +164,18 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
         $foreColor =& $this->options['forecolor'];
         $font      =& $this->options['font'];
         $fontSize  =& $this->options['fontsize'];
-        $width     = $this->options['barwidth'] * 48;
+        $barWidth  =& $this->options['barwidth'];
         
         $offX = $this->options['border'] + $this->options['quietzone'];
         $y    = $this->options['barheight'] + 3;
 
-        $x = $offX - $renderer->getTextWidth($text[0]) - 1;
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[0], $foreColor, $font, $fontSize);
+        $x = $offX - 3;
+        $renderer->drawText([$x, $y], $text[0], $foreColor, $font, $fontSize, 'right');
         
-        $x = self::centerPosition($width, $renderer->getTextWidth($text[1])) + $offX + $this->options['barwidth'] * 3;
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[1], $foreColor, $font, $fontSize);
+        $x += $barWidth * 28;
+        $renderer->drawText([$x, $y], $text[1], $foreColor, $font, $fontSize, 'center');
         
-        $x = $offX + $this->options['barwidth'] * 51 + 2;
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[2], $foreColor, $font, $fontSize);
+        $x += $barWidth * 31;
+        $renderer->drawText([$x, $y], $text[2], $foreColor, $font, $fontSize, 'left');
     }
 }

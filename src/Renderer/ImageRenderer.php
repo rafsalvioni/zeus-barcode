@@ -40,24 +40,25 @@ class ImageRenderer extends AbstractRenderer
      */
     public function drawPolygon(array $points, $color, $filled = true)
     {
-        $color = $this->getColorId($color);
-        $ps    = [];
-        $n     = \count($points);
+        $color  = $this->getColorId($color);
+        $points = \array_values(\array_unique($points, \SORT_REGULAR));
+        $ps     = [];
+        $n      = \count($points);
         
         foreach ($points as &$point) {
             $this->applyOffsets($point);
             $ps = \array_merge($ps, \array_values($point));
         }
             
-        if ($n > 3) {
+        if ($n >= 3) {
             $f = $filled ? '\\imagefilledpolygon' : '\\imagepolygon';
             $f($this->resource, $ps, \count($points), $color);
         }
         else if ($n == 2) {
-            \imageline($this->resource, $points[0]['x'], $points[0]['y'], $points[1]['x'], $points[1]['y'], $color);
+            \imageline($this->resource, $points[0][0], $points[0][1], $points[1][0], $points[1][1], $color);
         }
         else if ($n == 1) {
-            \imagesetpixel($this->resource, $points[0]['x'], $points[0]['y'], $color);
+            \imagesetpixel($this->resource, $points[0][0], $points[0][1], $color);
         }
     }
 
@@ -68,58 +69,37 @@ class ImageRenderer extends AbstractRenderer
      * @param int $color
      * @param string $font
      * @param int $fontSize
+     * @param string $align
      */
-    public function drawText(array $point, $text, $color, $font, $fontSize)
-    {
-        $color = $this->getColorId($color);
-        $font  = $this->resolveFont($font, $fontSize);
+    public function drawText(
+        array $point, $text, $color, $font, $fontSize, $align = null
+    ) {
+        $color     = $this->getColorId($color);
+        $font      = $this->resolveFont($font, $fontSize);
+        $width     = $this->barcode->getTotalWidth();
+        $offset    = $this->barcode->border + $this->barcode->quietZone;
+        $textWidth = $this->getTextWidth($font, $text);
+        
+        switch ($align) {
+            case 'center':
+                $point[0] -= \ceil($textWidth / 2);
+                break;
+            case 'right':
+                $point[0] -= $textWidth;
+                break;
+        }
         
         $this->applyOffsets($point);
         
         if (\is_int($font)) {
-            \imagestring($this->resource, $font, $point['x'], $point['y'], $text, $color);
+            \imagestring($this->resource, $font, $point[0], $point[1], $text, $color);
         }
         else {
-            $point['y'] += $this->getTextHeight();
-            \imagettftext($this->resource, $fontSize, 0, $point['x'], $point['y'], $color, $font, $text);
+            $point[1] += $fontSize;
+            \imagettftext($this->resource, $fontSize, 0, $point[0], $point[1], $color, $font, $text);
         }
     }
     
-    /**
-     * 
-     * @return int
-     */
-    public function getTextHeight()
-    {
-        $font = $this->resolveFont($this->barcode->font, $this->barcode->fontSize);
-        if (\is_int($font)) {
-            return \imagefontheight($font);
-        }
-        else {
-            $box = \imagettfbbox($this->barcode->fontSize, 0, $this->barcode->font, 'M');
-            return \abs($box[7] - $box[1]);
-        }
-    }
-
-    /**
-     * 
-     * @param string $text
-     * @return int
-     */
-    public function getTextWidth($text = null)
-    {
-        $font = $this->resolveFont($this->barcode->font, $this->barcode->fontSize);
-        $text = \coalesce($text, $this->barcode->getDataToDisplay());
-        
-        if (\is_int($font)) {
-            return \imagefontwidth($font) * \strlen($text);
-        }
-        else {
-            $box = \imagettfbbox($this->barcode->fontSize, 0, $this->barcode->font, $text);
-            return \abs($box[2] - $box[0]);
-        }
-    }
-
     /**
      * Allows use a another image where barcode will be drawed.
      * 
@@ -147,15 +127,33 @@ class ImageRenderer extends AbstractRenderer
      */
     protected function initResource()
     {
+        $width  = $this->barcode->getTotalWidth();
+        $height = $this->barcode->getTotalHeight();
+        
         if (!$this->external) {
-            $width          = $this->getTotalWidth();
-            $height         = $this->getTotalHeight();
             $this->resource = \imagecreatetruecolor($width, $height);
             $this->colors   = [];
         }
         else {
             $this->resource =& $this->external;
         }
+        
+        // Fill barcode's background
+        $point = [
+            0 => 0,
+            1 => 0,
+        ];
+        $this->applyOffsets($point);
+        
+        $color = $this->getColorId($this->barcode->backColor);
+        \imagefilledrectangle(
+            $this->resource,
+            $point[0],
+            $point[1],
+            $width + $point[0] - 1,
+            $height + $point[1] - 1,
+            $color
+        );
     }
     
     /**
@@ -212,6 +210,25 @@ class ImageRenderer extends AbstractRenderer
         }
         else {
             return 0;
+        }
+    }
+    
+    /**
+     * 
+     * @param string|int $font
+     * @param string $text
+     * @return int
+     */
+    protected function getTextWidth($font, $text = null)
+    {
+        $text = \coalesce($text, $this->barcode->getDataToDisplay());
+        
+        if (\is_int($font)) {
+            return \imagefontwidth($font) * \strlen($text);
+        }
+        else {
+            $box = \imagettfbbox($this->barcode->fontSize, 0, $font, $text);
+            return \abs($box[2] - $box[0]);
         }
     }
 }

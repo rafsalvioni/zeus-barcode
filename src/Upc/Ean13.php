@@ -252,17 +252,17 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
         $foreColor =& $this->options['forecolor'];
         $font      =& $this->options['font'];
         $fontSize  =& $this->options['fontsize'];
-        $width     = $this->options['barwidth'] * 42;
+        $barWidth  =& $this->options['barwidth'];
         
         $offX = $this->options['border'] + $this->options['quietzone'] + 1;
         $y    = $this->options['barheight'] + 3;
 
-        $x = $offX - $renderer->getTextWidth($text[0]);        
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[0], $foreColor, $font, $fontSize);
-        $x = self::centerPosition($width, $renderer->getTextWidth($text[1])) + $offX + $this->options['barwidth'] * 3;
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[1], $foreColor, $font, $fontSize);
-        $x = self::centerPosition($width, $renderer->getTextWidth($text[2])) + $offX + $this->options['barwidth'] * 50;
-        $renderer->drawText(['x' => $x, 'y' => $y], $text[2], $foreColor, $font, $fontSize);
+        $x = $offX - 3;
+        $renderer->drawText([$x, $y], $text[0], $foreColor, $font, $fontSize, 'right');
+        $x = $offX + $barWidth * 24;
+        $renderer->drawText([$x, $y], $text[1], $foreColor, $font, $fontSize, 'center');
+        $x += $barWidth * 45;
+        $renderer->drawText([$x, $y], $text[2], $foreColor, $font, $fontSize, 'center');
     }
 }
 
