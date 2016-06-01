@@ -12,6 +12,11 @@ use \DOMText;
  */
 class SvgRenderer extends AbstractRenderer
 {
+    /**
+     * SVG element
+     * 
+     * @var DOMElement
+     */
     protected $rootElement;
     
     /**
@@ -35,20 +40,20 @@ class SvgRenderer extends AbstractRenderer
         $ps = [];
         foreach ($points as &$point) {
             $this->applyOffsets($point);
-            $ps = \array_merge($ps, \array_values($point));
+            $ps[] = \implode(',', $point);
         }
         
         $n       = \count($points);
+        $color   = self::formatColor($color);
         $attribs = [
-            'style'  => 'stroke:' . self::formatColor($color),
+            'stroke' => $color,
         ];
         if ($filled) {
-            $attribs['style'] .= ';fill:' . self::formatColor($color);
+            $attribs['fill'] = $color;
         }
-        $attribs['style'] .= ';stroke-width:1';
         
-        if ($n > 3) {
-            $attribs['points'] = \implode(',', $ps);
+        if ($n >= 3) {
+            $attribs['points'] = \implode(' ', $ps);
             $this->appendRootElement('polygon', $attribs);
         }
         else if ($n == 2) {
@@ -65,6 +70,7 @@ class SvgRenderer extends AbstractRenderer
             $attribs['y2'] =& $points[0]['y'];
             $this->appendRootElement('line', $attribs);
         }
+        return $this;
     }
 
     /**
@@ -77,6 +83,20 @@ class SvgRenderer extends AbstractRenderer
      */
     public function drawText(array $point, $text, $color, $font, $fontSize)
     {
+        $attribs = [
+            'x'    => $point['x'],
+            'y'    => $point['y'] + $fontSize,
+            'fill' => self::formatColor($color),
+        ];
+        if ($font) {
+            $font = \preg_replace('/\.[a-z\d]{1,4}$/i', '', \basename($font));
+            $attribs['font-family'] = $font;
+        }
+        if ($fontSize) {
+            $attribs['font-size'] = "{$fontSize}pt";
+        }
+        $this->appendRootElement('text', $attribs, $text);
+        return $this;
     }
     
     /**
@@ -85,6 +105,8 @@ class SvgRenderer extends AbstractRenderer
      */
     public function getTextHeight()
     {
+        $fontSize = $this->barcode->fontSize;
+        return \round($fontSize * 0.84);
     }
 
     /**
@@ -94,6 +116,8 @@ class SvgRenderer extends AbstractRenderer
      */
     public function getTextWidth($text = null)
     {
+        $text = \coalesce($text, $this->barcode->getDataToDisplay());
+        return $this->getTextHeight() * 0.9 * \strlen($text);
     }
 
     /**
@@ -121,6 +145,12 @@ class SvgRenderer extends AbstractRenderer
         return $this;
     }
     
+    /**
+     * Convert a integer color to a RGB format used by SVG.
+     * 
+     * @param int $color
+     * @return string
+     */
     protected static function formatColor($color)
     {
         $rgb = self::colorToRgb($color);
@@ -139,12 +169,12 @@ class SvgRenderer extends AbstractRenderer
             $this->resource = new DOMDocument('1.0', 'utf-8');
             $this->resource->formatOutput = true;
             $this->rootElement = $this->resource->createElement('svg');
-            $this->resource->appendChild($this->rootElement);
             $this->rootElement->setAttribute('xmlns', "http://www.w3.org/2000/svg");
             $this->rootElement->setAttribute('version', '1.1');
             $this->rootElement->setAttribute('width', $width);
             $this->rootElement->setAttribute('height', $height);
             $this->rootElement->setAttribute('fill', self::formatColor($this->barcode->backColor));
+            $this->resource->appendChild($this->rootElement);
         }
         else {
             $this->resource =& $this->external;
