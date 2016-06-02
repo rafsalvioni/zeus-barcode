@@ -75,7 +75,9 @@ trait RendererTrait
     }
     
     /**
-     * Initializes the barcode to resource
+     * Initializes the barcode resource.
+     * 
+     * Should be fill barcode area with background color.
      * 
      */
     abstract protected function initResource();
