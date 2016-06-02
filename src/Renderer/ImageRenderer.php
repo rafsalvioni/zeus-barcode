@@ -143,7 +143,7 @@ class ImageRenderer extends AbstractRenderer
         if (!$this->resource || !$this->options['merge']) {
             $this->resource = \imagecreatetruecolor($width, $height);
             $this->colors   = [];
-            //\imagefill($this->resource, 0, 0, $this->getColorId($this->options['backcolor']));
+            $this->fillResource($this->resource);
         }
         if ($this->options['merge']) {
             $this->resizeResource($width, $height);
@@ -186,11 +186,21 @@ class ImageRenderer extends AbstractRenderer
         
         if ($newwidth != $oldwidth || $newheight != $oldheight) {
             $resource = \imagecreatetruecolor($newwidth, $newheight);
+            $this->fillResource($resource);
             \imagecopymerge($resource, $this->resource, 0, 0, 0, 0, $oldwidth, $oldheight, 100);
-            \imagefill($resource, 0, 0, $this->getColorId($this->options['backcolor']));
             \imagedestroy($this->resource);
             $this->resource = $resource;
         }
+    }
+    
+    /**
+     * Fill a resource.
+     * 
+     * @param resource $resource
+     */
+    protected function fillResource($resource)
+    {
+        \imagefill($resource, 0, 0, $this->getColorId($this->options['backcolor']));
     }
 
     /**
