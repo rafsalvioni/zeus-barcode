@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0f8e25052c61864208a7e35e33f9efc2",
+    "hash": "9adfadc241ecd775cb3a8c4ed983e2af",
     "content-hash": "037ef9064bfd55020528b58b8672c877",
     "packages": [
         {
             "name": "rafsalvioni/zeus-base",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rafsalvioni/zeus-base.git",
-                "reference": "41ec422db84446d64eda6fe9ade860664b198dd4"
+                "reference": "d42ec7cf57c351c5e2234b6016a1f55f2cd183cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rafsalvioni/zeus-base/zipball/41ec422db84446d64eda6fe9ade860664b198dd4",
-                "reference": "41ec422db84446d64eda6fe9ade860664b198dd4",
+                "url": "https://api.github.com/repos/rafsalvioni/zeus-base/zipball/d42ec7cf57c351c5e2234b6016a1f55f2cd183cc",
+                "reference": "d42ec7cf57c351c5e2234b6016a1f55f2cd183cc",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,7 @@
                 "vars",
                 "zeus"
             ],
-            "time": "2016-05-12 04:14:05"
+            "time": "2016-06-02 15:32:18"
         }
     ],
     "packages-dev": [
@@ -259,16 +259,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "3.3.1",
+            "version": "3.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2431befdd451fac43fbcde94d1a92fb3b8b68f86"
+                "reference": "44cd8e3930e431658d1a5de7d282d5cb37837fd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2431befdd451fac43fbcde94d1a92fb3b8b68f86",
-                "reference": "2431befdd451fac43fbcde94d1a92fb3b8b68f86",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/44cd8e3930e431658d1a5de7d282d5cb37837fd5",
+                "reference": "44cd8e3930e431658d1a5de7d282d5cb37837fd5",
                 "shasum": ""
             },
             "require": {
@@ -318,7 +318,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-04-08 08:14:53"
+            "time": "2016-05-27 16:24:29"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -1146,16 +1146,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.0.6",
+            "version": "v3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "0047c8366744a16de7516622c5b7355336afae96"
+                "reference": "eca51b7b65eb9be6af88ad7cc91685f1556f5c9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/0047c8366744a16de7516622c5b7355336afae96",
-                "reference": "0047c8366744a16de7516622c5b7355336afae96",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/eca51b7b65eb9be6af88ad7cc91685f1556f5c9a",
+                "reference": "eca51b7b65eb9be6af88ad7cc91685f1556f5c9a",
                 "shasum": ""
             },
             "require": {
@@ -1164,7 +1164,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -1191,7 +1191,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-03-04 07:55:57"
+            "time": "2016-05-26 21:46:24"
         }
     ],
     "aliases": [],
