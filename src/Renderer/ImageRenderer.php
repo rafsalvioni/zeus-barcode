@@ -37,6 +37,7 @@ class ImageRenderer extends AbstractRenderer
      * @param array $points
      * @param int $color
      * @param bool $filled
+     * @return self
      */
     public function drawRect(array $points, $color, $filled = true)
     {
@@ -60,6 +61,7 @@ class ImageRenderer extends AbstractRenderer
         else if ($n == 1) {
             \imagesetpixel($this->resource, $points[0][0], $points[0][1], $color);
         }
+        return $this;
     }
 
     /**
@@ -70,6 +72,7 @@ class ImageRenderer extends AbstractRenderer
      * @param string $font
      * @param int $fontSize
      * @param string $align
+     * @return self
      */
     public function drawText(
         array $point, $text, $color, $font, $fontSize, $align = null
@@ -98,6 +101,7 @@ class ImageRenderer extends AbstractRenderer
             $point[1] += $fontSize;
             \imagettftext($this->resource, $fontSize, 0, $point[0], $point[1], $color, $font, $text);
         }
+        return $this;
     }
     
     /**

@@ -37,6 +37,7 @@ class SvgRenderer extends AbstractRenderer
      * @param array $points
      * @param int $color
      * @param bool $filled
+     * @return self
      */
     public function drawRect(array $points, $color, $filled = true)
     {
@@ -72,6 +73,7 @@ class SvgRenderer extends AbstractRenderer
      * @param string $font
      * @param int $fontSize
      * @param string $align
+     * @return self
      */
     public function drawText(
         array $point, $text, $color, $font, $fontSize, $align = null
@@ -89,7 +91,7 @@ class SvgRenderer extends AbstractRenderer
             case 'right':
                 $attribs['text-anchor'] = 'end';
                 break;
-            case 'left':
+            default:
                 $attribs['text-anchor'] = 'start';
                 break;
         }
