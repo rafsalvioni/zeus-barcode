@@ -28,6 +28,7 @@ class ImageRenderer extends AbstractRenderer
      */
     public function render()
     {
+        $this->checkStarted();
         \header('Content-Type: image/png');
         \imagepng($this->resource);
     }
@@ -41,6 +42,8 @@ class ImageRenderer extends AbstractRenderer
      */
     public function drawRect(array $points, $color, $filled = true)
     {
+        $this->checkStarted();
+        
         $color  = $this->getColorId($color);
         $points = \array_values(\array_unique($points, \SORT_REGULAR));
         $ps     = [];
@@ -77,6 +80,8 @@ class ImageRenderer extends AbstractRenderer
     public function drawText(
         array $point, $text, $color, $font, $fontSize, $align = null
     ) {
+        $this->checkStarted();
+        
         $color     = $this->getColorId($color);
         $font      = $this->resolveFont($font, $fontSize);
         $width     = $this->barcode->getTotalWidth();
@@ -138,8 +143,9 @@ class ImageRenderer extends AbstractRenderer
         if (!$this->resource || !$this->options['merge']) {
             $this->resource = \imagecreatetruecolor($width, $height);
             $this->colors   = [];
+            //\imagefill($this->resource, 0, 0, $this->getColorId($this->options['backcolor']));
         }
-        else if ($this->options['merge']) {
+        if ($this->options['merge']) {
             $this->resizeResource($width, $height);
         }
         
@@ -180,8 +186,9 @@ class ImageRenderer extends AbstractRenderer
         
         if ($newwidth != $oldwidth || $newheight != $oldheight) {
             $resource = \imagecreatetruecolor($newwidth, $newheight);
-            \imagefill($resource, 0, 0, $this->getColorId($this->options['backcolor']));
             \imagecopymerge($resource, $this->resource, 0, 0, 0, 0, $oldwidth, $oldheight, 100);
+            \imagefill($resource, 0, 0, $this->getColorId($this->options['backcolor']));
+            \imagedestroy($this->resource);
             $this->resource = $resource;
         }
     }

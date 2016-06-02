@@ -28,6 +28,7 @@ class SvgRenderer extends AbstractRenderer
      */
     public function render()
     {
+        $this->checkStarted();
         \header('Content-Type: image/svg+xml');
         echo $this->resource->saveXML();
     }
@@ -41,6 +42,8 @@ class SvgRenderer extends AbstractRenderer
      */
     public function drawRect(array $points, $color, $filled = true)
     {
+        $this->checkStarted();
+        
         $n  = \count($points);
         foreach ($points as &$point) {
             $this->applyOffsets($point);
@@ -78,6 +81,8 @@ class SvgRenderer extends AbstractRenderer
     public function drawText(
         array $point, $text, $color, $font, $fontSize, $align = null
     ) {
+        $this->checkStarted();
+        
         $this->applyOffsets($point);
         $attribs = [
             'x'    => $point[0],
@@ -132,7 +137,7 @@ class SvgRenderer extends AbstractRenderer
         else {
             throw new Exception('SVG resource should be a XML file, string or \\DOMDocument object');
         }
-        $this->options['merge'] = true;
+        $this->setOption('merge', true);
         return $this;
     }
     
@@ -166,7 +171,7 @@ class SvgRenderer extends AbstractRenderer
             ]);
             $this->resource->appendChild($svg);
         }
-        else if ($this->options['merge']) {
+        if ($this->options['merge']) {
             $this->resizeResource($width, $height);
         }
         
@@ -186,9 +191,15 @@ class SvgRenderer extends AbstractRenderer
         $this->resource->formatOutput = true;
     }
     
+    /**
+     * Resize resource.
+     * 
+     * @param number $width Additional width
+     * @param number $height Additional height
+     */
     protected function resizeResource($width, $height)
     {
-        $svg =& $this->resource->documentElement;
+        $svg  =& $this->resource->documentElement;
         
         $oldwidth  = $svg->getAttribute('width');
         $oldheight = $svg->getAttribute('height');
@@ -196,9 +207,34 @@ class SvgRenderer extends AbstractRenderer
         $newwidth  = \max($oldwidth, $width + $this->offsetLeft);
         $newheight = \max($oldheight, $height + $this->offsetTop);
         
-        $svg->setAttribute('width', $newwidth);
-        $svg->setAttribute('height', $newheight);
-    }    
+        if ($newwidth != $oldwidth || $newheight != $oldheight) {
+            $svg->setAttribute('width', $newwidth);
+            $svg->setAttribute('height', $newheight);
+
+            if (!$svg->firstChild) {
+                $this->fillResource();
+            }
+            $fill =& $svg->firstChild;
+            $fill->setAttribute('width', $newwidth);
+            $fill->setAttribute('height', $newheight);
+        }
+    }
+    
+    /**
+     * Fill whole resource.
+     * 
+     */
+    protected function fillResource()
+    {
+        $svg  =& $this->resource->documentElement;
+        $rect = $this->createElement('rect', [
+            'x'      => 0, 'y' => 0,
+            'width'  => $svg->getAttribute('width'),
+            'height' => $svg->getAttribute('height'),
+            'fill'   => self::formatColor($this->options['backcolor'])
+        ]);
+        $svg->appendChild($rect);
+    }
 
     /**
      * Append a new DOMElement to the root element

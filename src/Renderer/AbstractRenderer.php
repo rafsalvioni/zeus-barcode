@@ -23,7 +23,6 @@ abstract class AbstractRenderer implements RendererInterface
             'merge'      => false,
             'backcolor'  => 0xffffff,
         ];
-        $this->start(new NullBarcode());
     }
     
     /**

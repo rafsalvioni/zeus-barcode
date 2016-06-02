@@ -74,4 +74,18 @@ trait RendererTrait
      * 
      */
     abstract protected function initResource();
+    
+    /**
+     * Helper function to check if renderer is started.
+     * 
+     * Throws a exception if not.
+     * 
+     * @throws Exception
+     */
+    protected function checkStarted()
+    {
+        if (!$this->resource) {
+            throw new Exception('Renderer is not started!');
+        }
+    }
 }
