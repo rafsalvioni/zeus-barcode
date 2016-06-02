@@ -2,6 +2,8 @@
 
 namespace Zeus\Barcode\Upc;
 
+use Zeus\Barcode\Renderer\RendererInterface;
+
 /**
  * Implements a EAN13-ISSN barcode standard.
  *
@@ -32,6 +34,35 @@ class ISSN extends Ean13
     }
 
     /**
+     * ISSN barcode draws two texts. So, we can adjust height...
+     * 
+     * @return int
+     */
+    public function getTotalHeight()
+    {
+        $height = parent::getTotalHeight();
+        if ($this->options['showtext']) {
+            $height += $this->getTextHeight();
+        }
+        return $height;
+    }
+    
+    /**
+     * Returns the ISSN number.
+     * 
+     * @param bool $mask Mask number?
+     * @return string
+     */
+    public function getISSN($mask = false)
+    {
+        $issn = $this->getDataPart(3, 8);
+        if ($mask) {
+            $issn = \mask('####-####', $issn);
+        }
+        return $issn;
+    }
+
+    /**
      * ISSN's barcodes is a EAN-13 beggining with 977.
      * 
      * @param string $data
@@ -43,5 +74,40 @@ class ISSN extends Ean13
             return parent::checkData($data);
         }
         return false;
+    }
+    
+    /**
+     * Force barcode to be drawed with a top offset.
+     * 
+     * @param RendererInterface $renderer
+     */
+    protected function drawBarcode(RendererInterface &$renderer)
+    {
+        $this->options['textposition'] = 'top';
+        parent::drawBarcode($renderer);
+        $this->options['textposition'] = 'bottom';
+    }
+    
+    /**
+     * Draw the ISSN text on barcode.
+     * 
+     * @param RendererInterface $renderer
+     */
+    protected function drawText(RendererInterface &$renderer)
+    {
+        $textHeight = $this->getTextHeight();
+        $this->options['barheight'] += $textHeight;
+        parent::drawText($renderer);
+        
+        $renderer->drawText(
+            [$this->getTotalWidth() / 2, $this->options['border'] + 1],
+            'ISSN ' . $this->getISSN(true),
+            $this->options['forecolor'],
+            $this->options['font'],
+            $this->options['fontsize'],
+            'center'
+        );
+        
+        $this->options['barheight'] -= $textHeight;
     }
 }

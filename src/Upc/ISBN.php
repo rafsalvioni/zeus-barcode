@@ -2,6 +2,8 @@
 
 namespace Zeus\Barcode\Upc;
 
+use Zeus\Barcode\Renderer\RendererInterface;
+
 /**
  * Implements a EAN13-ISBN barcode standard.
  *
@@ -26,7 +28,35 @@ class ISBN extends Ean13
     {
         $isbn = \preg_replace('/[^\d]/', '', $isbn);
         $isbn = \substr($isbn, 0, -1);
-        return new self(self::SYSTEM . $isbn, false);
+        if (\strlen($isbn) == 9) {
+            return new self(self::SYSTEM . $isbn, false);
+        }
+        else {
+            return new self($isbn, true);
+        }
+    }
+    
+    public function getISBN($mask = false)
+    {
+        $isbn = $this->getData();
+        if ($mask) {
+            $isbn = \mask('###-##-###-####-#', $isbn);
+        }
+        return $isbn;
+    }
+
+    /**
+     * ISBN barcode draws two texts. So, we can adjust height...
+     * 
+     * @return int
+     */
+    public function getTotalHeight()
+    {
+        $height = parent::getTotalHeight();
+        if ($this->options['showtext']) {
+            $height += $this->getTextHeight();
+        }
+        return $height;
     }
 
     /**
@@ -41,5 +71,40 @@ class ISBN extends Ean13
             return parent::checkData($data);
         }
         return false;
+    }
+    
+    /**
+     * Force barcode to be drawed with a top offset.
+     * 
+     * @param RendererInterface $renderer
+     */
+    protected function drawBarcode(RendererInterface &$renderer)
+    {
+        $this->options['textposition'] = 'top';
+        parent::drawBarcode($renderer);
+        $this->options['textposition'] = 'bottom';
+    }
+    
+    /**
+     * Draw the ISBN text on barcode.
+     * 
+     * @param RendererInterface $renderer
+     */
+    protected function drawText(RendererInterface &$renderer)
+    {
+        $textHeight = $this->getTextHeight();
+        $this->options['barheight'] += $textHeight;
+        parent::drawText($renderer);
+        
+        $renderer->drawText(
+            [$this->getTotalWidth() / 2, $this->options['border'] + 1],
+            'ISBN ' . $this->getISBN(true),
+            $this->options['forecolor'],
+            $this->options['font'],
+            $this->options['fontsize'],
+            'center'
+        );
+        
+        $this->options['barheight'] -= $textHeight;
     }
 }
