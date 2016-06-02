@@ -8,7 +8,7 @@ $bcs = [
     new \Zeus\Barcode\Code2of5\Standard('12345670'),
     new \Zeus\Barcode\Code2of5\Interleaved('098765789', false),
     new Zeus\Barcode\Codabar('A12345670C'),
-    new Zeus\Barcode\Upc\Ean13('7501031311309'),
+    new Zeus\Barcode\Upc\Ean13('978098754612', false),
     new Zeus\Barcode\Upc\Ean8('55123457'),
     new Zeus\Barcode\Upc\Ean2('34'),
     new Zeus\Barcode\Upc\Ean5('51234'),
@@ -32,12 +32,12 @@ $bcs = [
     (new Zeus\Barcode\Itf14('1234567890123', false)),
 ];
 
-$render = new Zeus\Barcode\Renderer\ImageRenderer();
+//$render = new Zeus\Barcode\Renderer\ImageRenderer();
 //$gd = \imagecreatefrompng('D:\\Users\\rafaelsalvioni\\Desktop\\01.png');
-$gd = \imagecreatetruecolor(600, 4000);
-$render->setResource($gd);
-//$render = new \Zeus\Barcode\Renderer\SvgRenderer();
-//$render->setResource('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="4000" width="600" fill="#ffff00"></svg>');
+//$gd = \imagecreatetruecolor(1000, 4000);
+//$render->setResource($gd);
+$render = new \Zeus\Barcode\Renderer\SvgRenderer();
+$render->setResource('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="4000" width="600"></svg>');
 $render->offsetLeft = 70;
 $render->offsetTop = 10;
 
@@ -49,7 +49,7 @@ foreach ($bcs as &$bc) {
     //$bc->barwidth = 2;
     $bc->barheight = 50;
     $bc->quietZone = 20;
-    $bc->font = 'D:\\Users\\rafaelsalvioni\\Desktop\\arial.ttf';
+    //$bc->font = 'D:\\Users\\rafaelsalvioni\\Desktop\\arial.ttf';
     $bc->fontSize = 8;
     //$bc->backColor = 0xffff00;
     //$bc->foreColor = 0xff0000;

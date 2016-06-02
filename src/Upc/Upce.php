@@ -172,10 +172,10 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
         $x = $offX - 3;
         $renderer->drawText([$x, $y], $text[0], $foreColor, $font, $fontSize, 'right');
         
-        $x += $barWidth * 28;
+        $x += 4 + $barWidth * 24;
         $renderer->drawText([$x, $y], $text[1], $foreColor, $font, $fontSize, 'center');
         
-        $x += $barWidth * 26;
+        $x += $barWidth * 27 + 3;
         $renderer->drawText([$x, $y], $text[2], $foreColor, $font, $fontSize, 'left');
     }
 }

@@ -38,7 +38,7 @@ class ImageRenderer extends AbstractRenderer
      * @param int $color
      * @param bool $filled
      */
-    public function drawPolygon(array $points, $color, $filled = true)
+    public function drawRect(array $points, $color, $filled = true)
     {
         $color  = $this->getColorId($color);
         $points = \array_values(\array_unique($points, \SORT_REGULAR));
@@ -50,7 +50,7 @@ class ImageRenderer extends AbstractRenderer
             $ps = \array_merge($ps, \array_values($point));
         }
             
-        if ($n >= 3) {
+        if ($n == 4) {
             $f = $filled ? '\\imagefilledpolygon' : '\\imagepolygon';
             $f($this->resource, $ps, \count($points), $color);
         }
@@ -105,16 +105,16 @@ class ImageRenderer extends AbstractRenderer
      * 
      * $source can be a GD resource or a image file path.
      * 
-     * @param mixed $source
+     * @param mixed $resource
      * @return ImageRenderer
      */
-    public function setResource($source)
+    public function setResource($resource)
     {
-        if (\is_resource($source) && \strpos('gd', \get_resource_type($source)) !== false) {
-            $this->external = $source;
+        if (\is_resource($resource) && \strpos('gd', \get_resource_type($resource)) !== false) {
+            $this->external = $resource;
         }
-        else if (\file_exists($source)) {
-            $this->external = \imagecreatefromstring(\file_get_contents($source));
+        else if (\file_exists($resource)) {
+            $this->external = \imagecreatefromstring(\file_get_contents($resource));
         }
         else {
             $this->external = null;

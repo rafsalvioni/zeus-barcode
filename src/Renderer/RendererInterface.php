@@ -20,24 +20,22 @@ interface RendererInterface
     public function setBarcode(BarcodeInterface $barcode);
     
     /**
-     * Draws a polygon.
+     * Draws a rectangle.
      * 
-     * $points should be a points array with format:
-     * [['x' => 0, 'y' => 0], ['x' => 10, 'y' => 10]]
-     * 
-     * If $points have only 2 points, draw a line. If only one, a single point.
+     * $points should be a points array with format (X, Y):
+     * [[0, 0], [10, 10]]
      * 
      * @param array $points Points
      * @param int $color Color
-     * @param bool $filled Polygon should be filled?
+     * @param bool $filled Rect should be filled?
      * @return self
      */
-    public function drawPolygon(array $points, $color, $filled = true);
+    public function drawRect(array $points, $color, $filled = true);
     
     /**
      * Draws a text.
      * 
-     * @param array $point Point
+     * @param array $point Point, same format of drawRect()
      * @param string $text Text
      * @param int $color Color
      * @param string $font Font

@@ -259,9 +259,9 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
 
         $x = $offX - 3;
         $renderer->drawText([$x, $y], $text[0], $foreColor, $font, $fontSize, 'right');
-        $x = $offX + $barWidth * 24;
+        $x += 3 + $barWidth * 24;
         $renderer->drawText([$x, $y], $text[1], $foreColor, $font, $fontSize, 'center');
-        $x += $barWidth * 45;
+        $x += $barWidth * 46;
         $renderer->drawText([$x, $y], $text[2], $foreColor, $font, $fontSize, 'center');
     }
 }

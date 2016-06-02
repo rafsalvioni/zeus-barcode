@@ -162,7 +162,7 @@ class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
         
         $x = $offX + $barWidth * 17;
         $renderer->drawText([$x, $y], $text[0], $foreColor, $font, $fontSize, 'center');
-        $x += ($barWidth * 32);
+        $x += ($barWidth * 33);
         $renderer->drawText([$x, $y], $text[1], $foreColor, $font, $fontSize, 'center');
     }
 }

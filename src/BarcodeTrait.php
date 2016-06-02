@@ -232,12 +232,23 @@ trait BarcodeTrait
                    $this->getHeight();
         
         if ($this->options['showtext']) {
-            $height += $this->options['fontsize'] + 3;
+            $height += $this->getTextHeight();
         }
         
         return (int)\ceil($height);
     }
     
+    /**
+     * Calcs the text height using draw options.
+     * 
+     * @return number
+     */
+    protected function getTextHeight()
+    {
+        return \max($this->options['fontsize'] + 3, 15);
+    }
+
+
     /**
      * Encodes a data and put them on Encoder given.
      * 
@@ -274,7 +285,7 @@ trait BarcodeTrait
         $border = $this->border;
         
         for ($i = 0; $i < $border; $i++) {
-            $renderer->drawPolygon([
+            $renderer->drawRect([
                 [0 + $i, 0 + $i],
                 [$width - $i, $i],
                 [$width - $i, $height - $i],
@@ -296,7 +307,7 @@ trait BarcodeTrait
         $barY       = $barOffsetY;
         
         if ($this->showText && $this->textPosition == 'top') {
-            $barOffsetY += $this->options['fontsize'] + 3;
+            $barOffsetY += $this->getTextHeight();
         }
         
         foreach ($this->getEncoded() as $bar) {
@@ -304,7 +315,7 @@ trait BarcodeTrait
             $barHeight = ($bar->h * $this->options['barheight']) - 1;
             $barY      = $barOffsetY + ($bar->y * $this->options['barheight']);
             if ($bar->b) {
-                $renderer->drawPolygon([
+                $renderer->drawRect([
                     [$barX, $barY], [$barX + $barWidth, $barY],
                     [$barX + $barWidth, $barY + $barHeight], [$barX, $barY + $barHeight],
                 ], $this->options['forecolor'], true);
@@ -325,10 +336,10 @@ trait BarcodeTrait
         $offset = $this->options['border'] + $this->options['quietzone'];
         switch ($this->options['textposition']) {
             case 'top':
-                $y = $this->border + 1;
+                $y = $this->options['border'] + 1;
                 break;
             default:
-                $y = $this->border + 2 + $this->getHeight();
+                $y = $this->options['border'] + $this->getHeight() + 2;
         }
         switch ($this->options['textalign']) {
             case 'center':
@@ -337,7 +348,7 @@ trait BarcodeTrait
             case 'right':
                 $x = $this->getTotalWidth() - $offset;
                 break;
-            case 'left':
+            default:
                 $x = $offset;
                 break;
         }

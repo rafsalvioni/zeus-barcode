@@ -2,9 +2,6 @@
 
 namespace Zeus\Barcode\Renderer;
 
-use \DOMDocument;
-use \DOMText;
-
 /**
  * Renderer to draw barcodes as XML-SVG markup.
  *
@@ -35,7 +32,7 @@ class SvgRenderer extends AbstractRenderer
      * @param int $color
      * @param bool $filled
      */
-    public function drawPolygon(array $points, $color, $filled = true)
+    public function drawRect(array $points, $color, $filled = true)
     {
         $n  = \count($points);
         foreach ($points as &$point) {
@@ -121,7 +118,7 @@ class SvgRenderer extends AbstractRenderer
                 $resource =& $doc;
             }
         }
-        if ($resource instanceof DOMDocument) {
+        if ($resource instanceof \DOMDocument) {
             $this->external = $resource;
         }
         else {
