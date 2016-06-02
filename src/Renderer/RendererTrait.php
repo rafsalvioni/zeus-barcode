@@ -54,7 +54,6 @@ trait RendererTrait
     }
 
     /**
-     * Start a barcode draw.
      * 
      * @param BarcodeInterface $barcode
      * @return self

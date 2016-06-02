@@ -12,7 +12,7 @@ use Zeus\Barcode\BarcodeInterface;
 interface RendererInterface
 {
     /**
-     * Sets the barcode to draw/render.
+     * Start a barcode draw.
      * 
      * @param BarcodeInterface $barcode
      * @return self
@@ -48,19 +48,21 @@ interface RendererInterface
     );
 
     /**
-     * Render the barcode to output with its own headers.
+     * Render the resource to output with its own headers.
      * 
      */
     public function render();
     
     /**
-     * Return the barcode resource. Depends of renderer.
+     * Return the renderer resource. Depends of renderer.
      * 
      */
     public function getResource();
     
     /**
      * Sets the initial resource. Depends of renderer.
+     * 
+     * "merge" option should be defined with true.
      * 
      * @param mixed $resource
      * @return self
