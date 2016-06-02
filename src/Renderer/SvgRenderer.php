@@ -15,7 +15,13 @@ class SvgRenderer extends AbstractRenderer
      * @var DOMElement
      */
     protected $rootElement;
-    
+    /**
+     * Group counter
+     * 
+     * @var int
+     */
+    protected $groupCounter = 0;
+
     /**
      * Render as PNG
      * 
@@ -149,25 +155,31 @@ class SvgRenderer extends AbstractRenderer
 
         if (!$this->external) {
             $this->resource = new \DOMDocument('1.0', 'utf-8');
-            $this->rootElement = $this->resource->createElement('svg');
-            $this->rootElement->setAttribute('width', $width);
-            $this->rootElement->setAttribute('height', $height);
-            $this->rootElement->setAttribute('version', '1.1');
-            $this->rootElement->setAttribute('xmlns', "http://www.w3.org/2000/svg");
-            $this->resource->appendChild($this->rootElement);
+            $svg = $this->createElement('svg', [
+                'width'   => $width,
+                'height'  => $height,
+                'version' => '1.1',
+                'xmlns'   => 'http://www.w3.org/2000/svg',
+            ]);
+            $this->resource->appendChild($svg);
         }
         else {
             $this->resource =& $this->external;
-            $this->rootElement =& $this->resource->documentElement;
-            $this->rootElement->setAttribute(
+            $svg =& $this->resource->documentElement;
+            $svg->setAttribute(
                 'width',
-                \max($this->rootElement->getAttribute('width'), $width + $this->offsetLeft)
+                \max($svg->getAttribute('width'), $width + $this->offsetLeft)
             );
-            $this->rootElement->setAttribute(
+            $svg->setAttribute(
                 'height',
-                \max($this->rootElement->getAttribute('height'), $height + $this->offsetTop)
+                \max($svg->getAttribute('height'), $height + $this->offsetTop)
             );
         }
+        $this->rootElement = $this->createElement('g', [
+            'id' => $this->groupCounter++
+        ]);
+        $this->resource->documentElement->appendChild($this->rootElement);
+       
         $this->appendRootElement('rect', [
             'x'      => $this->offsetLeft,
             'y'      => $this->offsetTop,
