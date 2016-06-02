@@ -127,11 +127,12 @@ class SvgRenderer extends AbstractRenderer
             }
         }
         if ($resource instanceof \DOMDocument) {
-            $this->external = $resource;
+            $this->resource = $resource;
         }
         else {
-            $this->external = null;
+            throw new Exception('SVG resource should be a XML file, string or \\DOMDocument object');
         }
+        $this->options['merge'] = true;
         return $this;
     }
     
@@ -155,7 +156,7 @@ class SvgRenderer extends AbstractRenderer
         $width  = $this->barcode->getTotalWidth();
         $height = $this->barcode->getTotalHeight();
 
-        if (!$this->external) {
+        if (!$this->resource || !$this->options['merge']) {
             $this->resource = new \DOMDocument('1.0', 'utf-8');
             $svg = $this->createElement('svg', [
                 'width'   => $width,
@@ -165,18 +166,10 @@ class SvgRenderer extends AbstractRenderer
             ]);
             $this->resource->appendChild($svg);
         }
-        else {
-            $this->resource =& $this->external;
-            $svg =& $this->resource->documentElement;
-            $svg->setAttribute(
-                'width',
-                \max($svg->getAttribute('width'), $width + $this->offsetLeft)
-            );
-            $svg->setAttribute(
-                'height',
-                \max($svg->getAttribute('height'), $height + $this->offsetTop)
-            );
+        else if ($this->options['merge']) {
+            $this->resizeResource($width, $height);
         }
+        
         $this->rootElement = $this->createElement('g', [
             'id' => $this->groupCounter++
         ]);
@@ -193,6 +186,20 @@ class SvgRenderer extends AbstractRenderer
         $this->resource->formatOutput = true;
     }
     
+    protected function resizeResource($width, $height)
+    {
+        $svg =& $this->resource->documentElement;
+        
+        $oldwidth  = $svg->getAttribute('width');
+        $oldheight = $svg->getAttribute('height');
+        
+        $newwidth  = \max($oldwidth, $width + $this->offsetLeft);
+        $newheight = \max($oldheight, $height + $this->offsetTop);
+        
+        $svg->setAttribute('width', $newwidth);
+        $svg->setAttribute('height', $newheight);
+    }    
+
     /**
      * Append a new DOMElement to the root element
      *

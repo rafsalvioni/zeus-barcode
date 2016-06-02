@@ -17,8 +17,8 @@ interface RendererInterface
      * @param BarcodeInterface $barcode
      * @return self
      */
-    public function setBarcode(BarcodeInterface $barcode);
-    
+    public function start(BarcodeInterface $barcode);
+
     /**
      * Draws a rectangle.
      * 

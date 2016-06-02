@@ -81,7 +81,7 @@ class ImageRenderer extends AbstractRenderer
         $font      = $this->resolveFont($font, $fontSize);
         $width     = $this->barcode->getTotalWidth();
         $offset    = $this->barcode->border + $this->barcode->quietZone;
-        $textWidth = $this->getTextWidth($font, $text);
+        $textWidth = $this->getTextWidth($font, $fontSize, $text);
         
         switch ($align) {
             case 'center':
@@ -115,31 +115,32 @@ class ImageRenderer extends AbstractRenderer
     public function setResource($resource)
     {
         if (\is_resource($resource) && \strpos('gd', \get_resource_type($resource)) !== false) {
-            $this->external = $resource;
+            $this->resource = $resource;
         }
         else if (\file_exists($resource)) {
-            $this->external = \imagecreatefromstring(\file_get_contents($resource));
+            $this->resource = \imagecreatefromstring(\file_get_contents($resource));
         }
         else {
-            $this->external = null;
+            throw new Exception('Invalid image resource!');
         }
+        $this->options['merge'] = true;
         return $this;
     }
 
     /**
      * 
      */
-    protected function initResource()
+    public function initResource()
     {
         $width  = $this->barcode->getTotalWidth();
         $height = $this->barcode->getTotalHeight();
         
-        if (!$this->external) {
+        if (!$this->resource || !$this->options['merge']) {
             $this->resource = \imagecreatetruecolor($width, $height);
             $this->colors   = [];
         }
-        else {
-            $this->resource =& $this->external;
+        else if ($this->options['merge']) {
+            $this->resizeResource($width, $height);
         }
         
         // Fill barcode's background
@@ -160,6 +161,31 @@ class ImageRenderer extends AbstractRenderer
         );
     }
     
+    /**
+     * Resize the resource.
+     * 
+     * @param number $width
+     * @param number $height
+     */
+    protected function resizeResource($width, $height)
+    {
+        $width  += $this->offsetLeft;
+        $height += $this->offsetTop;
+
+        $oldwidth  = \imagesx($this->resource);
+        $oldheight = \imagesy($this->resource);
+        
+        $newwidth  = \max($width, $oldwidth);
+        $newheight = \max($height, $oldheight);
+        
+        if ($newwidth != $oldwidth || $newheight != $oldheight) {
+            $resource = \imagecreatetruecolor($newwidth, $newheight);
+            \imagefill($resource, 0, 0, $this->getColorId($this->options['backcolor']));
+            \imagecopymerge($resource, $this->resource, 0, 0, 0, 0, $oldwidth, $oldheight, 100);
+            $this->resource = $resource;
+        }
+    }
+
     /**
      * Returns the color index to be used. If a color is not allocated, it will be.
      * 
@@ -218,20 +244,20 @@ class ImageRenderer extends AbstractRenderer
     }
     
     /**
+     * Returns the width of a text.
      * 
      * @param string|int $font
+     * @param int $fontSize
      * @param string $text
-     * @return int
+     * @return number
      */
-    protected function getTextWidth($font, $text = null)
+    protected function getTextWidth($font, $fontSize, $text)
     {
-        $text = \coalesce($text, $this->barcode->getDataToDisplay());
-        
         if (\is_int($font)) {
             return \imagefontwidth($font) * \strlen($text);
         }
         else {
-            $box = \imagettfbbox($this->barcode->fontSize, 0, $font, $text);
+            $box = \imagettfbbox($fontSize, 0, $font, $text);
             return \abs($box[2] - $box[0]);
         }
     }

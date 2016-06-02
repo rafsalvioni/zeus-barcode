@@ -21,12 +21,6 @@ trait RendererTrait
      */
     protected $resource;
     /**
-     * Stores the external resource
-     * 
-     * @var mixed
-     */
-    protected $external;
-    /**
      * Barcode
      * 
      * @var BarcodeInterface
@@ -60,12 +54,12 @@ trait RendererTrait
     }
 
     /**
-     * Sets the barcode and call draw() method.
+     * Start a barcode draw.
      * 
      * @param BarcodeInterface $barcode
      * @return self
      */
-    public function setBarcode(BarcodeInterface $barcode)
+    public function start(BarcodeInterface $barcode)
     {
         if ($this->barcode !== $barcode) {
             $this->barcode = $barcode;

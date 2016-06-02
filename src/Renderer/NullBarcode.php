@@ -36,4 +36,13 @@ class NullBarcode extends AbstractBarcode
      * @param string $data
      */
     protected function encodeData(EncoderInterface &$encoder, $data) {}
+    
+    /**
+     * 
+     */
+    protected function setDefaultOptions()
+    {
+        $this->setOption('barwidth', 0);
+        $this->setOption('barheight', 0);
+    }
 }

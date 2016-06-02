@@ -180,7 +180,7 @@ trait BarcodeTrait
      */
     public function draw(Renderer\RendererInterface $renderer)
     {
-        $renderer->setBarcode($this);
+        $renderer->start($this);
         $this->drawInstructions($renderer);
         return $renderer;
     }

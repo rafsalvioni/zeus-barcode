@@ -20,18 +20,20 @@ abstract class AbstractRenderer implements RendererInterface
         $this->options = [
             'offsettop'  => 0,
             'offsetleft' => 0,
+            'merge'      => false,
+            'backcolor'  => 0xffffff,
         ];
-        $this->setBarcode(new NullBarcode());
+        $this->start(new NullBarcode());
     }
     
     /**
-     * Apply offsets on a point if has a external source defined.
+     * Apply offsets on a point.
      * 
      * @param array $point
      */
     protected function applyOffsets(array &$point)
     {
-        if ($this->external) {
+        if ($this->options['merge']) {
             $point[0] += $this->options['offsetleft'];
             $point[1] += $this->options['offsettop'];
         }
