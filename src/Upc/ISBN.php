@@ -36,6 +36,12 @@ class ISBN extends Ean13
         }
     }
     
+    /**
+     * Return the ISBN number, masked or not.
+     * 
+     * @param bool $mask Mask number?
+     * @return string
+     */
     public function getISBN($mask = false)
     {
         $isbn = $this->getData();
