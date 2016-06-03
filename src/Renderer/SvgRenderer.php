@@ -205,32 +205,9 @@ class SvgRenderer extends AbstractRenderer
         if ($newwidth != $oldwidth || $newheight != $oldheight) {
             $svg->setAttribute('width', $newwidth);
             $svg->setAttribute('height', $newheight);
-
-            if (!$svg->firstChild) {
-                $this->fillResource();
-            }
-            $fill =& $svg->firstChild;
-            $fill->setAttribute('width', $newwidth);
-            $fill->setAttribute('height', $newheight);
         }
     }
     
-    /**
-     * Fill whole resource.
-     * 
-     */
-    protected function fillResource()
-    {
-        $svg  =& $this->resource->documentElement;
-        $rect = $this->createElement('rect', [
-            'x'      => 0, 'y' => 0,
-            'width'  => $svg->getAttribute('width'),
-            'height' => $svg->getAttribute('height'),
-            'fill'   => self::formatColor($this->options['backcolor'])
-        ]);
-        $svg->appendChild($rect);
-    }
-
     /**
      * Append a new DOMElement to the root element
      *

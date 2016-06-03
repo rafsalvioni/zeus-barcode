@@ -141,27 +141,14 @@ class ImageRenderer extends AbstractRenderer
         if (!$this->resource || !$this->options['merge']) {
             $this->resource = \imagecreatetruecolor($width, $height);
             $this->colors   = [];
-            //\imagefill($this->resource, 0, 0, $this->getColorId($this->options['backcolor']));
         }
         if ($this->options['merge']) {
             $this->resizeResource($width, $height);
         }
         
         // Fill barcode's background
-        $point = [
-            0 => 0,
-            1 => 0,
-        ];
-        $this->applyOffsets($point);
-        
-        $color = $this->getColorId($this->barcode->backColor);
-        \imagefilledrectangle(
-            $this->resource,
-            $point[0],
-            $point[1],
-            $width + $point[0] - 1,
-            $height + $point[1] - 1,
-            $color
+        $this->drawRect(
+            [0, 0], $width, $height, $this->barcode->backColor, true
         );
     }
     
@@ -185,7 +172,6 @@ class ImageRenderer extends AbstractRenderer
         if ($newwidth != $oldwidth || $newheight != $oldheight) {
             $resource = \imagecreatetruecolor($newwidth, $newheight);
             \imagecopymerge($resource, $this->resource, 0, 0, 0, 0, $oldwidth, $oldheight, 100);
-            \imagefill($resource, 0, 0, $this->getColorId($this->options['backcolor']));
             \imagedestroy($this->resource);
             $this->resource = $resource;
         }
