@@ -51,7 +51,7 @@ trait BarcodeTrait
     }
     
     /**
-     * Auxiliar function to calculate checksums using cresacent weights.
+     * Auxiliar function to calculate checksums using crescent weights.
      * 
      * The order is from right to left.
      * 
@@ -76,7 +76,7 @@ trait BarcodeTrait
     }
 
     /**
-     * Auxiliar function to calculate checksums using cresacent weights.
+     * Auxiliar function to calculate checksums using decrescent weights.
      * 
      * The order is from right to left.
      * 
@@ -282,13 +282,13 @@ trait BarcodeTrait
         // Draws the border
         $width  = $this->getTotalWidth();
         $height = $this->getTotalHeight();
-        $border = $this->border;
+        $border =& $this->options['border'];
         
         for ($i = 0; $i < $border; $i++) {
             $renderer->drawRect(
-                [],
-                $width - $i,
-                $height - $i,
+                [$i, $i],
+                $width-- - $i,
+                $height-- - $i,
                 $this->options['forecolor'],
                 false
             );
