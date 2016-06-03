@@ -84,8 +84,6 @@ class ImageRenderer extends AbstractRenderer
         
         $color     = $this->getColorId($color);
         $font      = $this->resolveFont($font, $fontSize);
-        $width     = $this->barcode->getTotalWidth();
-        $offset    = $this->barcode->border + $this->barcode->quietZone;
         $textWidth = $this->getTextWidth($font, $fontSize, $text);
         
         switch ($align) {
