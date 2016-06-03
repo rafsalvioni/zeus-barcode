@@ -17,20 +17,45 @@ class ISSN extends Ean13
      * 
      */
     const SYSTEM = '977';
+    protected $issn;
 
     /**
      * Create a instance using a ISSN number.
      * 
-     * ISSN has a format like be XXXX-XXXX
+     * ISSN has a format like be XXXX-XXXX. Zero left padding will be
+     * applied if necessary.
+     * 
+     * If ISSN number is invalid, a exception will be thrown.
      * 
      * @param string $issn
      * @return ISSN
+     * @throws ISSNException
      */
     public static function fromISSN($issn)
     {
-        $issn = \preg_replace('/[^\d]/', '', $issn);
-        $issn = self::SYSTEM . \substr($issn, 0, -1) . '00';
-        return new self($issn, false);
+        $issn  = \preg_replace('/[^\d]/', '', $issn);
+        $check = \substr_remove($issn, -1);
+        if (!empty($issn)) {
+            $issn = self::zeroLeftPadding($issn, 7);
+            $me   = new self(self::SYSTEM . $issn . '00', false);
+            if ($me->issn == $issn . \strtoupper($check)) {
+                return $me;
+            }
+        }
+        throw new ISSNException('Invalid ISSN checksum number!');
+    }
+    
+    /**
+     * Calculates ISSN.
+     * 
+     * @param string $data
+     * @param bool $hasChecksum
+     */
+    public function __construct($data, $hasChecksum = true)
+    {
+        parent::__construct($data, $hasChecksum);
+        $this->issn  = $this->getDataPart(3, 7);
+        $this->issn .= self::calcISSNCheck($this->issn);
     }
 
     /**
@@ -55,7 +80,7 @@ class ISSN extends Ean13
      */
     public function getISSN($mask = false)
     {
-        $issn = $this->getDataPart(3, 8);
+        $issn = $this->issn;
         if ($mask) {
             $issn = \mask('####-####', $issn);
         }
@@ -110,4 +135,24 @@ class ISSN extends Ean13
         
         $this->options['barheight'] -= $textHeight;
     }
+    
+    /**
+     * Calc ISSN checksum.
+     * 
+     * @param string $issn
+     * @return string
+     */
+    protected static function calcISSNCheck($issn)
+    {
+        $issn  = \str_split($issn);
+        $sum   = self::sumCrescentWeight($issn, 2);
+        $check = 11 - ($sum % 11);
+        return $check == 10 ? 'X' : $check;
+    }
 }
+
+/**
+ * Class' exception
+ * 
+ */
+class ISSNException extends Exception {}
