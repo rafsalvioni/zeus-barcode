@@ -35,34 +35,34 @@ class ImageRenderer extends AbstractRenderer
 
     /**
      * 
-     * @param array $points
+     * @param array $point
+     * @param number $width
+     * @param number $height
      * @param int $color
      * @param bool $filled
      * @return self
      */
-    public function drawRect(array $points, $color, $filled = true)
+    public function drawRect(array $point, $width, $height, $color, $filled = true)
     {
         $this->checkStarted();
         
-        $color  = $this->getColorId($color);
-        $points = \array_values(\array_unique($points, \SORT_REGULAR));
-        $ps     = [];
-        $n      = \count($points);
+        $color = $this->getColorId($color);
+        $this->applyOffsets($point);
         
-        foreach ($points as &$point) {
-            $this->applyOffsets($point);
-            $ps = \array_merge($ps, \array_values($point));
+        $point2 = [
+            $point[0] + $width - 1,
+            $point[1] + $height - 1
+        ];
+        
+        if ($point2[0] > $point[0] && $point2[1] > $point[1]) {
+            $f = $filled ? '\\imagefilledrectangle' : '\\imagerectangle';
+            $f($this->resource, $point[0], $point[1], $point2[0], $point2[1], $color);
         }
-            
-        if ($n == 4) {
-            $f = $filled ? '\\imagefilledpolygon' : '\\imagepolygon';
-            $f($this->resource, $ps, \count($points), $color);
+        else if ($point2[0] == $point[0] || $point2[1] == $point[1]) {
+            \imageline($this->resource, $point[0], $point[1], $point2[0], $point2[1], $color);
         }
-        else if ($n == 2) {
-            \imageline($this->resource, $points[0][0], $points[0][1], $points[1][0], $points[1][1], $color);
-        }
-        else if ($n == 1) {
-            \imagesetpixel($this->resource, $points[0][0], $points[0][1], $color);
+        else if ($point === $point2) {
+            \imagesetpixel($this->resource, $point[0], $point[1], $color);
         }
         return $this;
     }

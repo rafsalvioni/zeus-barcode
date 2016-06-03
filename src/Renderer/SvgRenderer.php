@@ -35,21 +35,26 @@ class SvgRenderer extends AbstractRenderer
 
     /**
      * 
-     * @param array $points
+     * @param array $point
+     * @param number $width
+     * @param number $height
      * @param int $color
      * @param bool $filled
      * @return self
      */
-    public function drawRect(array $points, $color, $filled = true)
+    public function drawRect(array $point, $width, $height, $color, $filled = true)
     {
         $this->checkStarted();
         
-        $n  = \count($points);
-        foreach ($points as &$point) {
-            $this->applyOffsets($point);
-        }
+        $this->applyOffsets($point);
         
-        $color = self::formatColor($color);
+        $color   = self::formatColor($color);
+        $attribs = [
+            'x'      => $point[0],
+            'y'      => $point[1],
+            'width'  => $width,
+            'height' => $height,
+        ];
         if ($filled) {
             $attribs['fill'] = $color;
         }
@@ -58,13 +63,7 @@ class SvgRenderer extends AbstractRenderer
             $attribs['stroke'] = $color;
         }
 
-        if ($n == 4) {
-            $attribs['x']      = $points[0][0];
-            $attribs['y']      = $points[0][1];
-            $attribs['width']  = $points[1][0] - $points[0][0] + 1;
-            $attribs['height'] = $points[2][1] - $points[1][1] + 1;
-            $this->appendRootElement('rect', $attribs);
-        }
+        $this->appendRootElement('rect', $attribs);
         return $this;
     }
 

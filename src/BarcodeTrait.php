@@ -280,17 +280,18 @@ trait BarcodeTrait
     protected function drawBorder(Renderer\RendererInterface &$renderer)
     {
         // Draws the border
-        $width  = $this->getTotalWidth() - 1;
-        $height = $this->getTotalHeight() - 1;
+        $width  = $this->getTotalWidth();
+        $height = $this->getTotalHeight();
         $border = $this->border;
         
         for ($i = 0; $i < $border; $i++) {
-            $renderer->drawRect([
-                [0 + $i, 0 + $i],
-                [$width - $i, $i],
-                [$width - $i, $height - $i],
-                [$i, $height - $i],
-            ], $this->options['forecolor'], false);
+            $renderer->drawRect(
+                [],
+                $width - $i,
+                $height - $i,
+                $this->options['forecolor'],
+                false
+            );
         }
     }
     
@@ -311,16 +312,19 @@ trait BarcodeTrait
         }
         
         foreach ($this->getEncoded() as $bar) {
-            $barWidth  = ($bar->w * $this->options['barwidth']) - 1;
-            $barHeight = ($bar->h * $this->options['barheight']) - 1;
+            $barWidth  = ($bar->w * $this->options['barwidth']);
+            $barHeight = ($bar->h * $this->options['barheight']);
             $barY      = $barOffsetY + ($bar->y * $this->options['barheight']);
             if ($bar->b) {
-                $renderer->drawRect([
-                    [$barX, $barY], [$barX + $barWidth, $barY],
-                    [$barX + $barWidth, $barY + $barHeight], [$barX, $barY + $barHeight],
-                ], $this->options['forecolor'], true);
+                $renderer->drawRect(
+                    [$barX, $barY],
+                    $barWidth,
+                    $barHeight,
+                    $this->options['forecolor'],
+                    true
+                );
             }
-            $barX += $barWidth + 1;
+            $barX += $barWidth;
         }
         unset($barOffsetX, $barX, $barY, $barWidth, $barHeight, $bar);
     }

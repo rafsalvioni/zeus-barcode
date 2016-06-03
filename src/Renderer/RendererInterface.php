@@ -22,15 +22,17 @@ interface RendererInterface
     /**
      * Draws a rectangle.
      * 
-     * $points should be a points array with format (X, Y):
-     * [[0, 0], [10, 10]]
+     * $point referers to coordinates of top-left corner of rectangle and
+     * should be a array with format [X, Y].
      * 
-     * @param array $points Points
+     * @param array $point Point
+     * @param number $width Width
+     * @param number $height Height
      * @param int $color Color
      * @param bool $filled Rect should be filled?
      * @return self
      */
-    public function drawRect(array $points, $color, $filled = true);
+    public function drawRect(array $point, $width, $height, $color, $filled = true);
     
     /**
      * Draws a text.
