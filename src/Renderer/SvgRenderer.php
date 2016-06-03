@@ -130,6 +130,7 @@ class SvgRenderer extends AbstractRenderer
                 \is_scalar($resource) && $doc->loadXML((string)$resource)
             ) {
                 $resource =& $doc;
+                $isDOM    = true;
             }
         }
         if (!$isDOM) {
