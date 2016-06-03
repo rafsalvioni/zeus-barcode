@@ -285,7 +285,7 @@ trait BarcodeTrait
         $border =& $this->options['border'];
         $color  =& $this->options['forecolor'];
         
-        if ($border > 4) {
+        if ($border >= 4) {
             $renderer->drawRect([0, 0], $border, $height, $color, true);
             $renderer->drawRect([0, 0], $width, $border, $color, true);
             $renderer->drawRect([$width - $border, 0], $border, $height, $color, true);
