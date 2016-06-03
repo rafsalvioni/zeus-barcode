@@ -184,7 +184,7 @@ class ImageRenderer extends AbstractRenderer
     {
         $resource = \imagecreatetruecolor($width, $height);
         if ($fill) {
-            $color = $this->registerColor($this->barcode->backColor, $resource);
+            $color = $this->registerColor($this->options['backcolor'], $resource);
             \imagefill($resource, 0, 0, $color);
         }
         return $resource;

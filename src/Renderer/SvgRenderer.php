@@ -173,6 +173,7 @@ class SvgRenderer extends AbstractRenderer
                 'xmlns'   => 'http://www.w3.org/2000/svg',
             ]);
             $this->resource->appendChild($svg);
+            $this->fillResource($width, $height);
         }
         if ($this->options['merge']) {
             $this->resizeResource($width, $height);
@@ -209,9 +210,41 @@ class SvgRenderer extends AbstractRenderer
         if ($newwidth != $oldwidth || $newheight != $oldheight) {
             $svg->setAttribute('width', $newwidth);
             $svg->setAttribute('height', $newheight);
+            $this->fillResource($newwidth, $newheight);
         }
     }
     
+    /**
+     * Fill the current resource with the define background color.
+     * 
+     * @param number $width
+     * @param number $height
+     */
+    protected function fillResource($width, $height)
+    {
+        $svg   =& $this->resource->documentElement;
+        $color = self::formatColor($this->options['backcolor']);
+        $fill  = $this->createElement('rect', [
+            'x'      => 0, 'y' => 0,
+            'width'  => $width,
+            'height' => $height,
+            'fill'   => $color
+        ]);
+        if ($svg->firstChild) {
+            $first =& $svg->firstChild;
+            if ($first->tagName == 'rect' && $first->getAttribute('fill') == $color) {
+                $first->setAttribute('width', $width);
+                $first->setAttribute('height', $height);
+            }
+            else {
+                $svg->insertBefore($fill, $first);
+            }
+        }
+        else {
+            $svg->appendChild($fill);
+        }
+    }
+
     /**
      * Append a new DOMElement to the root element
      *

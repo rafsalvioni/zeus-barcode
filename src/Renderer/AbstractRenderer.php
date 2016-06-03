@@ -21,6 +21,7 @@ abstract class AbstractRenderer implements RendererInterface
             'offsettop'  => 0,
             'offsetleft' => 0,
             'merge'      => false,
+            'backcolor'  => 0xffffff,
         ];
     }
     
