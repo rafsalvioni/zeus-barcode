@@ -15,12 +15,6 @@ class ImageRenderer extends AbstractRenderer
      * @var array
      */
     private static $fonts = [];    
-    /**
-     * Stores the allocated colors. Its a cache. Use getColorId()
-     * 
-     * @var array
-     */
-    private $colors = [];
     
     /**
      * Render as PNG
@@ -46,7 +40,7 @@ class ImageRenderer extends AbstractRenderer
     {
         $this->checkStarted();
         
-        $color = $this->getColorId($color);
+        $color = $this->registerColor($color);
         $this->applyOffsets($point);
         
         $point2 = [
@@ -82,7 +76,7 @@ class ImageRenderer extends AbstractRenderer
     ) {
         $this->checkStarted();
         
-        $color     = $this->getColorId($color);
+        $color     = $this->registerColor($color);
         $font      = $this->resolveFont($font, $fontSize);
         $textWidth = $this->getTextWidth($font, $fontSize, $text);
         
@@ -139,8 +133,9 @@ class ImageRenderer extends AbstractRenderer
         $height = $this->barcode->getTotalHeight();
         
         if (!$this->resource || !$this->options['merge']) {
-            $this->resource = \imagecreatetruecolor($width, $height);
-            $this->colors   = [];
+            $this->resource = $this->createResource(
+                                    $width, $height, $this->options['merge']
+                            );
         }
         if ($this->options['merge']) {
             $this->resizeResource($width, $height);
@@ -170,7 +165,7 @@ class ImageRenderer extends AbstractRenderer
         $newheight = \max($height, $oldheight);
         
         if ($newwidth != $oldwidth || $newheight != $oldheight) {
-            $resource = \imagecreatetruecolor($newwidth, $newheight);
+            $resource = $this->createResource($newwidth, $newheight, true);
             \imagecopymerge($resource, $this->resource, 0, 0, 0, 0, $oldwidth, $oldheight, 100);
             \imagedestroy($this->resource);
             $this->resource = $resource;
@@ -178,25 +173,46 @@ class ImageRenderer extends AbstractRenderer
     }
     
     /**
-     * Returns the color index to be used. If a color is not allocated, it will be.
+     * Create a new image resource.
+     * 
+     * @param int $width
+     * @param int $height
+     * @param bool $fill Fill image with render background color?
+     * @return resource
+     */
+    protected function createResource($width, $height, $fill = false)
+    {
+        $resource = \imagecreatetruecolor($width, $height);
+        if ($fill) {
+            $color = $this->registerColor($this->barcode->backColor, $resource);
+            \imagefill($resource, 0, 0, $color);
+        }
+        return $resource;
+    }
+
+    /**
+     * Register a color on given resource and return its pallete index.
+     * 
+     * If a color is already registered, return only the index.
+     * 
+     * If $resource was null, default resource will be used.
      * 
      * @param int $color
+     * @param resource $resource
      * @return int
      */
-    protected function getColorId($color)
+    protected function registerColor($color, $resource = null)
     {
-        if (isset($this->colors[$color])) {
-            return $this->colors[$color];
+        if (!$resource) {
+            $resource =& $this->resource;
         }
         
         list($r, $g, $b) = self::colorToRgb($color);
-        
-        $i = \imagecolorexact($this->resource, $r, $g, $b);
+        $i = \imagecolorexact($resource, $r, $g, $b);
         if ($i == -1) {
-            $i = \imagecolorallocate($this->resource, $r, $g, $b);
+            $i = \imagecolorallocate($resource, $r, $g, $b);
         }
         
-        $this->colors[$color] = $i;
         return $i;
     }
     
