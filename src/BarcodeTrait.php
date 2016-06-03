@@ -283,15 +283,24 @@ trait BarcodeTrait
         $width  = $this->getTotalWidth();
         $height = $this->getTotalHeight();
         $border =& $this->options['border'];
+        $color  =& $this->options['forecolor'];
         
-        for ($i = 0; $i < $border; $i++) {
-            $renderer->drawRect(
-                [$i, $i],
-                $width-- - $i,
-                $height-- - $i,
-                $this->options['forecolor'],
-                false
-            );
+        if ($border > 4) {
+            $renderer->drawRect([0, 0], $border, $height, $color, true);
+            $renderer->drawRect([0, 0], $width, $border, $color, true);
+            $renderer->drawRect([$width - $border, 0], $border, $height, $color, true);
+            $renderer->drawRect([0, $height - $border], $width, $border, $color, true);
+        }
+        else if ($border > 0) {
+            for ($i = 0; $i < $border; $i++) {
+                $renderer->drawRect(
+                    [$i, $i],
+                    $width-- - $i,
+                    $height-- - $i,
+                    $this->options['forecolor'],
+                    false
+                );
+            }
         }
     }
     
