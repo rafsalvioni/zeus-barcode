@@ -17,6 +17,11 @@ class ISSN extends Ean13
      * 
      */
     const SYSTEM = '977';
+    /**
+     * ISSN number
+     * 
+     * @var string
+     */
     protected $issn;
 
     /**
