@@ -179,13 +179,9 @@ class SvgRenderer extends AbstractRenderer
         ]);
         $this->resource->documentElement->appendChild($this->rootElement);
        
-        $this->appendRootElement('rect', [
-            'x'      => $this->offsetLeft,
-            'y'      => $this->offsetTop,
-            'width'  => $width,
-            'height' => $height,
-            'fill'   => self::formatColor($this->barcode->backColor)
-        ]);
+        $this->drawRect(
+            [0, 0], $width, $height, $this->barcode->backColor, true
+        );
         
         $this->resource->formatOutput = true;
     }
