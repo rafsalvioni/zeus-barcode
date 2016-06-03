@@ -60,7 +60,7 @@ trait RendererTrait
      */
     public function start(BarcodeInterface $barcode)
     {
-        if ($this->barcode !== $barcode) {
+        if ($this->barcode !== $barcode || $this->options['merge']) {
             $this->barcode = $barcode;
             $this->initResource();
         }
