@@ -171,23 +171,12 @@ class ImageRenderer extends AbstractRenderer
         
         if ($newwidth != $oldwidth || $newheight != $oldheight) {
             $resource = \imagecreatetruecolor($newwidth, $newheight);
-            $this->fillResource($resource);
             \imagecopymerge($resource, $this->resource, 0, 0, 0, 0, $oldwidth, $oldheight, 100);
             \imagedestroy($this->resource);
             $this->resource = $resource;
         }
     }
     
-    /**
-     * Fill a resource.
-     * 
-     * @param resource $resource
-     */
-    protected function fillResource($resource)
-    {
-        \imagefill($resource, 0, 0, $this->getColorId($this->options['backcolor']));
-    }
-
     /**
      * Returns the color index to be used. If a color is not allocated, it will be.
      * 
