@@ -258,7 +258,7 @@ class Convenio extends AbstractFebraban
     {
         parent::setDefaultOptions();
         $this->setOption('textposition', 'top');
-        $this->setOption('fontsize', 3);
+        $this->setOption('fontsize', 9);
     }
 
     /**
