@@ -35,7 +35,7 @@ abstract class AbstractBarcode implements BarcodeInterface
             'textalign'    => 'center',
             'textposition' => 'bottom',
             'font'         => '',
-            'fontsize'     => 3,
+            'fontsize'     => 9,
             'quietzone'    => 30,
         ];
         if ($this instanceof FixedLengthInterface) {
