@@ -114,14 +114,16 @@ class SvgRenderer extends AbstractRenderer
     /**
      * Allows use a another XML document where barcode will be drawed.
      * 
-     * $resource can be a file path, string or DOMDocument object.
+     * $resource can be a file path, string, \DOMDocument or \DOMElement object.
      * 
      * @param mixed $resource
      * @return SvgRenderer
+     * @throws Exception
      */
     public function setResource($resource)
     {
-        if (!($resource instanceof \DOMDocument)) {
+        $isDOM = $resource instanceof \DOMDocument;
+        if (!$isDOM) {
             $doc = new \DOMDocument();
             if (
                 $resource instanceof \DOMElement && $doc->appendChild($resource) ||
@@ -131,12 +133,13 @@ class SvgRenderer extends AbstractRenderer
                 $resource =& $doc;
             }
         }
-        if ($resource instanceof \DOMDocument) {
-            $this->resource = $resource;
+        if (!$isDOM) {
+            throw new Exception('SVG resource should be a XML file, string, DOMDocument or DOMElement object!');
         }
-        else {
-            throw new Exception('SVG resource should be a XML file, string or \\DOMDocument object');
+        if (!$resource->documentElement) {
+            throw new Exception('SVG resource doesn\'t have a XML root element');
         }
+        $this->resource = $resource;
         $this->setOption('merge', true);
         return $this;
     }
