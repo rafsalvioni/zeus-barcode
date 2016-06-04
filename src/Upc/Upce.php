@@ -70,7 +70,29 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
      */
     public function setTextPosition($value)
     {
-        return $this->setOption('textposition', 'bottom');
+        return $this->checkAndSetOption('textposition', 'bottom');
+    }
+    
+    /**
+     * 
+     * @return int
+     */
+    public function getTotalHeight()
+    {
+        $height = parent::getTotalHeight();
+        if ($this->options['showtext']) {
+            $height -= (int)\ceil($this->options['barheight']* 0.2);
+        }
+        return $height;
+    }
+    
+    /**
+     * 
+     * @return number
+     */
+    protected function getTextY()
+    {
+        return $this->getContentOffsetTop() + $this->options['barheight'] + 2;
     }
 
     /**
@@ -166,8 +188,8 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
         $fontSize  =& $this->options['fontsize'];
         $barWidth  =& $this->options['barwidth'];
         
-        $offX = $this->options['border'] + $this->options['quietzone'];
-        $y    = $this->options['border'] + $this->options['barheight'] + 2;
+        $offX = $this->getContentOffsetLeft();
+        $y    = $this->getTextY();
 
         $x = $offX - 3;
         $renderer->drawText([$x, $y], $text[0], $foreColor, $font, $fontSize, 'right');
