@@ -232,17 +232,32 @@ trait BarcodeTrait
         return (int)\ceil($height);
     }
     
+    /**
+     * Return the general offset left.
+     * 
+     * @return number
+     */
     protected function getContentOffsetLeft()
     {
         return $this->options['border'] +
                $this->options['quietzone'];
     }
 
+    /**
+     * Return the general offset top.
+     * 
+     * @return number
+     */
     protected function getContentOffsetTop()
     {
         return $this->options['border'];
     }
     
+    /**
+     * Return the text's X position.
+     * 
+     * @return number
+     */
     protected function getTextX()
     {
         $x = $this->getContentOffsetLeft();
@@ -257,6 +272,11 @@ trait BarcodeTrait
         return $x;
     }
     
+    /**
+     * Return the text's Y position.
+     * 
+     * @return number
+     */
     protected function getTextY()
     {
         switch ($this->options['textposition']) {
@@ -269,6 +289,11 @@ trait BarcodeTrait
         return $y;
     }
     
+    /**
+     * Return the barcode's offset top.
+     * 
+     * @return number
+     */
     protected function getBarcodeOffsetTop()
     {
         $offset = $this->getContentOffsetTop();
