@@ -120,7 +120,7 @@ class ImageRenderer extends AbstractRenderer
         else {
             throw new Exception('Invalid image resource!');
         }
-        $this->options['merge'] = true;
+        $this->setOption('merge', true);
         return $this;
     }
 
