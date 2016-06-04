@@ -215,10 +215,7 @@ trait BarcodeTrait
      */
     public function getTotalWidth()
     {
-        $width = ($this->options['border'] * 2) +
-                 ($this->options['quietzone'] * 2) +
-                 $this->getWidth();
-        
+        $width = ($this->getContentOffsetLeft() * 2) + $this->getWidth();
         return (int)\ceil($width);
     }
     
@@ -228,16 +225,59 @@ trait BarcodeTrait
      */
     public function getTotalHeight()
     {
-        $height = ($this->options['border'] * 2) +
-                   $this->getHeight();
-        
+        $height = ($this->getContentOffsetTop() * 2) + $this->getHeight();
         if ($this->options['showtext']) {
             $height += $this->getTextHeight();
         }
-        
         return (int)\ceil($height);
     }
     
+    protected function getContentOffsetLeft()
+    {
+        return $this->options['border'] +
+               $this->options['quietzone'];
+    }
+
+    protected function getContentOffsetTop()
+    {
+        return $this->options['border'];
+    }
+    
+    protected function getTextX()
+    {
+        $x = $this->getContentOffsetLeft();
+        switch ($this->options['textalign']) {
+            case 'center':
+                $x += $this->getWidth() / 2;
+                break;
+            case 'right':
+                $x += $this->getWidth();
+                break;
+        }
+        return $x;
+    }
+    
+    protected function getTextY()
+    {
+        switch ($this->options['textposition']) {
+            case 'top':
+                $y = $this->getContentOffsetTop() + 1;
+                break;
+            default:
+                $y = $this->getContentOffsetTop() + $this->getHeight() + 2;
+        }
+        return $y;
+    }
+    
+    protected function getBarcodeOffsetTop()
+    {
+        $offset = $this->getContentOffsetTop();
+        if ($this->options['showtext'] && $this->options['textposition'] == 'top') {
+            $offset += $this->getTextHeight();
+        }
+        return $offset;
+    }
+
     /**
      * Calcs the text height using draw options.
      * 
@@ -247,7 +287,6 @@ trait BarcodeTrait
     {
         return \max($this->options['fontsize'] + 3, 15);
     }
-
 
     /**
      * Encodes a data and put them on Encoder given.
@@ -279,7 +318,6 @@ trait BarcodeTrait
      */
     protected function drawBorder(Renderer\RendererInterface &$renderer)
     {
-        // Draws the border
         $width  = $this->getTotalWidth();
         $height = $this->getTotalHeight();
         $border =& $this->options['border'];
@@ -311,14 +349,10 @@ trait BarcodeTrait
      */
     protected function drawBarcode(Renderer\RendererInterface &$renderer)
     {
-        $barOffsetX = $this->border + $this->quietZone;
-        $barOffsetY = $this->border;
+        $barOffsetX = $this->getContentOffsetLeft();
+        $barOffsetY = $this->getBarcodeOffsetTop();
         $barX       = $barOffsetX;
         $barY       = $barOffsetY;
-        
-        if ($this->showText && $this->textPosition == 'top') {
-            $barOffsetY += $this->getTextHeight();
-        }
         
         foreach ($this->getEncoded() as $bar) {
             $barWidth  = ($bar->w * $this->options['barwidth']);
@@ -345,26 +379,9 @@ trait BarcodeTrait
      */
     protected function drawText(Renderer\RendererInterface &$renderer)
     {
-        $text   = $this->getDataToDisplay();
-        $offset = $this->options['border'] + $this->options['quietzone'];
-        switch ($this->options['textposition']) {
-            case 'top':
-                $y = $this->options['border'] + 1;
-                break;
-            default:
-                $y = $this->options['border'] + $this->getHeight() + 2;
-        }
-        switch ($this->options['textalign']) {
-            case 'center':
-                $x = $this->getTotalWidth() / 2;
-                break;
-            case 'right':
-                $x = $this->getTotalWidth() - $offset;
-                break;
-            default:
-                $x = $offset;
-                break;
-        }
+        $text = $this->getDataToDisplay();
+        $x    = $this->getTextX();
+        $y    = $this->getTextY();
         $renderer->drawText(
             [$x, $y],
             $text,
