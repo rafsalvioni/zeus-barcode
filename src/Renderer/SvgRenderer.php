@@ -175,9 +175,7 @@ class SvgRenderer extends AbstractRenderer
             $this->resource->appendChild($svg);
             $this->fillResource($width, $height);
         }
-        if ($this->options['merge']) {
-            $this->resizeResource($width, $height);
-        }
+        $this->resizeResource($width, $height);
         
         $this->rootElement = $this->createElement('g', [
             'id' => $this->groupCounter++

@@ -133,13 +133,9 @@ class ImageRenderer extends AbstractRenderer
         $height = $this->barcode->getTotalHeight();
         
         if (!$this->resource || !$this->options['merge']) {
-            $this->resource = $this->createResource(
-                                    $width, $height, $this->options['merge']
-                            );
+            $this->resource = $this->createResource($width, $height);
         }
-        if ($this->options['merge']) {
-            $this->resizeResource($width, $height);
-        }
+        $this->resizeResource($width, $height);
         
         // Fill barcode's background
         $this->drawRect(
@@ -165,7 +161,7 @@ class ImageRenderer extends AbstractRenderer
         $newheight = \max($height, $oldheight);
         
         if ($newwidth != $oldwidth || $newheight != $oldheight) {
-            $resource = $this->createResource($newwidth, $newheight, true);
+            $resource = $this->createResource($newwidth, $newheight);
             \imagecopymerge($resource, $this->resource, 0, 0, 0, 0, $oldwidth, $oldheight, 100);
             \imagedestroy($this->resource);
             $this->resource = $resource;
@@ -180,13 +176,11 @@ class ImageRenderer extends AbstractRenderer
      * @param bool $fill Fill image with render background color?
      * @return resource
      */
-    protected function createResource($width, $height, $fill = false)
+    protected function createResource($width, $height)
     {
         $resource = \imagecreatetruecolor($width, $height);
-        if ($fill) {
-            $color = $this->registerColor($this->options['backcolor'], $resource);
-            \imagefill($resource, 0, 0, $color);
-        }
+        $color = $this->registerColor($this->options['backcolor'], $resource);
+        \imagefill($resource, 0, 0, $color);
         return $resource;
     }
 
