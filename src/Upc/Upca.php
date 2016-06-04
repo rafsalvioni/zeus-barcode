@@ -225,8 +225,8 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
         $fontSize  =& $this->options['fontsize'];
         $barWidth  =& $this->options['barwidth'];
         
-        $offX = $this->border + $this->quietzone;
-        $y    = $this->barheight + 3;
+        $offX = $this->options['border'] + $this->options['quietzone'];
+        $y    = $this->options['border'] + $this->options['barheight'] + 2;
 
         $x = $offX - 3;
         $renderer->drawText([$x, $y], $text[0], $foreColor, $font, $fontSize, 'right');
