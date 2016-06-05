@@ -1,17 +1,16 @@
 <?php
 
-namespace Zeus\Barcode;
+namespace Zeus\Barcode\DHL;
 
 /**
  * Implementation of Leitcode barcode standard.
  * 
- * Leitcode is a Interleaved 2 of 5 barcode with 14 fixed digits length
- * and variable length fields.
+ * Leitcode is a Interleaved 2 of 5 barcode with 14 fixed digits length.
  * 
  * @author Rafael M. Salvioni
  * @see http://www.activebarcode.com/codes/leitcode.html
  */
-class Leitcode extends Code2of5\Interleaved implements FixedLengthInterface
+class Leitcode extends AbstractDHL
 {
     /**
      * Always 14.
@@ -34,18 +33,5 @@ class Leitcode extends Code2of5\Interleaved implements FixedLengthInterface
                     '$1.$2.$3.$4 $5',
                     $this->data
                 );
-    }
-
-    /**
-     * 
-     * @param string $data
-     * @return int
-     */
-    protected function calcChecksum($data)
-    {
-        $data  = \str_split($data);
-        $sum   = self::sumAlternateWeight($data, 4, 9);
-        $check = (10 - ($sum % 10)) % 10;
-        return $check;
     }
 }
