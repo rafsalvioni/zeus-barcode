@@ -15,12 +15,6 @@ class SvgRenderer extends AbstractRenderer
      * @var DOMElement
      */
     protected $rootElement;
-    /**
-     * Group counter
-     * 
-     * @var int
-     */
-    protected $groupCounter = 0;
 
     /**
      * Render as PNG
@@ -152,8 +146,12 @@ class SvgRenderer extends AbstractRenderer
      */
     protected static function formatColor($color)
     {
-        $rgb = $color & 0xffffff;
-        return '#' . \str_pad(\dechex($rgb), 6, '0', \STR_PAD_LEFT);
+        static $colors = [];
+        if (!isset($colors[$color])) {
+            $rgb = $color & 0xffffff;
+            $colors[$color] = '#' . \str_pad(\dechex($rgb), 6, '0', \STR_PAD_LEFT);
+        }
+        return $colors[$color];
     }
 
     /**
@@ -178,7 +176,7 @@ class SvgRenderer extends AbstractRenderer
         $this->resizeResource($width, $height);
         
         $this->rootElement = $this->createElement('g', [
-            'id' => $this->groupCounter++
+            'id' => \md5(\get_class($this->barcode) . $this->barcode->getData())
         ]);
         $this->resource->documentElement->appendChild($this->rootElement);
        
@@ -222,12 +220,15 @@ class SvgRenderer extends AbstractRenderer
     {
         $svg   =& $this->resource->documentElement;
         $color = self::formatColor($this->options['backcolor']);
-        $fill  = $this->createElement('rect', [
-            'x'      => 0, 'y' => 0,
-            'width'  => $width,
-            'height' => $height,
-            'fill'   => $color
-        ]);
+        $fill  = function() use ($width, $height, $color)
+        {
+            return $this->createElement('rect', [
+                'x'      => 0, 'y' => 0,
+                'width'  => $width,
+                'height' => $height,
+                'fill'   => $color
+            ]);
+        };
         if ($svg->firstChild) {
             $first =& $svg->firstChild;
             if ($first->tagName == 'rect' && $first->getAttribute('fill') == $color) {
@@ -235,11 +236,11 @@ class SvgRenderer extends AbstractRenderer
                 $first->setAttribute('height', $height);
             }
             else {
-                $svg->insertBefore($fill, $first);
+                $svg->insertBefore($fill(), $first);
             }
         }
         else {
-            $svg->appendChild($fill);
+            $svg->appendChild($fill());
         }
     }
 
