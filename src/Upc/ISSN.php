@@ -130,7 +130,7 @@ class ISSN extends Ean13
         parent::drawText($renderer);
         
         $renderer->drawText(
-            [$this->getTotalWidth() / 2, $this->options['border'] + 1],
+            [$this->getTextX(), $this->getContentOffsetTop() + 1],
             'ISSN ' . $this->getISSN(true),
             $this->options['forecolor'],
             $this->options['font'],

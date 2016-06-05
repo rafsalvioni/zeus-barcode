@@ -103,7 +103,7 @@ class ISBN extends Ean13
         parent::drawText($renderer);
         
         $renderer->drawText(
-            [$this->getTotalWidth() / 2, $this->options['border'] + 1],
+            [$this->getTextX(), $this->getContentOffsetTop() + 1],
             'ISBN ' . $this->getISBN(true),
             $this->options['forecolor'],
             $this->options['font'],
