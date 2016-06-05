@@ -37,8 +37,27 @@ class Leitcode extends AbstractDHL
         self::ZIP_CODE     => 5,
         self::STREET_CODE  => 3,
         self::HOUSE_NUMBER => 3,
-        self::HOUSE_NUMBER => 2,
+        self::PRODUCT_CODE => 2,
     ];
+    
+    /**
+     * Builder to create a instance using data fields.
+     * 
+     * @param string|int $zipCode
+     * @param string|int $streetCode
+     * @param string|int $houseNumber
+     * @param string|int $productCode
+     * @return self
+     */
+    public static function builder(
+        $zipCode, $streetCode, $houseNumber, $productCode
+    ){
+        $me = new self('0', false);
+        return $me->withZipCode($zipCode)
+                  ->withStreetCode($streetCode)
+                  ->withHouseNumber($houseNumber)
+                  ->withProductCode($productCode);
+    }
     
     /**
      * Returns barcode's mail zip code.

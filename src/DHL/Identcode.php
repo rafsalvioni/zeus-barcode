@@ -36,6 +36,24 @@ class Identcode extends AbstractDHL
     ];
     
     /**
+     * Builder to create a instance using data fields.
+     * 
+     * @param string|int $zipCode
+     * @param string|int $streetCode
+     * @param string|int $houseNumber
+     * @param string|int $productCode
+     * @return self
+     */
+    public static function builder(
+        $mailCenter, $customerCode, $deliveryNumber
+    ){
+        $me = new self('0', false);
+        return $me->withMailCenter($mailCenter)
+                  ->withCustomerCode($customerCode)
+                  ->withDeliveryNumber($deliveryNumber);
+    }
+    
+    /**
      * Returns barcode's mail center code.
      * 
      * @return string
