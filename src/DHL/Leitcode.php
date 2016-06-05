@@ -13,6 +13,116 @@ namespace Zeus\Barcode\DHL;
 class Leitcode extends AbstractDHL
 {
     /**
+     * 
+     */
+    const ZIP_CODE     = 0;
+    /**
+     * 
+     */
+    const STREET_CODE  = 5;
+    /**
+     * 
+     */
+    const HOUSE_NUMBER = 8;
+    /**
+     * 
+     */
+    const PRODUCT_CODE = 11;
+    
+    /**
+     *
+     * @var array
+     */
+    protected static $lengths = [
+        self::ZIP_CODE     => 5,
+        self::STREET_CODE  => 3,
+        self::HOUSE_NUMBER => 3,
+        self::HOUSE_NUMBER => 2,
+    ];
+    
+    /**
+     * Returns barcode's mail zip code.
+     * 
+     * @return string
+     */
+    public function getZipCode()
+    {
+        return $this->getField(self::ZIP_CODE);
+    }
+    
+    /**
+     * Create a new class instance with another zip code.
+     * 
+     * @param string|int $code
+     * @return self
+     */
+    public function withZipCode($code)
+    {
+        return $this->withField(self::ZIP_CODE, $code);
+    }
+    
+    /**
+     * Returns barcode's street code.
+     * 
+     * @return string
+     */
+    public function getStreetCode()
+    {
+        return $this->getField(self::STREET_CODE);
+    }
+    
+    /**
+     * Create a new class instance with another street code.
+     * 
+     * @param string|int $code
+     * @return self
+     */
+    public function withStreetCode($code)
+    {
+        return $this->withField(self::STREET_CODE, $code);
+    }
+    /**
+     * Returns barcode's house number.
+     * 
+     * @return string
+     */
+    public function getHouseNumber()
+    {
+        return $this->getField(self::HOUSE_NUMBER);
+    }
+    
+    /**
+     * Create a new class instance with another house number.
+     * 
+     * @param string|int $number
+     * @return self
+     */
+    public function withHouseNumber($number)
+    {
+        return $this->withField(self::HOUSE_NUMBER, $number);
+    }
+    /**
+     * Returns barcode's product code.
+     * 
+     * @return string
+     */
+    public function getProductCode()
+    {
+        return $this->getField(self::PRODUCT_CODE);
+    }
+    
+    /**
+     * Create a new class instance with another product code.
+     * 
+     * @param string|int $code
+     * @return self
+     */
+    public function withProductCode($code)
+    {
+        return $this->withField(self::PRODUCT_CODE, $code);
+    }
+    
+    /**
      * Always 14.
      * 
      * @return int
