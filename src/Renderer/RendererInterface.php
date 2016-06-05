@@ -18,6 +18,14 @@ interface RendererInterface
      * @return self
      */
     public function start(BarcodeInterface $barcode);
+    
+    /**
+     * Draw barcodes on stream, horizontally.
+     * 
+     * @param BarcodeInterface $barcode
+     * @return self
+     */
+    public function stream(BarcodeInterface $barcode);
 
     /**
      * Draws a rectangle.

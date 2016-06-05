@@ -68,6 +68,21 @@ trait RendererTrait
     }
     
     /**
+     * 
+     * @param BarcodeInterface $barcode
+     * @return self
+     */
+    public function stream(BarcodeInterface $barcode)
+    {
+        $merged = $this->options['merge'];
+        $this->options['merge'] = true;
+        $barcode->draw($this);
+        $this->options['offsetleft'] += $barcode->getTotalWidth();
+        $this->options['merge'] = $merged;
+        return $this;
+    }
+
+    /**
      * Initializes the barcode resource.
      * 
      * Should be fill barcode area with background color.
