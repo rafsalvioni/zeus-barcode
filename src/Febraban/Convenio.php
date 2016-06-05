@@ -161,7 +161,7 @@ class Convenio extends AbstractFebraban
      */
     public function comValor($valor)
     {
-        $valor = $valor * 100;
+        $valor = \intval($valor * 100);
         return $this->withCampo(self::VALOR, $valor);
     }
     

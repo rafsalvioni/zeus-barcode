@@ -231,7 +231,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function comValor($valor)
     {
-        $valor = $valor * 100;
+        $valor = (int)($valor * 100);
         return $this->withCampo(self::VALOR, $valor);
     }
     
