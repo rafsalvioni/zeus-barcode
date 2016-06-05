@@ -40,6 +40,14 @@ class Ean2 extends AbstractBarcode implements FixedLengthInterface
 
     /**
      * 
+     */
+    protected function setDefaultOptions()
+    {
+        $this->checkAndSetOption('textposition', 'top');
+    }
+
+    /**
+     * 
      * @param EncoderInterface $bars
      * @param string $data
      */

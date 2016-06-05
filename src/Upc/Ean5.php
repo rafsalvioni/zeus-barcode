@@ -41,6 +41,14 @@ class Ean5 extends AbstractBarcode implements FixedLengthInterface
     {
         return 5;
     }
+    
+    /**
+     * 
+     */
+    protected function setDefaultOptions()
+    {
+        $this->checkAndSetOption('textposition', 'top');
+    }
 
     /**
      * 
