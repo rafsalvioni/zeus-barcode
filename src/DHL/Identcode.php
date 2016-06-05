@@ -2,6 +2,8 @@
 
 namespace Zeus\Barcode\DHL;
 
+use Zeus\Barcode\FieldsTrait;
+
 /**
  * Implementation of Identcode barcode standard.
  * 
@@ -137,5 +139,15 @@ class Identcode extends AbstractDHL
                     '$1.$2 $3.$4 $5',
                     $this->data
                 );
+    }
+
+    /**
+     * 
+     * @param int $field
+     * @return int
+     */
+    protected function getFieldLength($field)
+    {
+        return self::$lengths[$field];
     }
 }

@@ -163,4 +163,14 @@ class Leitcode extends AbstractDHL
                     $this->data
                 );
     }
+    
+    /**
+     * 
+     * @param int $field
+     * @return int
+     */
+    protected function getFieldLength($field)
+    {
+        return self::$lengths[$field];
+    }
 }

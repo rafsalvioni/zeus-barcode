@@ -117,7 +117,7 @@ class Convenio extends AbstractFebraban
      */
     public function getSegmento()
     {
-        return $this->getCampo(self::SEGMENTO);
+        return $this->getField(self::SEGMENTO);
     }
     
     /**
@@ -138,7 +138,7 @@ class Convenio extends AbstractFebraban
      */
     public function comSegmento($segmento)
     {
-        return $this->withCampo(self::SEGMENTO, $segmento);
+        return $this->withField(self::SEGMENTO, $segmento);
     }
 
     /**
@@ -147,7 +147,7 @@ class Convenio extends AbstractFebraban
      */
     public function getValor()
     {
-        $valor = (int)$this->getCampo(self::VALOR);
+        $valor = (int)$this->getField(self::VALOR);
         $valor = $valor / 100;
         return $valor;
     }
@@ -162,7 +162,7 @@ class Convenio extends AbstractFebraban
     public function comValor($valor)
     {
         $valor = \intval($valor * 100);
-        return $this->withCampo(self::VALOR, $valor);
+        return $this->withField(self::VALOR, $valor);
     }
     
     /**
@@ -177,7 +177,7 @@ class Convenio extends AbstractFebraban
         else {
             $campo = self::CAMPO_LIVRE2;
         }
-        return $this->getCampo($campo);
+        return $this->getField($campo);
     }
     
     /**
@@ -195,7 +195,7 @@ class Convenio extends AbstractFebraban
         else {
             $campo = self::CAMPO_LIVRE2;
         }
-        return $this->withCampo($campo, $campoLivre);
+        return $this->withField($campo, $campoLivre);
     }
     
     /**
@@ -262,32 +262,18 @@ class Convenio extends AbstractFebraban
     }
 
     /**
-     * Retorna um valor de campo contido nos dados do código de barras.
      * 
-     * @param int $campo Constantes da classe
-     * @return string
+     * @param int $field
+     * @return int
      */
-    protected function getCampo($campo)
+    protected function getFieldLength($field)
     {
-        return $this->getDataPart($campo, self::$tamanhoCampos[$campo]);
-    }
-    
-    /**
-     * Retorna um objeto criado a partir do objeto atual substituindo o valor
-     * do campo especificado.
-     * 
-     * $valor será completado com zeros a esquerda utilizando o tamnho do campo
-     * registrado.
-     * 
-     * @param int $campo Constantes da classe
-     * @param string|int Novo valor
-     * @return Bloqueto
-     */
-    protected function withCampo($campo, $valor)
-    {
-        $data = $this->withDataPart($valor, $campo, self::$tamanhoCampos[$campo]);
-        return new self($data, false);
+        return self::$tamanhoCampos[$field];
     }
 }
 
+/**
+ * Class' exception
+ * 
+ */
 class ConvenioException extends Exception {}

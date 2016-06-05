@@ -124,7 +124,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function getCodigoBanco()
     {
-        return $this->getCampo(self::BANCO);
+        return $this->getField(self::BANCO);
     }
     
     /**
@@ -136,7 +136,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function comCodigoBanco($codBanco)
     {
-        return $this->withCampo(self::BANCO, $codBanco);
+        return $this->withField(self::BANCO, $codBanco);
     }
 
     /**
@@ -146,7 +146,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function getCodigoMoeda()
     {
-        return $this->getCampo(self::MOEDA);
+        return $this->getField(self::MOEDA);
     }
     
     /**
@@ -158,7 +158,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function comCodigoMoeda($codMoeda)
     {
-        return $this->withCampo(self::MOEDA, $codMoeda);
+        return $this->withField(self::MOEDA, $codMoeda);
     }
 
     /**
@@ -168,7 +168,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function getFatorVecto()
     {
-        return $this->getCampo(self::FATOR_VENCTO);
+        return $this->getField(self::FATOR_VENCTO);
     }
     
     /**
@@ -180,7 +180,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function comFatorVencto($fator)
     {
-        return $this->withCampo(self::FATOR_VENCTO, $fator);
+        return $this->withField(self::FATOR_VENCTO, $fator);
     }
     
     /**
@@ -217,7 +217,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function getValor()
     {
-        $valor = (int)$this->getCampo(self::VALOR);
+        $valor = (int)$this->getField(self::VALOR);
         $valor = $valor / 100;
         return $valor;
     }
@@ -232,7 +232,7 @@ class Bloqueto extends AbstractFebraban
     public function comValor($valor)
     {
         $valor = (int)($valor * 100);
-        return $this->withCampo(self::VALOR, $valor);
+        return $this->withField(self::VALOR, $valor);
     }
     
     /**
@@ -241,7 +241,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function getCampoLivre()
     {
-        return $this->getCampo(self::CAMPO_LIVRE);
+        return $this->getField(self::CAMPO_LIVRE);
     }
     
     /**
@@ -253,7 +253,7 @@ class Bloqueto extends AbstractFebraban
      */
     public function comCampoLivre($campoLivre)
     {
-        return $this->withCampo(self::CAMPO_LIVRE, $campoLivre);
+        return $this->withField(self::CAMPO_LIVRE, $campoLivre);
     }
     
     /**
@@ -323,32 +323,18 @@ class Bloqueto extends AbstractFebraban
     }
     
     /**
-     * Retorna um valor de campo contido nos dados do código de barras.
      * 
-     * @param int $campo Constantes da classe
-     * @return string
+     * @param int $field
+     * @return int
      */
-    protected function getCampo($campo)
+    protected function getFieldLength($field)
     {
-        return $this->getDataPart($campo, self::$tamanhoCampos[$campo]);
-    }
-    
-    /**
-     * Retorna um objeto criado a partir do objeto atual substituindo o valor
-     * do campo especificado.
-     * 
-     * $valor será completado com zeros a esquerda utilizando o tamanho do campo
-     * registrado.
-     * 
-     * @param int $campo Constantes da classe
-     * @param string|int Novo valor
-     * @return Bloqueto
-     */
-    protected function withCampo($campo, $valor)
-    {
-        $data = $this->withDataPart($valor, $campo, self::$tamanhoCampos[$campo]);
-        return new self($data, false);
+        return self::$tamanhoCampos[$field];
     }
 }
 
+/**
+ * Class's exception
+ * 
+ */
 class BloquetoException extends Exception {}

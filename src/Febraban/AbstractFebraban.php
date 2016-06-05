@@ -4,6 +4,7 @@ namespace Zeus\Barcode\Febraban;
 
 use Zeus\Barcode\Code2of5\Interleaved;
 use Zeus\Barcode\FixedLengthInterface;
+use Zeus\Barcode\FieldsTrait;
 
 /**
  * Classe abstrata para criação de códigos de barra padrão Febraban.
@@ -17,6 +18,8 @@ use Zeus\Barcode\FixedLengthInterface;
 abstract class AbstractFebraban extends Interleaved implements
     FixedLengthInterface
 {
+    use FieldsTrait;
+    
     /**
      * Armazena a representação dos dados no padrão Febraban
      * 
