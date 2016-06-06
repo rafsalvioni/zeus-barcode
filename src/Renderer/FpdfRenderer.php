@@ -10,6 +10,19 @@ namespace Zeus\Barcode\Renderer;
 class FpdfRenderer extends AbstractRenderer
 {
     /**
+     * Default typography unit used in FPDF
+     * 
+     */
+    const DEFAULT_UNIT = 'mm';
+    
+    /**
+     * Unit used in current FPDF resource
+     * 
+     * @var string
+     */
+    protected $unit = self::DEFAULT_UNIT;
+
+    /**
      * Render
      * 
      */
@@ -43,8 +56,8 @@ class FpdfRenderer extends AbstractRenderer
         $this->resource->Rect(
             $point[0],
             $point[1],
-            $this->pixelToUnit($width),
-            $this->pixelToUnit($height),
+            $this->convertUnit($width),
+            $this->convertUnit($height),
             $filled ? 'F' : 'D'
         );
         
@@ -80,14 +93,14 @@ class FpdfRenderer extends AbstractRenderer
         
         switch ($align) {
             case 'center':
-                $point[0] -= \round($textWidth / 2);
+                $point[0] -= ($textWidth / 2);
                 break;
             case 'right':
                 $point[0] -= $textWidth;
                 break;
         }
         
-        $point[1] += $fontSize * 0.352777778;
+        $point[1] += $this->convertUnit($fontSize, 'pt');
         $this->resource->Text($point[0], $point[1], $text);
         
         return $this;
@@ -110,6 +123,7 @@ class FpdfRenderer extends AbstractRenderer
             throw new Exception('PDF haven\'t a current page!');
         }
         $this->resource = $resource;
+        $this->unit     = $this->getResourceUnit($resource);
         $this->setOption('merge', true);
         return $this;
     }
@@ -123,7 +137,8 @@ class FpdfRenderer extends AbstractRenderer
         $height = $this->barcode->getTotalHeight();
         
         if (!$this->resource || !$this->options['merge']) {
-            $this->resource = new \FPDF();
+            $this->resource = new \FPDF('P', self::DEFAULT_UNIT);
+            $this->unit = self::DEFAULT_UNIT;
             $this->resource->AddPage();
         }
         $this->addPage($height);
@@ -137,11 +152,11 @@ class FpdfRenderer extends AbstractRenderer
     /**
      * Adds a page if necessary.
      * 
-     * @param number $height Additional height
+     * @param number $height Additional height, in pixels
      */
     protected function addPage($height)
     {
-        $height     = $this->pixelToUnit($height + $this->offsetTop);
+        $height     = $this->convertUnit($height + $this->offsetTop);
         $pageHeight = $this->resource->GetPageHeight();
         $oldheight  = $pageHeight * $this->resource->PageNo();
         
@@ -150,26 +165,43 @@ class FpdfRenderer extends AbstractRenderer
             $this->offsetTop = 0;
         }
     }
-
+    
     /**
-     * Convert a value in pixel to millimiter.
+     * Convert a value to resource unit.
      * 
      * @param number $value
+     * @param string $from Value unit
      * @return number
      */
-    protected function pixelToUnit($value)
+    protected function convertUnit($value, $from = 'px')
     {
-        return $value * 0.264583333;
+        return self::convertToUnit($value, $from, $this->unit);
+    }
+
+    /**
+     * Convert coords to resource unit.
+     * 
+     * @param array $point
+     * @param string $unit Coords. Unit
+     */
+    protected function convertPointUnit(array &$point, $unit = 'px')
+    {
+        $point[0] = $this->convertUnit($point[0], $unit);
+        $point[1] = $this->convertUnit($point[1], $unit);
     }
     
     /**
-     * Convert coords in pixel to millimiter.
+     * Get the user unit used in FPDF resource.
      * 
-     * @param array $point
+     * @param \FPDF $resource
+     * @return string
      */
-    protected function convertPointUnit(array &$point)
+    protected function getResourceUnit(\FPDF $resource)
     {
-        $point[0] = $this->pixelToUnit($point[0]);
-        $point[1] = $this->pixelToUnit($point[1]);
+        $arr  = (array)$resource;
+        $key  = "\x0*\x0k";
+        $val  = $arr[$key];
+        $unit = \array_search($val, self::$units, true);
+        return $unit;
     }
 }
