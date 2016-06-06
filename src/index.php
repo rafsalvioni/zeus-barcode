@@ -21,7 +21,7 @@ $bcs = [
     (new Zeus\Barcode\Msi\MsiMod10('80523', false)),
     (new Zeus\Barcode\Msi\MsiMod11('80523', false)),
     (new Zeus\Barcode\Msi\MsiMod1110('80523', false)),
-    (new Zeus\Barcode\Code39\Code39('ZEND-FRAMEWORK')),
+    (new Zeus\Barcode\Code39\Code39('ZEUS-FRAMEWORK')),
     (new Zeus\Barcode\Code39\Code39Mod43('BARCODE1%P')),
     (new Zeus\Barcode\Code39\Code39Ext('BARCODE1%')),
     (new Zeus\Barcode\Code39\Code39ExtMod43('$%&b@', false)),
@@ -30,33 +30,46 @@ $bcs = [
     (new Zeus\Barcode\Code128("Eça de Queirós")),
     (new Zeus\Barcode\Ean128('010123456789012815051231')),
     (new Zeus\Barcode\Itf14('1234567890123', false)),
+    \Zeus\Barcode\Upc\ISBN::fromISBN('9876543789'),
+    \Zeus\Barcode\Upc\ISSN::fromISSN('378-5955'),
+    new \Zeus\Barcode\DHL\Leitcode('21348075016401'),
+    new \Zeus\Barcode\DHL\Identcode('563102430313'),
 ];
 
 //$render = new Zeus\Barcode\Renderer\ImageRenderer();
 //$gd = \imagecreatefrompng('D:\\Users\\rafaelsalvioni\\Desktop\\01.png');
 //$gd = \imagecreatetruecolor(1000, 4000);
-//$render->setResource($gd);
-$render = new \Zeus\Barcode\Renderer\SvgRenderer();
-$render->setResource('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="4000" width="600"></svg>');
-$render->offsetLeft = 70;
-$render->offsetTop = 10;
+//$render->setResource('C:\\Users\\Rafael\\Desktop\\boleto.jpg');
+//$render = new \Zeus\Barcode\Renderer\SvgRenderer();
+//$render->setResource('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="4000" width="600"></svg>');
+$render = new Zeus\Barcode\Renderer\FpdfRenderer();
+$render->merge = true;
+//$render->offsetLeft = 120;
+//$render->offsetTop = 20;
 
 foreach ($bcs as &$bc) {
-    //$bc->fontSize = 3;
-    //$bc->textAlign = 'left';
+    //$bc->textAlign = 'right';
     //$bc->textPosition = 'top';
-    //$bc->border = 2;
+    //$bc->border = 5;
     //$bc->barwidth = 2;
-    $bc->barheight = 50;
-    $bc->quietZone = 20;
+    //$bc->barheight = 80;
+    //$bc->quietZone = 20;
     //$bc->font = 'D:\\Users\\rafaelsalvioni\\Desktop\\arial.ttf';
-    $bc->fontSize = 8;
+    $bc->fontSize = 7;
     //$bc->backColor = 0xffff00;
     //$bc->foreColor = 0xff0000;
     $bc->showText = true;
+    //$render->backColor = \rand(0xff0000, 0xffff99);
+    //$bc->backColor = \rand(0xff0000, 0xffff99);
     $bc->draw($render);
-    $render->offsetTop += $bc->getHeight() + 20;
+    //$render->stream($bc);
+    //$render->offsetLeft += $bc->getTotalWidth() + 20;
     //$render->drawText([0, 0], \get_class($bc), 0xffff00, $bc->font, $bc->fontSize + 2);
-    //$render->offsetTop += 50;
+    $render->offsetTop += $bc->getTotalHeight() + 50;
 }
 $render->render();
+
+/*$render->stream(\array_last($bcs))
+       ->stream(new \Zeus\Barcode\Upc\Ean5('87624'))
+       ->stream(new \Zeus\Barcode\Upc\Ean2('84'))
+       ->render();*/
