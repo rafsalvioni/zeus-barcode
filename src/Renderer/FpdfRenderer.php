@@ -21,6 +21,17 @@ class FpdfRenderer extends AbstractRenderer
      * @var string
      */
     protected $unit = self::DEFAULT_UNIT;
+    /**
+     * Total resource height, expressed in current unit
+     * 
+     * @var number
+     */
+    protected $totalHeight = 0;
+    /**
+     *
+     * @var \FPDI
+     */
+    protected $resource;
 
     /**
      * Render
@@ -119,13 +130,25 @@ class FpdfRenderer extends AbstractRenderer
         if (!($resource instanceof \FPDF)) {
             throw new Exception('Invalid PDF resource. Should be a FPDF object!');
         }
-        if ($resource->PageNo() == 0) {
-            throw new Exception('PDF haven\'t a current page!');
-        }
         $this->resource = $resource;
-        $this->unit     = $this->getResourceUnit($resource);
+        $this->unit     = self::getResourceUnit($resource);
         $this->setOption('merge', true);
         return $this;
+    }
+    
+    /**
+     * Get the user unit used in FPDF resource.
+     * 
+     * @param \FPDF $resource
+     * @return string
+     */
+    protected static function getResourceUnit(\FPDF $resource)
+    {
+        $arr  = (array)$resource;
+        $key  = "\x0*\x0k";
+        $val  = $arr[$key];
+        $unit = \array_search($val, self::$units, true);
+        return $unit;
     }
     
     /**
@@ -137,9 +160,9 @@ class FpdfRenderer extends AbstractRenderer
         $height = $this->barcode->getTotalHeight();
         
         if (!$this->resource || !$this->options['merge']) {
-            $this->resource = new \FPDF('P', self::DEFAULT_UNIT);
-            $this->unit = self::DEFAULT_UNIT;
-            $this->resource->AddPage();
+            $this->resource    = new \FPDF('P', self::DEFAULT_UNIT);
+            $this->unit        = self::DEFAULT_UNIT;
+            $this->totalHeight = 0;
         }
         $this->addPage($height);
         
@@ -156,13 +179,10 @@ class FpdfRenderer extends AbstractRenderer
      */
     protected function addPage($height)
     {
-        $height     = $this->convertUnit($height + $this->offsetTop);
-        $pageHeight = $this->resource->GetPageHeight();
-        $oldheight  = $pageHeight * $this->resource->PageNo();
-        
-        if ($height > $oldheight) {
+        $height = $this->convertUnit($height + $this->offsetTop);
+        while ($height > $this->totalHeight) {
             $this->resource->AddPage();
-            $this->offsetTop = 0;
+            $this->totalHeight += $this->resource->GetPageHeight();
         }
     }
     
@@ -188,20 +208,5 @@ class FpdfRenderer extends AbstractRenderer
     {
         $point[0] = $this->convertUnit($point[0], $unit);
         $point[1] = $this->convertUnit($point[1], $unit);
-    }
-    
-    /**
-     * Get the user unit used in FPDF resource.
-     * 
-     * @param \FPDF $resource
-     * @return string
-     */
-    protected function getResourceUnit(\FPDF $resource)
-    {
-        $arr  = (array)$resource;
-        $key  = "\x0*\x0k";
-        $val  = $arr[$key];
-        $unit = \array_search($val, self::$units, true);
-        return $unit;
     }
 }
