@@ -10,12 +10,6 @@ namespace Zeus\Barcode\Renderer;
 class FpdfRenderer extends AbstractRenderer
 {
     /**
-     *
-     * @var \FPDF
-     */
-    protected $resource;
-
-    /**
      * Render
      * 
      */
