@@ -15,6 +15,19 @@ trait RendererTrait
     use OptionsTrait;
     
     /**
+     * Units conversors
+     * 
+     * @var array
+     */
+    protected static $units = [
+        'pt' => 1,
+        'px' => 0.75,
+        'mm' => 72/25.4,
+        'cm' => 72/2.54,
+        'in' => 72,
+    ];
+    
+    /**
      * Draw resource
      * 
      * @var mixed
@@ -44,6 +57,22 @@ trait RendererTrait
         ];
     }
     
+    /**
+     * Convert values between units.
+     * 
+     * @param number $value
+     * @param string $from From unit
+     * @param string $to To unit
+     * @return number
+     */
+    protected static function convertToUnit($value, $from, $to)
+    {
+        $from  = \array_get(self::$units, $from, 0);
+        $to    = \array_get(self::$units, $to, 0);
+        $value = ($value / $to) * $from;
+        return $value;
+    }
+
     /**
      * 
      * @return mixed

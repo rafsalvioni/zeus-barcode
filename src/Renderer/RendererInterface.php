@@ -33,9 +33,9 @@ interface RendererInterface
      * $point referers to coordinates of top-left corner of rectangle and
      * should be a array with format [X, Y].
      * 
-     * @param array $point Point
-     * @param number $width Width
-     * @param number $height Height
+     * @param array $point Point, coords. in pixels
+     * @param number $width Width, in pixels
+     * @param number $height Height, in pixels
      * @param int $color Color
      * @param bool $filled Rect should be filled?
      * @return self
