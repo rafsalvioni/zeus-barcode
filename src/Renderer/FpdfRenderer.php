@@ -86,14 +86,14 @@ class FpdfRenderer extends AbstractRenderer
         
         switch ($align) {
             case 'center':
-                $point[0] -= \ceil($textWidth / 2);
+                $point[0] -= \round($textWidth / 2);
                 break;
             case 'right':
                 $point[0] -= $textWidth;
                 break;
         }
         
-        $point[1] += $fontSize;
+        $point[1] += $fontSize * 0.352777778;
         $this->resource->Text($point[0], $point[1], $text);
         
         return $this;
@@ -129,7 +129,7 @@ class FpdfRenderer extends AbstractRenderer
         $height = $this->barcode->getTotalHeight();
         
         if (!$this->resource || !$this->options['merge']) {
-            $this->resource = new \FPDF('P', 'pt');
+            $this->resource = new \FPDF();
             $this->resource->AddPage();
         }
         $this->resource->SetAutoPageBreak(false);
@@ -159,18 +159,18 @@ class FpdfRenderer extends AbstractRenderer
     }
 
     /**
-     * Convert a value in pixel to a value to pt.
+     * Convert a value in pixel to millimiter.
      * 
      * @param number $value
      * @return number
      */
     protected function pixelToUnit($value)
     {
-        return $value * 0.75;
+        return $value * 0.264583333;
     }
     
     /**
-     * Convert coords in pixel to pt.
+     * Convert coords in pixel to millimiter.
      * 
      * @param array $point
      */
