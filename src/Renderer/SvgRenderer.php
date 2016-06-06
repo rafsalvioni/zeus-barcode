@@ -110,7 +110,7 @@ class SvgRenderer extends AbstractRenderer
      * $resource can be a file path, string, \DOMDocument or \DOMElement object.
      * 
      * @param mixed $resource
-     * @return SvgRenderer
+     * @return self
      * @throws Exception
      */
     public function setResource($resource)

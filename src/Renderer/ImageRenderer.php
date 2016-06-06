@@ -107,7 +107,7 @@ class ImageRenderer extends AbstractRenderer
      * $source can be a GD resource or a image file path.
      * 
      * @param mixed $resource
-     * @return ImageRenderer
+     * @return self
      */
     public function setResource($resource)
     {
@@ -127,7 +127,7 @@ class ImageRenderer extends AbstractRenderer
     /**
      * 
      */
-    public function initResource()
+    protected function initResource()
     {
         $width  = $this->barcode->getTotalWidth();
         $height = $this->barcode->getTotalHeight();
