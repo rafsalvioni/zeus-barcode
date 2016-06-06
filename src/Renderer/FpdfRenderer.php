@@ -132,7 +132,6 @@ class FpdfRenderer extends AbstractRenderer
             $this->resource = new \FPDF();
             $this->resource->AddPage();
         }
-        $this->resource->SetAutoPageBreak(false);
         $this->addPage($height);
         
         // Fill barcode's background
