@@ -3,7 +3,7 @@
 namespace Zeus\Barcode\Renderer;
 
 /**
- * Renderer to draw barcodes as images.
+ * Renderer to draw barcodes as PDF using FPDF class.
  *
  * @author Rafael M. Salvioni
  */
