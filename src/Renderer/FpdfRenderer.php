@@ -13,23 +13,23 @@ class FpdfRenderer extends AbstractRenderer
      * Default typography unit used in FPDF
      * 
      */
-    const DEFAULT_UNIT = 'mm';
+    const DEFAULT_UNIT       = 'mm';
     
     /**
      * Unit used in current FPDF resource
      * 
      * @var string
      */
-    protected $unit = self::DEFAULT_UNIT;
+    protected $unit          = self::DEFAULT_UNIT;
     /**
      * Total resource height, expressed in current unit
      * 
      * @var number
      */
-    protected $totalHeight = 0;
+    protected $totalHeight   = 0;
     /**
      *
-     * @var \FPDI
+     * @var \FPDF
      */
     protected $resource;
 
@@ -179,11 +179,27 @@ class FpdfRenderer extends AbstractRenderer
      */
     protected function addPage($height)
     {
-        $height = $this->convertUnit($height + $this->offsetTop);
-        while ($height > $this->totalHeight) {
+        $height = $this->convertUnit($height);
+        $offset = $this->convertUnit($this->options['offsettop']);
+        $total  = $height + $offset;
+        
+        while ($total > $this->totalHeight) {
             $this->resource->AddPage();
             $this->totalHeight += $this->resource->GetPageHeight();
         }
+        
+        $pageHeight = $this->resource->GetPageHeight();
+        $offsetY    = $this->totalHeight - $pageHeight;
+        if ($offset >= $offsetY) {
+            $offset -= $offsetY;
+        }
+        $this->resource->SetY($offset);
+    }
+    
+    protected function applyOffsets(array &$point)
+    {
+        $point[0] += $this->options['offsetleft'];
+        $point[1] += self::convertToUnit($this->resource->GetY(), $this->unit, 'px');
     }
     
     /**
