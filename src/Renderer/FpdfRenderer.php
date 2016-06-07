@@ -28,10 +28,11 @@ class FpdfRenderer extends AbstractRenderer
      */
     protected $totalHeight   = 0;
     /**
-     *
-     * @var \FPDF
+     * External pages to import
+     * 
+     * @var int
      */
-    protected $resource;
+    protected $pagesToImport = 0;
 
     /**
      * Render
@@ -127,6 +128,16 @@ class FpdfRenderer extends AbstractRenderer
      */
     public function setResource($resource)
     {
+        if (\is_scalar($resource)) {
+            $resource = (string)$resource;
+            if (!\file_exists($resource)) {
+                throw new Exception("File \"$resource\" not found!");
+            }
+            $pdf                 = new \FPDI('P', self::DEFAULT_UNIT);
+            $this->pagesToImport = $pdf->setSourceFile($resource);
+            $this->totalHeight   = 0;
+            $resource =& $pdf;
+        }
         if (!($resource instanceof \FPDF)) {
             throw new Exception('Invalid PDF resource. Should be a FPDF object!');
         }
@@ -136,6 +147,19 @@ class FpdfRenderer extends AbstractRenderer
         return $this;
     }
     
+    /**
+     * Flush all pages still not imported.
+     * 
+     * @return self
+     */
+    public function flush()
+    {
+        while ($this->pagesToImport > 0) {
+            $this->totalHeight += $this->addOrImportPage();
+        }
+        return $this;
+    }
+
     /**
      * Get the user unit used in FPDF resource.
      * 
@@ -160,9 +184,10 @@ class FpdfRenderer extends AbstractRenderer
         $height = $this->barcode->getTotalHeight();
         
         if (!$this->resource || !$this->options['merge']) {
-            $this->resource    = new \FPDF('P', self::DEFAULT_UNIT);
-            $this->unit        = self::DEFAULT_UNIT;
-            $this->totalHeight = 0;
+            $this->resource      = new \FPDF('P', self::DEFAULT_UNIT);
+            $this->unit          = self::DEFAULT_UNIT;
+            $this->totalHeight   = 0;
+            $this->pagesToImport = 0;
         }
         $this->addPage($height);
         
@@ -184,8 +209,7 @@ class FpdfRenderer extends AbstractRenderer
         $total  = $height + $offset;
         
         while ($total > $this->totalHeight) {
-            $this->resource->AddPage();
-            $this->totalHeight += $this->resource->GetPageHeight();
+            $this->totalHeight += $this->addOrImportPage();
         }
         
         $pageHeight = $this->resource->GetPageHeight();
@@ -196,6 +220,34 @@ class FpdfRenderer extends AbstractRenderer
         $this->resource->SetY($offset);
     }
     
+    /**
+     * Add a blank page or import a parse page, if has one.
+     * 
+     * Returns the height of new page.
+     * 
+     * @return number
+     */
+    protected function addOrImportPage()
+    {
+        if ($this->pagesToImport > 0) {
+            $tpl    = $this->resource->importPage($this->resource->PageNo() + 1);
+            $size   = $this->resource->getTemplateSize($tpl);
+            $orient = $size['w'] > $size['h'] ? 'L' : 'P';
+            $this->resource->AddPage($orient, \array_values($size));
+            $this->resource->useTemplate($tpl);
+            $this->pagesToImport--;
+        }
+        else {
+            $this->resource->AddPage();
+        }
+        return $this->resource->GetPageHeight();
+    }
+
+    /**
+     * Using FPDF SetY in $point[1]
+     * 
+     * @param array $point
+     */
     protected function applyOffsets(array &$point)
     {
         $point[0] += $this->options['offsetleft'];
