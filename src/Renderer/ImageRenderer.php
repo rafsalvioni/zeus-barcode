@@ -201,10 +201,27 @@ class ImageRenderer extends AbstractRenderer
             $resource =& $this->resource;
         }
         
-        list($r, $g, $b) = self::colorToRgb($color);
-        $i = \imagecolorexact($resource, $r, $g, $b);
+        $alpha = null;
+        if ($color < 0) {
+            $color *= -1;
+            $alpha  = 127;
+            $exact  = '\\imagecolorexactalpha';
+            $alloc  = '\\imagecolorallocatealpha';
+        }
+        else {
+            $exact  = '\\imagecolorexact';
+            $alloc  = '\\imagecolorallocate';
+        }
+        
+        $args = self::colorToRgb($color);
+        if ($alpha != null) {
+            $args[] = $alpha;
+        }
+        \array_unshift($args, $resource);
+        
+        $i    = \call_user_func_array($exact, $args);
         if ($i == -1) {
-            $i = \imagecolorallocate($resource, $r, $g, $b);
+            $i = \call_user_func_array($alloc, $args);
         }
         
         return $i;

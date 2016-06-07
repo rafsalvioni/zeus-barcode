@@ -57,6 +57,11 @@ class FpdfRenderer extends AbstractRenderer
     public function drawRect(array $point, $width, $height, $color, $filled = true)
     {
         $this->checkStarted();
+        
+        if ($color < 0) {
+            return $this;
+        }
+
         $this->applyOffsets($point);
         
         list($r, $g, $b) = self::colorToRgb($color);
