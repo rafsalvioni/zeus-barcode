@@ -126,8 +126,11 @@ class FpdfRenderer extends AbstractRenderer
     /**
      * Allows use a another PDF where barcode will be drawed.
      * 
-     * $resource should be a FPDF instance.
+     * $resource should be a FPDF instance or a PDF file path.
+     * If is a file, its pages will be imported on demand. To import all
+     * remainder pages, use flush() method.
      * 
+     * @see self::flush()
      * @param mixed $resource
      * @return self
      */
