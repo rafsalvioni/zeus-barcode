@@ -97,3 +97,129 @@ Both widths are in pixels.
 
 ## Formatting barcode's apresentation
 We can parametrize how our barcode will be showed. There are many options for this. Let's see:
+- "barWidth": Width of a bar or space, in pixels. Default 1;
+- "barHeight": Height of a bar, in pixels. Default 50;
+- "foreColor": Foreground color, as integer. Used to draw bars and text. Default 0x000000 (black);
+- "backColor": Background color, as integer. Default 0xffffff (white). If negative, will be transparent;
+- "border": Border width, in pixels. Default 0 (no border);
+- "showtext": Boolean to inform if the text representation of barcode should be showed. Default true;
+- "textalign": Alignment of text. Possible values: "center", "left" and "right". Default "center";
+- "textposition": Position of text. Possible values: "top" and "bottom". Default "bottom";
+- "font": Font to write text. Can be a single string or a file path to a font file. If empty, uses default font renderer. Default '';
+- "fontsize": Size of font, in points (pt). Default 9;
+- "quietzone": Espace that encapsulates the barcode. Help to barcode readers. The value defined will be used on left and right. Default 30;
+
+Example:
+
+```php
+require 'vendor/autoload.php';
+
+use Zeus\Barcode\Code2of5\Interleaved;
+use Zeus\Barcode\Renderer\ImageRenderer;
+
+$renderer = new ImageRenderer();
+
+$bc = new Interleaved('5236589', false);
+$bc->backColor = 0xffffaa;
+$bc->foreColor = 0x0000ff;
+$bc->barwidth  = 2;
+$bc->barheight = 150;
+$bc->fontsize  = 5;
+
+$bc->draw($renderer)->render();
+```
+
+## Managing renderers
+We see above how to use renderers on basic way. However, renderers can be setted to do some boring tasks when we use barcodes.
+
+### Styling renderer apresentation
+As barcodes, renderers has some parameters to change how a barcode draw will be done. Are they:
+- "offsetTop": Offset from top, in pixels. Default 0;
+- "offsetLeft": Offset from left, in pixels. Default 0;
+- "backColor": Background color, as integer, used on resize (see "merge" option). Default 0xffffff (white). Not used for FpdfRenderer;
+- "merge": This is the best option... see below. Boolean value, default false;
+
+Using last example, we can do this:
+```php
+require 'vendor/autoload.php';
+
+use Zeus\Barcode\Code2of5\Interleaved;
+use Zeus\Barcode\Renderer\ImageRenderer;
+
+$renderer = new ImageRenderer();
+
+$bc = new Interleaved('5236589', false);
+$bc->backColor = 0xffffaa;
+$bc->foreColor = 0x0000ff;
+$bc->barwidth  = 2;
+$bc->barheight = 150;
+$bc->fontsize  = 5;
+
+$renderer->offsetTop = 50;
+$renderer->offsetLeft = 50;
+$renderer->backColor = 0xababab;
+
+$bc->draw($renderer)->render();
+```
+
+### Using renderer's "merge" mode
+By default, renderers draw one barcode at a time. If you draw a barcode and right after you draw another barcode, the resource of first draw will be lost.
+However, if you set "merge" option to "true", renderer will merge all barcodes draw with him, returning the resource of this merge.
+On wide/narrow example we can see this when we use the stream() method.
+
+Example:
+
+```php
+require 'vendor/autoload.php';
+
+use Zeus\Barcode\Code2of5\Interleaved;
+use Zeus\Barcode\Renderer\ImageRenderer;
+
+$renderer = new ImageRenderer();
+
+$bc = new Interleaved('5236589', false);
+$bc->backColor = 0xffffaa;
+$bc->foreColor = 0x0000ff;
+$bc->barwidth  = 2;
+$bc->barheight = 150;
+$bc->fontsize  = 5;
+
+// Setting render to merge mode
+$renderer->merge = true;
+
+$renderer->offsetTop = 50;
+$renderer->offsetLeft = 50;
+$renderer->backColor = 0xababab;
+
+$bc2 = clone $bc;
+$bc2->backColor = 0xffffff;
+
+$bc->draw($renderer); // Draw barcode 1
+$renderer->offsetLeft += $bc->getTotalWidth() + 20; // Add a offset
+$bc2->draw($renderer);  // Draw barcode 2
+$renderer->render(); // Show the result
+```
+
+The **RendererInterface::stream()** method do the same of previous example. Its draw a lot of barcodes side by side.
+
+### Using a external resource to render
+Sometimes, we need to draw a barcode on a external resource. Using the setResource() method, we can define a external resource and
+barcode will put it, always considering "offsetLeft" and "offsetTop" options. For this, the merge mode will be activated.
+
+Example:
+
+```php
+require 'vendor/autoload.php';
+
+use Zeus\Barcode\Code2of5\Interleaved;
+use Zeus\Barcode\Renderer\ImageRenderer;
+
+$bc = new Interleaved('5236589', false);
+
+$renderer = new ImageRenderer();
+$renderer->setResource("<IMAGE PATH OR GD RESOURCE>");
+$renderer->offsetLeft = 50;
+$renderer->offsetTop = 50;
+
+$bc->draw($renderer)->render();
+```
