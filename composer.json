@@ -1,6 +1,6 @@
 {
-    "name": "rafsalvioni/zeus-log",
-    "description": "Provides a Objected-Oriented API to create barcodes and manipulate its data",
+    "name": "rafsalvioni/zeus-barcode",
+    "description": "Provides a Objected-Oriented API to create, draw and manipulate barcode data",
     "license": "BSD-3-Clause",
     "keywords": [
         "barcode", "zeus", "standard25", "interleaved25", "codabar", "code11", "upc", "ean13", "ean8",
