@@ -2,6 +2,8 @@
 
 namespace Zeus\Barcode\Renderer;
 
+use Zeus\Barcode\Measure;
+
 /**
  * Renderer to draw barcodes as PDF using FPDF class.
  *
@@ -99,7 +101,10 @@ class FpdfRenderer extends AbstractRenderer
         if (!$font) {
             $font = 'Arial';
         }
-        
+        else {
+            $font = \preg_replace('/\.[a-z\d]{1,4}$/i', '', \basename($font));
+        }
+
         $this->applyOffsets($point);
         $this->convertPointUnit($point);
                         
@@ -117,7 +122,7 @@ class FpdfRenderer extends AbstractRenderer
                 break;
         }
         
-        $point[1] += $this->convertUnit($fontSize, 'pt');
+        $point[1] += $this->convertUnit($fontSize - 1, 'pt');
         $this->resource->Text($point[0], $point[1], $text);
         
         return $this;
@@ -197,7 +202,7 @@ class FpdfRenderer extends AbstractRenderer
             $this->totalHeight   = 0;
             $this->pagesToImport = 0;
         }
-        $this->addPage($height);
+        $this->addPage($width, $height);
         
         // Fill barcode's background
         $this->drawRect(
@@ -208,16 +213,18 @@ class FpdfRenderer extends AbstractRenderer
     /**
      * Adds a page if necessary.
      * 
+     * @param number $width Additional width, in pixels
      * @param number $height Additional height, in pixels
      */
-    protected function addPage($height)
+    protected function addPage($width, $height)
     {
         $height = $this->convertUnit($height);
+        $width  = $this->convertUnit($width);
         $offset = $this->convertUnit($this->options['offsettop']);
         $total  = $height + $offset;
         
         while ($total > $this->totalHeight) {
-            $this->totalHeight += $this->addOrImportPage();
+            $this->totalHeight += $this->addOrImportPage($width, $height);
         }
         
         $pageHeight = $this->resource->GetPageHeight();
@@ -233,9 +240,11 @@ class FpdfRenderer extends AbstractRenderer
      * 
      * Returns the height of new page.
      * 
+     * @param number $width Needed width, in FPDF unit
+     * @param number $height Needed height, in FPDF unit
      * @return number
      */
-    protected function addOrImportPage()
+    protected function addOrImportPage($width, $height)
     {
         if ($this->pagesToImport > 0) {
             $tpl    = $this->resource->importPage($this->resource->PageNo() + 1);
@@ -246,7 +255,8 @@ class FpdfRenderer extends AbstractRenderer
             $this->pagesToImport--;
         }
         else {
-            $this->resource->AddPage();
+            $orient = $width > $height ? 'L' : 'P';
+            $this->resource->AddPage($orient);
         }
         return $this->resource->GetPageHeight();
     }
@@ -259,7 +269,7 @@ class FpdfRenderer extends AbstractRenderer
     protected function applyOffsets(array &$point)
     {
         $point[0] += $this->options['offsetleft'];
-        $point[1] += self::convertToUnit($this->resource->GetY(), $this->unit, 'px');
+        $point[1] += Measure::convert($this->resource->GetY(), $this->unit, 'px');
     }
     
     /**
@@ -271,7 +281,7 @@ class FpdfRenderer extends AbstractRenderer
      */
     protected function convertUnit($value, $from = 'px')
     {
-        return self::convertToUnit($value, $from, $this->unit);
+        return Measure::convert($value, $from, $this->unit);
     }
 
     /**
