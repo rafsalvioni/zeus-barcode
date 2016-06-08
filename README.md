@@ -102,12 +102,12 @@ We can parametrize how our barcode will be showed. There are many options for th
 - "foreColor": Foreground color, as integer. Used to draw bars and text. Default 0x000000 (black);
 - "backColor": Background color, as integer. Default 0xffffff (white). If negative, will be transparent;
 - "border": Border width, in pixels. Default 0 (no border);
-- "showtext": Boolean to inform if the text representation of barcode should be showed. Default true;
-- "textalign": Alignment of text. Possible values: "center", "left" and "right". Default "center";
-- "textposition": Position of text. Possible values: "top" and "bottom". Default "bottom";
+- "showText": Boolean to inform if the text representation of barcode should be showed. Default true;
+- "textAlign": Alignment of text. Possible values: "center", "left" and "right". Default "center";
+- "textPosition": Position of text. Possible values: "top" and "bottom". Default "bottom";
 - "font": Font to write text. Can be a single string or a file path to a font file. If empty, uses default font renderer. Default '';
-- "fontsize": Size of font, in points (pt). Default 9;
-- "quietzone": Espace that encapsulates the barcode. Help to barcode readers. The value defined will be used on left and right. Default 30;
+- "fontSize": Size of font, in points (pt). Default 9;
+- "quietZone": Espace that encapsulates the barcode. Help to barcode readers. The value defined will be used on left and right. Default 30;
 
 Example:
 
@@ -128,6 +128,8 @@ $bc->fontsize  = 5;
 
 $bc->draw($renderer)->render();
 ```
+
+You can use too the applyFactor() method on barcode. This method will resize all dimension options proportionallity.
 
 ## Managing renderers
 We see above how to use renderers on basic way. However, renderers can be setted to do some boring tasks when we use barcodes.
