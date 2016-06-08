@@ -115,6 +115,15 @@ interface BarcodeInterface
     public function getTotalHeight();
     
     /**
+     * Applies a multiplier factor do resize all dimension options
+     * proportionallity.
+     * 
+     * @param number $factor
+     * @return self
+     */
+    public function applyFactor($factor);
+
+    /**
      * Draw the barcode to a renderer object.
      * 
      * Returns the own renderer.
