@@ -54,6 +54,8 @@ class LeitcodeTest extends Interleaved25Test
         $this->assertEquals($bc->withStreetCode('5')->getStreetCode(), '005');
         $this->assertEquals($bc->withHouseNumber('890')->getHouseNumber(), '890');
         $this->assertEquals($bc->withProductCode('90')->getProductCode(), '90');
+        
+        $this->assertEquals($bc->getDataToDisplay(), '21348.075.016.40 1');
 
         try {
             $bc->withZipCode('9035x');
