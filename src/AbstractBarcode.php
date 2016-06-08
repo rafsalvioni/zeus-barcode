@@ -25,22 +25,11 @@ abstract class AbstractBarcode implements BarcodeInterface
      */
     public function __construct($data)
     {
-        $this->options = [
-            'barwidth'     => 1,
-            'barheight'    => 50,
-            'forecolor'    => 0x000,
-            'backcolor'    => 0xffffff,
-            'border'       => 0,
-            'showtext'     => true,
-            'textalign'    => 'center',
-            'textposition' => 'bottom',
-            'font'         => '',
-            'fontsize'     => 9,
-            'quietzone'    => 30,
-        ];
         if ($this instanceof FixedLengthInterface) {
             $data = self::zeroLeftPadding($data, $this->getLength());
         }
+        $this->loadDefaultOptions();
+        
         if (!$this->checkData($data)) {
             throw $this->createException('Invalid "%class%" barcode data chars or length!');
         }

@@ -17,12 +17,7 @@ abstract class AbstractRenderer implements RendererInterface
      */
     public function __construct()
     {
-        $this->options = [
-            'offsettop'  => 0,
-            'offsetleft' => 0,
-            'merge'      => false,
-            'backcolor'  => 0xffffff,
-        ];
+        $this->loadDefaultOptions();
     }
     
     /**

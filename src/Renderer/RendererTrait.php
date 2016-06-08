@@ -132,4 +132,18 @@ trait RendererTrait
             throw new Exception('Renderer is not started!');
         }
     }
+    
+    /**
+     * Loads the default renderer options.
+     * 
+     */
+    protected function loadDefaultOptions()
+    {
+        $this->options = [
+            'offsettop'  => 0,
+            'offsetleft' => 0,
+            'merge'      => false,
+            'backcolor'  => 0xffffff,
+        ];
+    }
 }

@@ -416,4 +416,25 @@ trait BarcodeTrait
             $this->options['textalign']
         );
     }
+    
+    /**
+     * Loads the default barcode options.
+     * 
+     */
+    protected function loadDefaultOptions()
+    {
+        $this->options = [
+            'barwidth'     => 1,
+            'barheight'    => 50,
+            'forecolor'    => 0x000,
+            'backcolor'    => 0xffffff,
+            'border'       => 0,
+            'showtext'     => true,
+            'textalign'    => 'center',
+            'textposition' => 'bottom',
+            'font'         => '',
+            'fontsize'     => 9,
+            'quietzone'    => 30,
+        ];
+    }
 }
