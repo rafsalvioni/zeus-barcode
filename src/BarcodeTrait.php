@@ -233,6 +233,25 @@ trait BarcodeTrait
     }
     
     /**
+     * 
+     * @param number $factor
+     * @return self
+     */
+    public function applyFactor($factor)
+    {
+        $options = ['barwidth', 'barheight', 'quietzone', 'fontsize', 'border'];
+        foreach ($options as &$option) {
+            $value    =& $this->options[$option];
+            $newvalue = $value * $factor;
+            if (\is_int($value) && !\is_int($newvalue)) {
+                $newvalue = (int)\round($newvalue);
+            }
+            $value = $newvalue;
+        }
+        return $this;
+    }
+
+    /**
      * Return the general offset left.
      * 
      * @return number
@@ -281,7 +300,7 @@ trait BarcodeTrait
     {
         switch ($this->options['textposition']) {
             case 'top':
-                $y = $this->getContentOffsetTop() + 1;
+                $y = $this->getContentOffsetTop() + 2;
                 break;
             default:
                 $y = $this->getContentOffsetTop() + $this->getHeight() + 2;
@@ -310,7 +329,8 @@ trait BarcodeTrait
      */
     protected function getTextHeight()
     {
-        return \max($this->options['fontsize'] + 3, 15);
+        $pt = $this->options['fontsize'] + 2;
+        return Measure::convert($pt, 'pt', 'px');
     }
 
     /**
