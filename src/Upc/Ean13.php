@@ -223,7 +223,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     {
         $height = parent::getTotalHeight();
         if ($this->options['showtext']) {
-            $height -= (int)\ceil($this->options['barheight']* 0.2);
+            $height -= (int)\ceil($this->options['barheight'] * 0.2);
         }
         return $height;
     }

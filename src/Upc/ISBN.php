@@ -62,7 +62,7 @@ class ISBN extends Ean13
         if ($this->options['showtext']) {
             $height += $this->getTextHeight();
         }
-        return $height;
+        return (int)\ceil($height);
     }
 
     /**
