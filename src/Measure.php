@@ -33,10 +33,36 @@ class Measure
     public static function convert($value, $from, $to)
     {
         if ($from != $to) {
-            $from  = \array_get(self::$units, $from, 0);
-            $to    = \array_get(self::$units, $to, 0);
+            $from  = self::getUnitValue($from);
+            $to    = self::getUnitValue($to);
             $value = ($value / $to) * $from;
         }
         return $value;
+    }
+    
+    /**
+     * Returns the unit value.
+     * 
+     * If unit is unknown, return 0.
+     * 
+     * @param string $unit
+     * @return number
+     */
+    public static function getUnitValue($unit)
+    {
+        return \array_get(self::$units, $unit, 0);
+    }
+    
+    /**
+     * Returns the unit string that represents the value given.
+     * 
+     * If value is not found, return false.
+     * 
+     * @param number $value
+     * @return string
+     */
+    public static function getUnitByValue($value)
+    {
+        return \array_search($value, self::$units);
     }
 }
