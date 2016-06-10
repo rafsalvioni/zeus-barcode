@@ -461,7 +461,7 @@ trait BarcodeTrait
             'textalign'    => 'center',
             'textposition' => 'bottom',
             'font'         => '',
-            'fontsize'     => 9,
+            'fontsize'     => 8,
             'quietzone'    => 30,
         ];
     }
