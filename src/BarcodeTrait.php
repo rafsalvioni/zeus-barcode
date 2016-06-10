@@ -235,14 +235,22 @@ trait BarcodeTrait
     /**
      * 
      * @param number $factor
+     * @param string $unit
      * @return self
      */
-    public function applyFactor($factor)
+    public function applyFactor($factor, $unit = null)
     {
-        $options = ['barwidth', 'barheight', 'quietzone', 'fontsize', 'border'];
-        foreach ($options as &$option) {
+        $options = [
+            'barwidth'  => 'px',
+            'barheight' => 'px',
+            'quietzone' => 'px',
+            'fontsize'  => 'pt',
+            'border'    => 'px'
+        ];
+        foreach ($options as $option => $to) {
             $value    =& $this->options[$option];
-            $newvalue = $value * $factor;
+            $from     = $unit ? $unit : $to;
+            $newvalue = $value * Measure::convert($factor, $from, $to);
             if (\is_int($value) && !\is_int($newvalue)) {
                 $newvalue = (int)\round($newvalue);
             }
