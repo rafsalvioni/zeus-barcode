@@ -61,7 +61,7 @@ class Bloqueto extends AbstractFebraban
      * Cria uma instância da classe a partir dos parâmetros informados.
      * 
      * @param string|int $banco Cód. do Banco
-     * @param \DateTime $vencto Vencimento. Se nulo, usa a data atual
+     * @param \DateTime $vencto Vencimento. Se nulo, não possui vencimento
      * @param float $valor
      * @param string $campoLivre
      * @return self
@@ -72,16 +72,12 @@ class Bloqueto extends AbstractFebraban
         $data = '0009' . self::zeroLeftPadding('', 39);
         $me   = new self($data, false);
         
-        if (!$vencto) {
-            $vencto = new \DateTime();
-        }
-        
         return $me->comCodigoBanco($banco)
                   ->comValor($valor)
                   ->comVencto($vencto)
                   ->comCampoLivre($campoLivre);
     }
-
+        
     /**
      * Permite que a instância seja criada a partir da representação
      * numérica do código de barras.
@@ -202,12 +198,16 @@ class Bloqueto extends AbstractFebraban
      * Retorna um objeto criado a partir do objeto atual com o vencimento
      * informado.
      * 
+     * Se $vencto for nulo significa que não possui vencimento.
+     * 
      * @param \DateTime $vencto
      * @return Bloqueto
      */
-    public function comVencto(\DateTime $vencto)
+    public function comVencto(\DateTime $vencto = null)
     {
-        $diff = (int)self::$dataBase->diff($vencto)->days;
+        $diff = $vencto ?
+                (int)self::$dataBase->diff($vencto)->days :
+                0;
         return $this->comFatorVencto($diff);
     }
 

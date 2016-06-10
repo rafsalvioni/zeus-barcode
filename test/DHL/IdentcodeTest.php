@@ -53,6 +53,8 @@ class IdentcodeTest extends Interleaved25Test
         $this->assertEquals($bc->withCustomerCode('5')->getCustomerCode(), '005');
         $this->assertEquals($bc->withDeliveryNumber('890')->getDeliveryNumber(), '000890');
         
+        $this->assertEquals($bc->getDataToDisplay(), '56.310 243.031 3');
+        
         try {
             $bc->withMailCenter('354');
             $this->assertTrue(false);

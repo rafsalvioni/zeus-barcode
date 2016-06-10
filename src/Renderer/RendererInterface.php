@@ -36,7 +36,7 @@ interface RendererInterface
      * @param array $point Point, coords. in pixels
      * @param number $width Width, in pixels
      * @param number $height Height, in pixels
-     * @param int $color Color
+     * @param int $color Color If negative, rect should be opaque
      * @param bool $filled Rect should be filled?
      * @return self
      */

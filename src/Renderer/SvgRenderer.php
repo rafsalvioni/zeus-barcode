@@ -40,6 +40,10 @@ class SvgRenderer extends AbstractRenderer
     {
         $this->checkStarted();
         
+        if ($color < 0) {
+            return $this;
+        }
+        
         $this->applyOffsets($point);
         
         $color   = self::formatColor($color);
