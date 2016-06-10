@@ -75,8 +75,8 @@ class FpdfRenderer extends AbstractRenderer
         $this->resource->Rect(
             $point[0],
             $point[1],
-            $this->convertToResource($width),
-            $this->convertToResource($height),
+            $this->convertValueFrom($width),
+            $this->convertValueFrom($height),
             $filled ? 'F' : 'D'
         );
         
@@ -122,7 +122,7 @@ class FpdfRenderer extends AbstractRenderer
                 break;
         }
         
-        $point[1] += $this->convertToResource($fontSize - 1, 'pt');
+        $point[1] += $this->convertValueFrom($fontSize - 1, 'pt');
         $this->resource->Text($point[0], $point[1], $text);
         
         return $this;
@@ -174,23 +174,13 @@ class FpdfRenderer extends AbstractRenderer
     }
     
     /**
-     * Returns the string of unit used by current PDF resource.
-     * 
-     * @return string
-     */
-    public function getResourceUnit()
-    {
-        return $this->unit;
-    }
-    
-    /**
      * Convert a value to unit used by current PDF resource.
      * 
      * @param number $value
      * @param string $from Source unit
      * @return number
      */
-    public function convertToResource($value, $from = 'px')
+    public function convertValueFrom($value, $from = 'px')
     {
         return Measure::convert($value, $from, $this->unit);
     }
@@ -202,7 +192,7 @@ class FpdfRenderer extends AbstractRenderer
      * @param string $to To unit
      * @return number
      */
-    public function convertFromResource($value, $to = 'px')
+    public function convertValueTo($value, $to = 'px')
     {
         return Measure::convert($value, $this->unit, $to);
     }
@@ -252,9 +242,9 @@ class FpdfRenderer extends AbstractRenderer
      */
     protected function addPage($width, $height)
     {
-        $height = $this->convertToResource($height);
-        $width  = $this->convertToResource($width);
-        $offset = $this->convertToResource($this->options['offsettop']);
+        $height = $this->convertValueFrom($height);
+        $width  = $this->convertValueFrom($width);
+        $offset = $this->convertValueFrom($this->options['offsettop']);
         $total  = $height + $offset;
         
         while ($total > $this->totalHeight) {
@@ -314,7 +304,7 @@ class FpdfRenderer extends AbstractRenderer
      */
     protected function convertPointUnit(array &$point, $unit = 'px')
     {
-        $point[0] = $this->convertToResource($point[0], $unit);
-        $point[1] = $this->convertToResource($point[1], $unit);
+        $point[0] = $this->convertValueFrom($point[0], $unit);
+        $point[1] = $this->convertValueFrom($point[1], $unit);
     }
 }
