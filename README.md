@@ -106,7 +106,7 @@ We can parametrize how our barcode will be showed. There are many options for th
 - "textAlign": Alignment of text. Possible values: "center", "left" and "right". Default "center";
 - "textPosition": Position of text. Possible values: "top" and "bottom". Default "bottom";
 - "font": Font to write text. Can be a single string or a file path to a font file. If empty, uses default font renderer. Default '';
-- "fontSize": Size of font, in points (pt). Default 8;
+- "fontSize": Size of font, in points (pt). Default 9;
 - "quietZone": Espace that encapsulates the barcode. Help to barcode readers. The value defined will be used on left and right. Default 30;
 
 Example:
