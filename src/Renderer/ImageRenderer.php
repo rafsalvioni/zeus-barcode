@@ -2,6 +2,8 @@
 
 namespace Zeus\Barcode\Renderer;
 
+use Zeus\Barcode\Measure;
+
 /**
  * Renderer to draw barcodes as images.
  *
@@ -78,6 +80,9 @@ class ImageRenderer extends AbstractRenderer
         
         $color     = $this->registerColor($color);
         $font      = $this->resolveFont($font, $fontSize);
+        if (\is_int($font)) {
+            $font = $this->makeTextImage($font, $fontSize, $text);
+        }
         $textWidth = $this->getTextWidth($font, $fontSize, $text);
         
         switch ($align) {
@@ -93,6 +98,16 @@ class ImageRenderer extends AbstractRenderer
         
         if (\is_int($font)) {
             \imagestring($this->resource, $font, $point[0], $point[1], $text, $color);
+        }
+        else if (\is_resource($font)) {
+            \imagecopymerge(
+                    $this->resource,
+                    $font,
+                    $point[0], $point[1],
+                    0, 0,
+                    \imagesx($font), \imagesy($font),
+                    100
+                );
         }
         else {
             $point[1] += $fontSize;
@@ -207,6 +222,8 @@ class ImageRenderer extends AbstractRenderer
             $alpha  = 127;
             $exact  = '\\imagecolorexactalpha';
             $alloc  = '\\imagecolorallocatealpha';
+            \imagealphablending($resource, true);
+            \imagesavealpha($resource, true);
         }
         else {
             $exact  = '\\imagecolorexact';
@@ -243,7 +260,7 @@ class ImageRenderer extends AbstractRenderer
             if (\in_array($fontSize, self::$fonts)) {
                 return $fontSize;
             }
-            return $fontSize % 6;
+            return 4;
         }
         else if (\substr($font, -4) == '.ttf') {
             return $font;
@@ -262,6 +279,42 @@ class ImageRenderer extends AbstractRenderer
     }
     
     /**
+     * Create a resized text image when using internal GD fonts.
+     * 
+     * @param int $font
+     * @param int $fontSize
+     * @param string $text
+     * @return resource
+     */
+    protected function makeTextImage($font, $fontSize, $text)
+    {
+        $height    = \imagefontheight($font);
+        $width     = $this->getTextWidth($font, $fontSize, $text);
+        
+        if (!$width) {
+            $width = 1;
+        }
+        
+        $resource  = $this->createResource($width, $height);
+        $foreColor = $this->registerColor($this->barcode->foreColor, $resource);
+        $backColor = $this->registerColor($this->barcode->backColor, $resource);
+        \imagefill($resource, 0, 0, $backColor);
+        \imagestring($resource, $font, 0, 0, $text, $foreColor);
+        
+        $factor    = Measure::convert($fontSize, 'pt', 'px') / $height;
+        $newwidth  = \round($width * $factor);
+        $newheight = \round($height * $factor);
+        
+        if ($newheight > 0 && $newwidth > 0) {
+            $resized   = $this->createResource($newwidth, $newheight);
+            \imagecopyresampled($resized, $resource, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+            return $resized;
+        }
+        
+        return $resource;
+    }
+
+    /**
      * Returns the width of a text.
      * 
      * @param string|int $font
@@ -273,6 +326,9 @@ class ImageRenderer extends AbstractRenderer
     {
         if (\is_int($font)) {
             return \imagefontwidth($font) * \strlen($text);
+        }
+        else if (\is_resource($font)) {
+            return \imagesx($font);
         }
         else {
             $box = \imagettfbbox($fontSize, 0, $font, $text);
