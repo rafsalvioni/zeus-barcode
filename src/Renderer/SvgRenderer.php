@@ -119,19 +119,36 @@ class SvgRenderer extends AbstractRenderer
      */
     public function setResource($resource)
     {
-        $isDOM = $resource instanceof \DOMDocument;
-        if (!$isDOM) {
+        switch (true) {
+            case $resource instanceof \DOMDocument;
+                $type = 'doc';
+                break;
+            case $resource instanceof \DOMElement;
+                $type = 'el';
+                break;
+            case \is_string($resource):
+                if (\file_exists($resource)) {
+                    $type = 'file';
+                }
+                else {
+                    $type = 'xml';
+                }
+                break;
+            default:
+                $type = '';
+        }
+        if ($type != 'doc') {
             $doc = new \DOMDocument();
             if (
-                $resource instanceof \DOMElement && $doc->appendChild($resource) ||
-                \file_exists($resource) && $doc->load($resource) ||
-                \is_scalar($resource) && $doc->loadXML((string)$resource)
+                $type == 'el' && $doc->appendChild($resource) ||
+                $type == 'file' && $doc->load($resource) ||
+                $type == 'xml' && $doc->loadXML((string)$resource)
             ) {
                 $resource =& $doc;
-                $isDOM    = true;
+                $type = 'doc';
             }
         }
-        if (!$isDOM) {
+        if ($type != 'doc') {
             throw new Exception('SVG resource should be a XML file, string, DOMDocument or DOMElement object!');
         }
         if (!$resource->documentElement) {

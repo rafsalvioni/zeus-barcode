@@ -129,7 +129,7 @@ class ImageRenderer extends AbstractRenderer
         if (\is_resource($resource) && \strpos('gd', \get_resource_type($resource)) !== false) {
             $this->resource = $resource;
         }
-        else if (\file_exists($resource)) {
+        else if (\is_scalar($resource) && \file_exists((string)$resource)) {
             $this->resource = \imagecreatefromstring(\file_get_contents($resource));
         }
         else {
