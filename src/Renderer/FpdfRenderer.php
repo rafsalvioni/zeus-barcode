@@ -174,30 +174,6 @@ class FpdfRenderer extends AbstractRenderer
     }
     
     /**
-     * Convert a value to unit used by current PDF resource.
-     * 
-     * @param number $value
-     * @param string $from Source unit
-     * @return number
-     */
-    public function convertValueFrom($value, $from = 'px')
-    {
-        return Measure::convert($value, $from, $this->unit);
-    }
-    
-    /**
-     * Convert a value in PDF resource's unit to another unit.
-     * 
-     * @param number $value
-     * @param string $to To unit
-     * @return number
-     */
-    public function convertValueTo($value, $to = 'px')
-    {
-        return Measure::convert($value, $this->unit, $to);
-    }
-
-    /**
      * Get the user unit used in FPDF resource.
      * 
      * @param \FPDF $resource
@@ -221,10 +197,7 @@ class FpdfRenderer extends AbstractRenderer
         $height = $this->barcode->getTotalHeight();
         
         if (!$this->resource || !$this->options['merge']) {
-            $this->resource      = new \FPDF('P', self::DEFAULT_UNIT);
-            $this->unit          = self::DEFAULT_UNIT;
-            $this->totalHeight   = 0;
-            $this->pagesToImport = 0;
+            $this->setResource(new \FPDF('P', self::DEFAULT_UNIT));
         }
         $this->addPage($width, $height);
         
@@ -294,6 +267,18 @@ class FpdfRenderer extends AbstractRenderer
     {
         $point[0] += $this->options['offsetleft'];
         $point[1] += Measure::convert($this->resource->GetY(), $this->unit, 'px');
+    }
+    
+    /**
+     * Convert a value to unit used by current PDF resource.
+     * 
+     * @param number $value
+     * @param string $from Source unit
+     * @return number
+     */
+    protected function convertValueFrom($value, $from = 'px')
+    {
+        return Measure::convert($value, $from, $this->unit);
     }
     
     /**
