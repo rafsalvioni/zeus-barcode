@@ -337,8 +337,8 @@ trait BarcodeTrait
      */
     protected function getTextHeight()
     {
-        $pt = $this->options['fontsize'] + 2;
-        return Measure::convert($pt, 'pt', 'px');
+        $pt = $this->options['fontsize'];
+        return Measure::convert($pt, 'pt', 'px') + 2;
     }
 
     /**
