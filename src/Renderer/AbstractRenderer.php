@@ -19,15 +19,4 @@ abstract class AbstractRenderer implements RendererInterface
     {
         $this->loadDefaultOptions();
     }
-    
-    /**
-     * Apply offsets on a point.
-     * 
-     * @param array $point
-     */
-    protected function applyOffsets(array &$point)
-    {
-        $point[0] += $this->options['offsetleft'];
-        $point[1] += $this->options['offsettop'];
-    }
 }
