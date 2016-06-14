@@ -238,19 +238,18 @@ trait BarcodeTrait
      * @param string $unit
      * @return self
      */
-    public function applyFactor($factor, $unit = null)
+    public function scale($factor)
     {
         $options = [
-            'barwidth'  => 'px',
-            'barheight' => 'px',
-            'quietzone' => 'px',
-            'fontsize'  => 'pt',
-            'border'    => 'px'
+            'barwidth',
+            'barheight',
+            'quietzone',
+            'fontsize',
+            'border'
         ];
-        foreach ($options as $option => $to) {
+        foreach ($options as &$option) {
             $value    =& $this->options[$option];
-            $from     = $unit ? $unit : $to;
-            $newvalue = $value * Measure::convert($factor, $from, $to);
+            $newvalue = $value * $factor;
             if (\is_int($value) && !\is_int($newvalue)) {
                 $newvalue = (int)\round($newvalue);
             }
@@ -338,7 +337,7 @@ trait BarcodeTrait
     protected function getTextHeight()
     {
         $pt = $this->options['fontsize'];
-        return Measure::convert($pt, 'pt', 'px') + 2;
+        return ($pt / .75) + 2;
     }
 
     /**

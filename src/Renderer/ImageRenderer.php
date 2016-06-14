@@ -2,8 +2,6 @@
 
 namespace Zeus\Barcode\Renderer;
 
-use Zeus\Barcode\Measure;
-
 /**
  * Renderer to draw barcodes as images.
  *
@@ -301,7 +299,7 @@ class ImageRenderer extends AbstractRenderer
         \imagefill($resource, 0, 0, $backColor);
         \imagestring($resource, $font, 0, 0, $text, $foreColor);
         
-        $factor    = Measure::convert($fontSize, 'pt', 'px') / $height;
+        $factor    = ($fontSize / .75) / $height;
         $newwidth  = \round($width * $factor);
         $newheight = \round($height * $factor);
         

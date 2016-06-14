@@ -118,14 +118,10 @@ interface BarcodeInterface
      * Applies a multiplier factor do resize all dimension options
      * proportionallity.
      * 
-     * Optionallity, can be given the factor's unit of measure. If not given,
-     * uses the own unit of option.
-     * 
      * @param number $factor
-     * @param string $unit
      * @return self
      */
-    public function applyFactor($factor, $unit = null);
+    public function scale($factor);
 
     /**
      * Draw the barcode to a renderer object.
