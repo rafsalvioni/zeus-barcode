@@ -28,7 +28,7 @@
         "phpunit/phpunit": "5.3.0"
     },
     "replace": {
-        "rafsalvioni/zeus-barcode": "1.0.2"
+        "rafsalvioni/zeus-barcode": "1.0.3"
     },
     "suggest": {
         "ext-gd": "If you wanna use ImageRenderer class"
