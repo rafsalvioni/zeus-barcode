@@ -97,17 +97,17 @@ Both widths are in pixels.
 
 ## Formatting barcode's apresentation
 We can parametrize how our barcode will be showed. There are many options for this. Let's see:
-- "barWidth": Width of a bar or space, in pixels. Default 1;
-- "barHeight": Height of a bar, in pixels. Default 50;
+- "barWidth": Width of a bar or space, in renderer's unit. Default 1;
+- "barHeight": Height of a bar, in renderer's unit. Default 50;
 - "foreColor": Foreground color, as integer. Used to draw bars and text. Default 0x000000 (black);
 - "backColor": Background color, as integer. Default 0xffffff (white). If negative, will be transparent;
-- "border": Border width, in pixels. Default 0 (no border);
+- "border": Border width, in renderer's unit. Default 0 (no border);
 - "showText": Boolean to inform if the text representation of barcode should be showed. Default true;
 - "textAlign": Alignment of text. Possible values: "center", "left" and "right". Default "center";
 - "textPosition": Position of text. Possible values: "top" and "bottom". Default "bottom";
 - "font": Font to write text. Can be a single string or a file path to a font file. If empty, uses default font renderer. Default '';
 - "fontSize": Size of font, in points (pt). Default 9;
-- "quietZone": Espace that encapsulates the barcode. Help to barcode readers. The value defined will be used on left and right. Default 30;
+- "quietZone": Espace that encapsulates the barcode, in renderer's unit. Help to barcode readers. The value defined will be used on left and right. Default 30;
 
 Example:
 
@@ -129,15 +129,15 @@ $bc->fontsize  = 5;
 $bc->draw($renderer)->render();
 ```
 
-You can use too the applyFactor() method on barcode. This method will resize all dimension options proportionallity.
+You can use too the scale() method on barcode. This method will resize all dimension options proportionallity.
 
 ## Managing renderers
 We see above how to use renderers on basic way. However, renderers can be setted to do some boring tasks when we use barcodes.
 
 ### Styling renderer apresentation
 As barcodes, renderers has some parameters to change how a barcode draw will be done. Are they:
-- "offsetTop": Offset from top, in pixels. Default 0;
-- "offsetLeft": Offset from left, in pixels. Default 0;
+- "offsetTop": Offset from top, in renderer's unit. Default 0;
+- "offsetLeft": Offset from left, in renderer's unit. Default 0;
 - "backColor": Background color, as integer, used on resize (see "merge" option). Default 0xffffff (white). Not used for FpdfRenderer;
 - "merge": This is the best option... see below. Boolean value, default false;
 
