@@ -50,6 +50,7 @@ trait RendererTrait
      */
     public function getResource()
     {
+        $this->checkStarted();
         return $this->resource;
     }
 

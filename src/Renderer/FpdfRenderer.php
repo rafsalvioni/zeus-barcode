@@ -2,8 +2,6 @@
 
 namespace Zeus\Barcode\Renderer;
 
-use Zeus\Barcode\Measure;
-
 /**
  * Renderer to draw barcodes as PDF using FPDF class.
  *
@@ -12,39 +10,36 @@ use Zeus\Barcode\Measure;
 class FpdfRenderer extends AbstractRenderer
 {
     /**
-     * Default typography unit used in FPDF
+     * PDF element
      * 
+     * @var \FPDF
      */
-    const DEFAULT_UNIT       = 'mm';
-    
+    protected $resource;
     /**
-     * Unit used in current FPDF resource
-     * 
-     * @var string
-     */
-    protected $unit          = self::DEFAULT_UNIT;
-    /**
-     * Total resource height, expressed in current unit
+     * Unit conversor for FPDP units
      * 
      * @var number
      */
-    protected $totalHeight   = 0;
+    protected $conversor;
     /**
-     * External pages to import
+     * Total height of current resource
+     * 
+     * @var number
+     */
+    protected $totalHeight;
+    /**
+     * Pages to be imported from external PDF
      * 
      * @var int
      */
     protected $pagesToImport = 0;
 
     /**
-     * Render
      * 
      */
     public function render()
     {
-        $this->checkStarted();
-        \header('Pragma: no-cache');
-        $this->resource->Output('', uniqid() . '.pdf');
+        echo $this->getResource()->Output('', \uniqid() . '.pdf');
     }
 
     /**
@@ -63,20 +58,18 @@ class FpdfRenderer extends AbstractRenderer
         if ($color < 0) {
             return $this;
         }
-
+        
         $this->applyOffsets($point);
         
         list($r, $g, $b) = self::colorToRgb($color);
         $this->resource->SetDrawColor($r, $g, $b);
         $this->resource->SetFillColor($r, $g, $b);
         
-        $this->convertPointUnit($point);
-
         $this->resource->Rect(
-            $point[0],
-            $point[1],
-            $this->convertValueFrom($width),
-            $this->convertValueFrom($height),
+            $point[0] * $this->conversor,
+            $point[1] * $this->conversor,
+            $width    * $this->conversor,
+            $height   * $this->conversor,
             $filled ? 'F' : 'D'
         );
         
@@ -104,15 +97,14 @@ class FpdfRenderer extends AbstractRenderer
         else {
             $font = \preg_replace('/\.[a-z\d]{1,4}$/i', '', \basename($font));
         }
-
-        $this->applyOffsets($point);
-        $this->convertPointUnit($point);
-                        
-        list($r, $g, $b) = self::colorToRgb($color);
-        $this->resource->SetTextColor($r, $g, $b);
-        $this->resource->SetFont($font, '', $fontSize);
-        $textWidth = $this->resource->GetStringWidth($text);
         
+        $this->applyOffsets($point);
+        
+        list($r, $g, $b) = self::colorToRgb($color);
+        $this->resource->SetDrawColor($r, $g, $b);
+        $this->resource->SetFont($font, '', $fontSize);
+        
+        $textWidth = $this->resource->GetStringWidth($text) / $this->conversor;
         switch ($align) {
             case 'center':
                 $point[0] -= ($textWidth / 2);
@@ -122,22 +114,23 @@ class FpdfRenderer extends AbstractRenderer
                 break;
         }
         
-        $point[1] += $this->convertValueFrom($fontSize - 1, 'pt');
-        $this->resource->Text($point[0], $point[1], $text);
-        
+        $point[1] += ($fontSize + 1);
+        $this->resource->Text(
+            $point[0] * $this->conversor,
+            $point[1] * $this->conversor,
+            $text
+        );
         return $this;
     }
     
     /**
-     * Allows use a another PDF where barcode will be drawed.
+     * Allows define a external PDF resource to be used.
      * 
-     * $resource should be a FPDF instance or a PDF file path.
-     * If is a file, its pages will be imported on demand. To import all
-     * remainder pages, use flush() method.
+     * $resource can be a \FPDF object or a PDF file path.
      * 
-     * @see self::flush()
      * @param mixed $resource
      * @return self
+     * @throws Exception
      */
     public function setResource($resource)
     {
@@ -146,48 +139,44 @@ class FpdfRenderer extends AbstractRenderer
             if (!\file_exists($resource)) {
                 throw new Exception("File \"$resource\" not found!");
             }
-            $pdf                 = new \FPDI('P', self::DEFAULT_UNIT);
+            $pdf                 = new \FPDI();
             $this->pagesToImport = $pdf->setSourceFile($resource);
             $resource =& $pdf;
         }
         if (!($resource instanceof \FPDF)) {
-            throw new Exception('Invalid PDF resource. Should be a FPDF object!');
+            throw new Exception('Resource isn\'t a valid PDF resource');
         }
-        $this->resource    = $resource;
-        $this->unit        = self::extractResourceUnit($resource);
-        $this->totalHeight = $resource->GetPageHeight() * $resource->PageNo();
+        $this->loadResource($resource);
         $this->setOption('merge', true);
         return $this;
     }
     
     /**
-     * Flush all pages still not imported.
      * 
-     * @return self
+     * @return \FPDF
      */
-    public function flush()
+    public function getResource()
     {
         while ($this->pagesToImport > 0) {
-            $this->totalHeight += $this->addOrImportPage();
+            $this->addOrImportPage();
         }
-        return $this;
+        return parent::getResource();
     }
-    
+
     /**
-     * Get the user unit used in FPDF resource.
+     * Returns the FPDF conversor factor.
      * 
-     * @param \FPDF $resource
-     * @return string
+     * @param \FPDF $pdf
+     * @return number
      */
-    protected static function extractResourceUnit(\FPDF $resource)
+    protected static function getConversor(\FPDF $pdf)
     {
-        $arr  = (array)$resource;
-        $key  = "\x0*\x0k";
-        $val  = $arr[$key];
-        $unit = Measure::getUnitByValue($val);
-        return $unit !== false ? $unit : self::DEFAULT_UNIT;
+        $arr = (array)$pdf;
+        $key = "\x0*\x0k";
+        $val = \array_get($arr, $key, 1);
+        return (1 / $val) * .75;
     }
-    
+
     /**
      * 
      */
@@ -195,53 +184,57 @@ class FpdfRenderer extends AbstractRenderer
     {
         $width  = $this->barcode->getTotalWidth();
         $height = $this->barcode->getTotalHeight();
-        
+
         if (!$this->resource || !$this->options['merge']) {
-            $this->setResource(new \FPDF('P', self::DEFAULT_UNIT));
+            $this->loadResource(new \FPDF());
         }
-        $this->addPage($width, $height);
+        $this->addNeededPages($height);
         
-        // Fill barcode's background
         $this->drawRect(
             [0, 0], $width, $height, $this->barcode->backColor, true
         );
     }
     
     /**
-     * Adds a page if necessary.
+     * Add the needed pages to supports the current offsetTop + barcode height.
      * 
-     * @param number $width Additional width, in pixels
-     * @param number $height Additional height, in pixels
+     * @param number $height
      */
-    protected function addPage($width, $height)
+    protected function addNeededPages($height)
     {
-        $height = $this->convertValueFrom($height);
-        $width  = $this->convertValueFrom($width);
-        $offset = $this->convertValueFrom($this->options['offsettop']);
-        $total  = $height + $offset;
+        $height *= $this->conversor;
+        $offset  = $this->options['offsettop'] * $this->conversor;
+        $total   = $height + $offset;
+        $diff    = $total - $this->totalHeight;
         
         while ($total > $this->totalHeight) {
-            $this->totalHeight += $this->addOrImportPage($width, $height);
+            $this->addOrImportPage();
         }
         
-        $pageHeight = $this->resource->GetPageHeight();
-        $offsetY    = $this->totalHeight - $pageHeight;
-        if ($offset >= $offsetY) {
-            $offset -= $offsetY;
+        if ($diff > 0 && $diff < $height) {
+            $this->options['offsettop'] += (int)\ceil(
+                ($diff + $height) / $this->conversor
+            );
+            $offset = 0;
+        }
+        else {
+            $pageHeight = $this->resource->GetPageHeight();
+            $offsetY    = $this->totalHeight - $pageHeight;
+            if ($offset >= $offsetY) {
+                $offset -= $offsetY;
+            }
         }
         $this->resource->SetY($offset);
     }
     
     /**
-     * Add a blank page or import a parse page, if has one.
+     * Import a external page, if has one, or add a blank page.
      * 
-     * Returns the height of new page.
+     * Increments $totalHeight property and decrements $pagesToImport property.
      * 
-     * @param number $width Needed width, in FPDF unit
-     * @param number $height Needed height, in FPDF unit
-     * @return number
+     * @return self
      */
-    protected function addOrImportPage($width, $height)
+    protected function addOrImportPage()
     {
         if ($this->pagesToImport > 0) {
             $tpl    = $this->resource->importPage($this->resource->PageNo() + 1);
@@ -252,44 +245,31 @@ class FpdfRenderer extends AbstractRenderer
             $this->pagesToImport--;
         }
         else {
-            $orient = $width > $height ? 'L' : 'P';
-            $this->resource->AddPage($orient);
+            $this->resource->AddPage();
         }
-        return $this->resource->GetPageHeight();
+        $this->totalHeight += $this->resource->GetPageHeight();
+        return $this;
     }
 
     /**
-     * Using FPDF SetY in $point[1]
+     * Load object using info of a FDPF object.
+     * 
+     * @param \FPDF $pdf
+     */
+    protected function loadResource(\FPDF $pdf)
+    {
+        $this->resource    = $pdf;
+        $this->conversor   = self::getConversor($pdf);
+        $this->totalHeight = $pdf->PageNo() * $pdf->GetPageHeight();
+    }
+
+    /**
      * 
      * @param array $point
      */
     protected function applyOffsets(array &$point)
     {
         $point[0] += $this->options['offsetleft'];
-        $point[1] += Measure::convert($this->resource->GetY(), $this->unit, 'px');
-    }
-    
-    /**
-     * Convert a value to unit used by current PDF resource.
-     * 
-     * @param number $value
-     * @param string $from Source unit
-     * @return number
-     */
-    protected function convertValueFrom($value, $from = 'px')
-    {
-        return Measure::convert($value, $from, $this->unit);
-    }
-    
-    /**
-     * Convert coords to resource unit.
-     * 
-     * @param array $point
-     * @param string $unit Coords. Unit
-     */
-    protected function convertPointUnit(array &$point, $unit = 'px')
-    {
-        $point[0] = $this->convertValueFrom($point[0], $unit);
-        $point[1] = $this->convertValueFrom($point[1], $unit);
+        $point[1] += $this->resource->GetY() / $this->conversor;
     }
 }
