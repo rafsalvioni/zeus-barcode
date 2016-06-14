@@ -157,10 +157,11 @@ class FpdfRenderer extends AbstractRenderer
      */
     public function getResource()
     {
+        $this->checkStarted();
         while ($this->pagesToImport > 0) {
             $this->addOrImportPage();
         }
-        return parent::getResource();
+        return $this->resource;
     }
 
     /**
