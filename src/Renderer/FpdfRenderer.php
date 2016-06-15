@@ -101,7 +101,7 @@ class FpdfRenderer extends AbstractRenderer
         $this->applyOffsets($point);
         
         list($r, $g, $b) = self::colorToRgb($color);
-        $this->resource->SetDrawColor($r, $g, $b);
+        $this->resource->SetTextColor($r, $g, $b);
         $this->resource->SetFont($font, '', $fontSize);
         
         $textWidth = $this->resource->GetStringWidth($text) / $this->conversor;
@@ -118,7 +118,7 @@ class FpdfRenderer extends AbstractRenderer
         $this->resource->Text(
             $point[0] * $this->conversor,
             $point[1] * $this->conversor,
-            $text
+            \utf8_decode($text)
         );
         return $this;
     }
