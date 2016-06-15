@@ -214,9 +214,9 @@ class FpdfRenderer extends AbstractRenderer
         
         if ($diff > 0 && $diff < $height) {
             $this->options['offsettop'] += (int)\ceil(
-                ($diff + $height) / $this->conversor
+                $height / $this->conversor
             );
-            $offset = 0;
+            $offset = $diff;
         }
         else {
             $pageHeight = $this->resource->GetPageHeight();
