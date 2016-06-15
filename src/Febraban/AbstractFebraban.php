@@ -74,7 +74,7 @@ abstract class AbstractFebraban extends Interleaved implements
         $this->setOption('barheight', 50);
     }
 
-        /**
+    /**
      * Returns 44.
      * 
      * @return int
