@@ -2,7 +2,6 @@
 
 namespace Zeus\Barcode;
 
-use Zeus\Barcode\AbstractChecksumBarcode;
 use Zeus\Barcode\Encoder\EncoderInterface;
 
 /**
@@ -13,7 +12,7 @@ use Zeus\Barcode\Encoder\EncoderInterface;
  * @author Rafael M. Salvioni
  * @see http://www.barcodeisland.com/code93.phtml
  */
-class Code93 extends AbstractChecksumBarcode
+class Code93 extends AbstractBarcode
 {
     /**
      * Encoding table
@@ -82,16 +81,6 @@ class Code93 extends AbstractChecksumBarcode
     protected static $extData = [];
     
     /**
-     * Prints only real data.
-     * 
-     * @return string
-     */
-    public function getDataToDisplay()
-    {
-        return $this->getRealData();
-    }
-
-    /**
      * Converts a barcode data to full ascii.
      * 
      * Uses $extData property as cache.
@@ -118,9 +107,8 @@ class Code93 extends AbstractChecksumBarcode
      * @param string $data
      * @return string
      */
-    protected function calcChecksum($data)
+    protected function makeChecksum($data)
     {
-        $data  = $this->resolveExtended($data);
         $data  = \str_split($data);
         $enc   = \array_keys(self::$encodingTable);
         $flip  = \array_flip($enc);
@@ -146,16 +134,7 @@ class Code93 extends AbstractChecksumBarcode
      */
     protected function checkData($data)
     {
-        return \preg_match('/^[\x00-\x7f]{3,}$/', $data);
-    }
-
-    /**
-     * 
-     * @return int
-     */
-    protected function getCheckPosition()
-    {
-        return -2;
+        return \preg_match('/^[\x00-\x7f]+$/', $data);
     }
 
     /**
@@ -165,8 +144,9 @@ class Code93 extends AbstractChecksumBarcode
      */
     protected function encodeData(EncoderInterface &$encoder, $data)
     {
-        $data = $this->resolveExtended($data);
-        $data = "*$data*";
+        $data  = $this->resolveExtended($data);
+        $data .= $this->makeChecksum($data);
+        $data  = "*$data*";
 
         while (!empty($data)) {
             $char    = \substr_remove($data, 0, 1);
