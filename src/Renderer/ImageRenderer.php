@@ -106,6 +106,7 @@ class ImageRenderer extends AbstractRenderer
                     \imagesx($font), \imagesy($font),
                     100
                 );
+            \imagedestroy($font);
         }
         else {
             $point[1] += $fontSize;
@@ -135,6 +136,17 @@ class ImageRenderer extends AbstractRenderer
         }
         $this->setOption('merge', true);
         return $this;
+    }
+    
+    /**
+     * Destroy current image resource
+     * 
+     */
+    public function __destruct()
+    {
+        if (\is_resource($this->resource)) {
+            \imagedestroy($this->resource);
+        }
     }
 
     /**
@@ -255,8 +267,12 @@ class ImageRenderer extends AbstractRenderer
     protected function resolveFont($font, $fontSize)
     {
         if (!$font) {
-            if (\in_array($fontSize, self::$fonts)) {
-                return $fontSize;
+            return 4;
+        }
+        else if (\is_numeric($font)) {
+            $font = (int)$font;
+            if (($font > 0 && $font < 6) || \in_array($font, self::$fonts)) {
+                return $font;
             }
             return 4;
         }
