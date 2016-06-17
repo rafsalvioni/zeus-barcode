@@ -58,6 +58,7 @@ class ImageRenderer extends AbstractRenderer
         else if ($point === $point2) {
             \imagesetpixel($this->resource, $point[0], $point[1], $color);
         }
+        
         return $this;
     }
 
@@ -76,9 +77,10 @@ class ImageRenderer extends AbstractRenderer
     ) {
         $this->checkStarted();
         
-        $color     = $this->registerColor($color);
-        $font      = $this->resolveFont($font, $fontSize);
-        $text      = \utf8_decode($text);
+        $color = $this->registerColor($color);
+        $font  = $this->resolveFont($font, $fontSize);
+        $text  = \utf8_decode($text);
+        
         if (\is_int($font)) {
             $font = $this->makeTextImage($font, $fontSize, $text);
         }
@@ -95,24 +97,30 @@ class ImageRenderer extends AbstractRenderer
         
         $this->applyOffsets($point);
         
-        if (\is_int($font)) {
-            \imagestring($this->resource, $font, $point[0], $point[1], $text, $color);
-        }
-        else if (\is_resource($font)) {
+        if (\is_resource($font)) {
             \imagecopymerge(
                     $this->resource,
                     $font,
                     $point[0], $point[1],
                     0, 0,
-                    \imagesx($font), \imagesy($font),
+                    $textWidth, \imagesy($font),
                     100
                 );
             \imagedestroy($font);
         }
         else {
             $point[1] += $fontSize;
-            \imagettftext($this->resource, $fontSize, 0, $point[0], $point[1], $color, $font, $text);
+            \imagettftext(
+                    $this->resource,
+                    $fontSize,
+                    0,
+                    $point[0], $point[1],
+                    $color,
+                    $font,
+                    $text
+                );
         }
+        
         return $this;
     }
     
@@ -258,8 +266,8 @@ class ImageRenderer extends AbstractRenderer
     /**
      * Returns the font to be used by GD.
      * 
-     * If a integer, use a internal (or loaded) GD font. If a string,
-     * use a TTF font.
+     * If numeric, try to use a internal (or loaded) GD font. If a string,
+     * use try to use a TTF or GDF font.
      * 
      * @param string $font
      * @param int $fontSize
@@ -294,7 +302,8 @@ class ImageRenderer extends AbstractRenderer
     }
     
     /**
-     * Create a resized text image when using internal GD fonts.
+     * Create a resized text image when using GD fonts. GD fonts don't supports
+     * font sizes, so, we hacked-it!
      * 
      * @param int $font
      * @param int $fontSize
@@ -332,7 +341,7 @@ class ImageRenderer extends AbstractRenderer
     /**
      * Returns the width of a text.
      * 
-     * @param string|int $font
+     * @param string|int|resource $font
      * @param int $fontSize
      * @param string $text
      * @return number
