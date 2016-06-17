@@ -281,34 +281,22 @@ class Bloqueto extends AbstractFebraban
      */
     protected function montaLinhaDigitavel()
     {
-        $campoLivre = $this->getCampoLivre();
-        $linha      = [];
+        // Banco, Moeda, DV, Vencto, Valor, Campo Livre...
+        $linha = \preg_replace(
+            '/^(\d{3})(\d)(\d)(\d{4})(\d{10})(\d{5})(\d{10})(\d+)$/',
+            '$1$2$6 $7 $8 $3 $4$5',
+            $this->data
+        );
+        $linha = \explode(' ', $linha);
         
-        $linha[]    = \substr($this->data, 0, 4) .
-                      \substr($campoLivre, 0, 3) .
-                      \substr($campoLivre, 3, 2);
+        $mask = function($s)
+        {
+            return \preg_replace('/^(\d{5})(\d+)$/', '$1.$2', $s);
+        };
         
-        $linha[0]  .= self::modulo10($linha[0]);
-        $linha[0]   = \substr_replace($linha[0], '.', 5, 0);
-                 
-        $linha[]    = \substr($campoLivre, 5, 6) .
-                      \substr($campoLivre, 11, 1) .
-                      \substr($campoLivre, 12, 3);
-        
-        $linha[1]  .= self::modulo10($linha[1]);
-        $linha[1]   = \substr_replace($linha[1], '.', 5, 0);
-        
-        $linha[]    = \substr($campoLivre, 15, 1) .
-                      \substr($campoLivre, 16, 6) .
-                      \substr($campoLivre, 22);
-        
-        $linha[2]  .= self::modulo10($linha[2]);
-        $linha[2]   = \substr_replace($linha[2], '.', 5, 0);
-        
-        $linha[]    = $this->getChecksum();
-        
-        $linha[]    = $this->getFatorVecto() .
-                      \substr($this->data, 9, 10);
+        $linha[0] = $mask($linha[0] . self::modulo10($linha[0]));
+        $linha[1] = $mask($linha[1] . self::modulo10($linha[1]));
+        $linha[2] = $mask($linha[2] . self::modulo10($linha[2]));
         
         return \implode(' ', $linha);
     }
