@@ -78,6 +78,7 @@ class ImageRenderer extends AbstractRenderer
         
         $color     = $this->registerColor($color);
         $font      = $this->resolveFont($font, $fontSize);
+        $text      = \utf8_decode($text);
         if (\is_int($font)) {
             $font = $this->makeTextImage($font, $fontSize, $text);
         }
