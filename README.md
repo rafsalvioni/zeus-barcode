@@ -140,6 +140,7 @@ As barcodes, renderers has some parameters to change how a barcode draw will be 
 - "offsetLeft": Offset from left, in renderer's unit. Default 0;
 - "backColor": Background color, as integer, used on resize (see "merge" option). Default 0xffffff (white). Not used for FpdfRenderer;
 - "merge": This is the best option... see below. Boolean value, default false;
+- "type": Image type to render. Valid values are "png", "jpg", "jpeg" and "gif". Default "png". Supported only by ImageRenderer;
 
 Using last example, we can do this:
 ```php

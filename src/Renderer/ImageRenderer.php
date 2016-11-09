@@ -3,7 +3,7 @@
 namespace Zeus\Barcode\Renderer;
 
 /**
- * Renderer to draw barcodes as images.
+ * Renderer to draw barcodes as images using GD extension.
  *
  * @author Rafael M. Salvioni
  */
@@ -23,8 +23,22 @@ class ImageRenderer extends AbstractRenderer
     public function render()
     {
         $this->checkStarted();
-        \header('Content-Type: image/png');
-        \imagepng($this->resource);
+        $type = $this->options['type'];
+        
+        switch ($type) {
+            case 'jpg':
+                $type = 'jpeg';
+            case 'jpeg':
+            case 'gif':
+                break;
+            default:
+                $type = 'png';
+                break;
+        }
+        
+        \header("Content-Type: image/$type");
+        $f = "\\image$type";
+        $f($this->resource);
     }
 
     /**
@@ -358,5 +372,15 @@ class ImageRenderer extends AbstractRenderer
             $box = \imagettfbbox($fontSize, 0, $font, $text);
             return \abs($box[2] - $box[0]);
         }
+    }
+    
+    /**
+     * Loads the default renderer options.
+     * 
+     */
+    protected function loadDefaultOptions()
+    {
+        parent::loadDefaultOptions();
+        $this->options['type'] = 'png';
     }
 }
