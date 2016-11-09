@@ -21,7 +21,7 @@ Barcodes can be encoded on different ways. Most barcodes are encoded using bars 
 
 ### Renderers
 Once a barcode is created, we can draw this barcode in different formats. A renderer is who do this. A renderer should be implement
-the **RendererInterface**. Now a days, we have three renderers: Image (PNG), SVG and PDF.
+the **RendererInterface**. By default, this package has only the SVG renderer. There are a PDF and Image renderer too in separated packages.
 
 ## Default usage
 To create a barcode, you have to instantiate the barcode format wanted and gave the data to be encoded. For example, we create a Codabar
@@ -31,14 +31,14 @@ barcode:
 require 'vendor/autoload.php';
 
 use Zeus\Barcode\Codabar;
-use Zeus\Barcode\Renderer\ImageRenderer;
+use Zeus\Barcode\Renderer\SvgRenderer;
 
 $bc = new Codabar('A123456B');
-$renderer = new ImageRenderer();
+$renderer = new SvgRenderer();
 $bc->draw($renderer)->render();
 ```
 
-The code above will create a Ean13 barcode with data "A123456B". This barcode will be drawed using ImageRenderer and the
+The code above will create a Codabar barcode with data "A123456B". This barcode will be drawed using SvgRenderer and the
 render() method show the result to browser, using especific headers.
 
 All barcodes will be check if the data given can be encoded for them. A barcode exception will be throwed on error.
@@ -78,9 +78,9 @@ To barcodes thas implements TwoWidthInterface, we can set which width of wide an
 require 'vendor/autoload.php';
 
 use Zeus\Barcode\Code2of5\Interleaved;
-use Zeus\Barcode\Renderer\ImageRenderer;
+use Zeus\Barcode\Renderer\SvgRenderer;
 
-$renderer = new ImageRenderer();
+$renderer = new SvgRenderer();
 
 // With default width
 $bc1 = new Interleaved('5236589', false);
@@ -115,9 +115,9 @@ Example:
 require 'vendor/autoload.php';
 
 use Zeus\Barcode\Code2of5\Interleaved;
-use Zeus\Barcode\Renderer\ImageRenderer;
+use Zeus\Barcode\Renderer\SvgRenderer;
 
-$renderer = new ImageRenderer();
+$renderer = new SvgRenderer();
 
 $bc = new Interleaved('5236589', false);
 $bc->backColor = 0xffffaa;
@@ -138,18 +138,17 @@ We see above how to use renderers on basic way. However, renderers can be setted
 As barcodes, renderers has some parameters to change how a barcode draw will be done. Are they:
 - "offsetTop": Offset from top, in renderer's unit. Default 0;
 - "offsetLeft": Offset from left, in renderer's unit. Default 0;
-- "backColor": Background color, as integer, used on resize (see "merge" option). Default 0xffffff (white). Not used for FpdfRenderer;
+- "backColor": Background color, as integer, used on resize (see "merge" option). Default 0xffffff (white);
 - "merge": This is the best option... see below. Boolean value, default false;
-- "type": Image type to render. Valid values are "png", "jpg", "jpeg" and "gif". Default "png". Supported only by ImageRenderer;
 
 Using last example, we can do this:
 ```php
 require 'vendor/autoload.php';
 
 use Zeus\Barcode\Code2of5\Interleaved;
-use Zeus\Barcode\Renderer\ImageRenderer;
+use Zeus\Barcode\Renderer\SvgRenderer;
 
-$renderer = new ImageRenderer();
+$renderer = new SvgRenderer();
 
 $bc = new Interleaved('5236589', false);
 $bc->backColor = 0xffffaa;
@@ -176,9 +175,9 @@ Example:
 require 'vendor/autoload.php';
 
 use Zeus\Barcode\Code2of5\Interleaved;
-use Zeus\Barcode\Renderer\ImageRenderer;
+use Zeus\Barcode\Renderer\SvgRenderer;
 
-$renderer = new ImageRenderer();
+$renderer = new SvgRenderer();
 
 $bc = new Interleaved('5236589', false);
 $bc->backColor = 0xffffaa;
@@ -215,12 +214,12 @@ Example:
 require 'vendor/autoload.php';
 
 use Zeus\Barcode\Code2of5\Interleaved;
-use Zeus\Barcode\Renderer\ImageRenderer;
+use Zeus\Barcode\Renderer\SvgRenderer;
 
 $bc = new Interleaved('5236589', false);
 
-$renderer = new ImageRenderer();
-$renderer->setResource("<IMAGE PATH OR GD RESOURCE>");
+$renderer = new SvgRenderer();
+$renderer->setResource("<\DOMDocument OBJECT, XML FILE OR XML STRING>");
 $renderer->offsetLeft = 50;
 $renderer->offsetTop = 50;
 
