@@ -89,7 +89,7 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
     public function toUpce()
     {
         $data    = $this->getRealData();
-        $system  = $data{0};
+        $system  = $data[0];
         $mfct    = \substr($data, 1, 5);
         $product = \substr($data, 6, 5);
         
@@ -251,7 +251,7 @@ class Upca extends AbstractChecksumBarcode implements FixedLengthInterface
     protected function drawText(RendererInterface &$renderer)
     {
         $text = $this->getData();
-        $text = [$text{0}, \substr($text, 1, 5), \substr($text, 6, 5), \substr($text, -1)];
+        $text = [$text[0], \substr($text, 1, 5), \substr($text, 6, 5), \substr($text, -1)];
         
         $foreColor =& $this->options['forecolor'];
         $font      =& $this->options['font'];

@@ -57,9 +57,9 @@ class Ean2 extends AbstractBarcode implements FixedLengthInterface
         $parityTab =& self::$parityTable[($data % 4)];
         
         $encoded  = '1011' .
-                    self::$encodingTable[$data{0}][$parityTab[0]] .
+                    self::$encodingTable[$data[0]][$parityTab[0]] .
                     '01' .
-                    self::$encodingTable[$data{1}][$parityTab[1]];
+                    self::$encodingTable[$data[1]][$parityTab[1]];
         
         $encoder->addBinary($encoded);
     }

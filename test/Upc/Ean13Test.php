@@ -32,7 +32,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($info[1]);
                 $this->assertEquals($bc->getProductCode(), \substr($data, 7, 5));
                 $this->assertEquals($bc->withProductCode('56')->getProductCode(), '00056');
-                $this->assertEquals($bc->isUpcaCompatible(), $data{0} == '0');
+                $this->assertEquals($bc->isUpcaCompatible(), $data[0] == '0');
                 if ($bc->isUpcaCompatible()) {
                     $this->assertStringStartsWith(\substr($data, 1), $bc->toUpca()->getData());
                 }

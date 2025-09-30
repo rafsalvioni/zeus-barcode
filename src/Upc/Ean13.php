@@ -119,7 +119,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
         if ($n == $this->systemLength) {
             $len = $n;
         }
-        else if ($n > $this->systemLength && $mfg{0} == '0') {
+        else if ($n > $this->systemLength && $mfg[0] == '0') {
             $len = 3;
         }
         else if ($n < $this->systemLength) {
@@ -186,7 +186,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
      */
     public function isUpcaCompatible()
     {
-        return $this->data{0} == '0';
+        return $this->data[0] == '0';
     }
     
     /**
@@ -245,11 +245,11 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     protected function encodeData(EncoderInterface &$encoder, $data)
     {
         $encoded   = '';
-        $parityTab =& self::$parityTable[$data{0}];
+        $parityTab =& self::$parityTable[$data[0]];
         
         for ($i = 1; $i < 13; $i++) {
             $parity   = $i <= 6 ? $parityTab[$i - 1] : 2;
-            $encoded .= self::$encodingTable[$data{$i}][$parity];
+            $encoded .= self::$encodingTable[$data[$i]][$parity];
         }
         
         $barHeight = $this->showText ? 1.2 : 1;
@@ -269,7 +269,7 @@ class Ean13 extends AbstractChecksumBarcode implements FixedLengthInterface
     protected function drawText(RendererInterface &$renderer)
     {
         $text = $this->getData();
-        $text = [$text{0}, \substr($text, 1, 6), \substr($text, 7)];
+        $text = [$text[0], \substr($text, 1, 6), \substr($text, 7)];
         
         $foreColor =& $this->options['forecolor'];
         $font      =& $this->options['font'];

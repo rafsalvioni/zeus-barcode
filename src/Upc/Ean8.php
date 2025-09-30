@@ -70,7 +70,7 @@ class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
         if ($n == $this->systemLength) {
             $len = $n;
         }
-        else if ($n > $this->systemLength && $item{0} == '0') {
+        else if ($n > $this->systemLength && $item[0] == '0') {
             $len = 3;
         }
         else if ($n < $this->systemLength) {
@@ -152,7 +152,7 @@ class Ean8 extends AbstractChecksumBarcode implements FixedLengthInterface
         
         for ($i = 0; $i < 8; $i++) {
             $parity   = $i < 4 ? 0 : 2;
-            $encoded .= self::$encodingTable[$data{$i}][$parity];
+            $encoded .= self::$encodingTable[$data[$i]][$parity];
         }
         
         $barHeight = $this->showText ? 1.2 : 1;

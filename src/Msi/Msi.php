@@ -163,7 +163,7 @@ class Msi extends AbstractBarcode
         $encoder->addBinary('110');
         
         for ($i = 0; $i < $n; $i++) {
-            $encoded = self::$encodingTable[$data{$i}];
+            $encoded = self::$encodingTable[$data[$i]];
             $encoder->addBinary($encoded);
         }
         
