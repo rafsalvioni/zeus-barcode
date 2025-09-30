@@ -8,7 +8,7 @@ use Zeus\Barcode\Postnet;
  * 
  * @author Rafael M. Salvioni
  */
-class PostnetTest extends \PHPUnit_Framework_TestCase
+class PostnetTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

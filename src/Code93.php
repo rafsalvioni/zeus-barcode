@@ -120,7 +120,7 @@ class Code93 extends AbstractBarcode
         $sum    = self::sumCrescentWeight($data, 1, 20);
         $check  = (string)$enc[($sum % 47)];
         
-        $data[] = $flip[$check{0}];
+        $data[] = $flip[$check[0]];
         $sum    = self::sumCrescentWeight($data, 1, 15);
         $check .= $enc[($sum % 47)];
         

@@ -9,7 +9,7 @@ use Zeus\Barcode\Code11\Code11K;
  * 
  * @author Rafael M. Salvioni
  */
-class Code11Test extends \PHPUnit_Framework_TestCase
+class Code11Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

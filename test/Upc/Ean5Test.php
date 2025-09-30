@@ -8,7 +8,7 @@ use Zeus\Barcode\Upc\Ean5;
  * 
  * @author Rafael M. Salvioni
  */
-class Ean5Test extends \PHPUnit_Framework_TestCase
+class Ean5Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

@@ -8,7 +8,7 @@ use Zeus\Barcode\Itf14;
  * 
  * @author Rafael M. Salvioni
  */
-class Itf14Test extends \PHPUnit_Framework_TestCase
+class Itf14Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

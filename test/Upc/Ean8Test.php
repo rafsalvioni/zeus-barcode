@@ -8,7 +8,7 @@ use Zeus\Barcode\Upc\Ean8;
  * 
  * @author Rafael M. Salvioni
  */
-class Ean8Test extends \PHPUnit_Framework_TestCase
+class Ean8Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
@@ -100,11 +100,11 @@ class Ean8Test extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @depends withTest
-     * @expectedException \Zeus\Barcode\Upc\Ean8Exception
      */
     public function systemCodeErrorTest()
     {
         $bc = new Ean8('9911031', false);
+        $this->expectException(\Zeus\Barcode\Upc\Ean8Exception::class);
         $bc = $bc->withSystemCode('750');
     }
 }

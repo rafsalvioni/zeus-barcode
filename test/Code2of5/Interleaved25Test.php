@@ -8,7 +8,7 @@ use Zeus\Barcode\Code2of5\Interleaved;
  * 
  * @author Rafael M. Salvioni
  */
-class Interleaved25Test extends \PHPUnit_Framework_TestCase
+class Interleaved25Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

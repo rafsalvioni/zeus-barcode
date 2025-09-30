@@ -8,7 +8,7 @@ use Zeus\Barcode\Code128;
  * 
  * @author Rafael M. Salvioni
  */
-class Code128Test extends \PHPUnit_Framework_TestCase
+class Code128Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

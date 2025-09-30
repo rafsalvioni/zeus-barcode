@@ -8,7 +8,7 @@ use Zeus\Barcode\Codabar;
  * 
  * @author Rafael M. Salvioni
  */
-class CodabarTest extends \PHPUnit_Framework_TestCase
+class CodabarTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

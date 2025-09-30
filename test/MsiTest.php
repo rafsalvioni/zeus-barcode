@@ -10,7 +10,7 @@ use Zeus\Barcode\Msi\MsiMod11;
  * 
  * @author Rafael M. Salvioni
  */
-class MsiTest extends \PHPUnit_Framework_TestCase
+class MsiTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

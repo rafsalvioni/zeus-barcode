@@ -8,7 +8,7 @@ use Zeus\Barcode\Upc\ISSN;
  * 
  * @author Rafael M. Salvioni
  */
-class ISSNTest extends \PHPUnit_Framework_TestCase
+class ISSNTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

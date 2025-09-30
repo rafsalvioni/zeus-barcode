@@ -26,7 +26,7 @@ class Standard extends AbstractCode2of5
         foreach ($data as &$char) {
             $nwChar =& self::$encodingTable[$char];
             for ($i = 0; $i < 5; $i++) {
-                $encoded  = $this->encodeWithWidth($nwChar{$i} == 'N', true);
+                $encoded  = $this->encodeWithWidth($nwChar[$i] == 'N', true);
                 $encoded .= $this->encodeWithWidth(true, false);
                 $encoder->addBinary($encoded);
             }

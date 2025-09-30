@@ -11,7 +11,7 @@ use Zeus\Barcode\Code39\Code39ExtMod43;
  * 
  * @author Rafael M. Salvioni
  */
-class Code39Test extends \PHPUnit_Framework_TestCase
+class Code39Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

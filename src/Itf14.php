@@ -79,7 +79,7 @@ class Itf14 extends Code2of5\Interleaved implements FixedLengthInterface
     protected function checkData($data)
     {
         $len = $this->getLength();
-        if (\strlen($data) == $len && $data{0} != '9') {
+        if (\strlen($data) == $len && $data[0] != '9') {
             return parent::checkData($data);
         }
         return false;

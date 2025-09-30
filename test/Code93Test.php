@@ -8,7 +8,7 @@ use Zeus\Barcode\Code93;
  * 
  * @author Rafael M. Salvioni
  */
-class Code93Test extends \PHPUnit_Framework_TestCase
+class Code93Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

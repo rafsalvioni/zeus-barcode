@@ -57,7 +57,7 @@ trait EncoderTrait
         while (\preg_match('/^(0+|1+)/', $bin, $match)) {
             $width = \strlen($match[1]);
             $bin   = \substr($bin, $width);
-            $this->processBinary($match[1]{0}, $width, $height);
+            $this->processBinary($match[1][0], $width, $height);
         }
         return $this;
     }

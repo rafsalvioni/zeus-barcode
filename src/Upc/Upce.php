@@ -107,7 +107,7 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
         $check = $hasChecksum ? $this->extractChecksum($data, $data) : '';
         $last  = \substr($data, -1);
         $upce  = \substr($data, 1);
-        $data  = $data{0};
+        $data  = $data[0];
         
         if ($last == '0' || $last == '1' || $last == '2') {
             $data .= \substr($upce, 0, 2) . $last . '0000' . \substr($upce, 2, 3);
@@ -116,7 +116,7 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
             $data .= \substr($upce, 0, 3) . '00000' . \substr($upce, 3, 2);
         }
         else if ($last == '4') {
-            $data .= \substr($upce, 0, 4) . '00000' . $upce{4};
+            $data .= \substr($upce, 0, 4) . '00000' . $upce[4];
         }
         else {
             $data .= \substr($upce, 0, 5) . '0000' . $last;
@@ -157,12 +157,12 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
     protected function encodeData(EncoderInterface &$encoder, $data)
     {
         $check     = $this->extractChecksum($data, $data);
-        $parityTab =& self::$parityTable[$check][$data{0}];
+        $parityTab =& self::$parityTable[$check][$data[0]];
         $encoded   = '';
         
         for ($i = 1; $i < 7; $i++) {
             $parity   = $parityTab[$i - 1];
-            $encoded .= self::$encodingTable[$data{$i}][$parity];
+            $encoded .= self::$encodingTable[$data[$i]][$parity];
         }
         
         $barHeight = $this->showText ? 1.2 : 1;
@@ -181,7 +181,7 @@ class Upce extends AbstractChecksumBarcode implements FixedLengthInterface
     protected function drawText(RendererInterface &$renderer)
     {
         $text = $this->getData();
-        $text = [$text{0}, \substr($text, 1, 6), \substr($text, -1)];
+        $text = [$text[0], \substr($text, 1, 6), \substr($text, -1)];
         
         $foreColor =& $this->options['forecolor'];
         $font      =& $this->options['font'];

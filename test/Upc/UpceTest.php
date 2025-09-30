@@ -8,7 +8,7 @@ use Zeus\Barcode\Upc\Upce;
  * 
  * @author Rafael M. Salvioni
  */
-class UpceTest extends \PHPUnit_Framework_TestCase
+class UpceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

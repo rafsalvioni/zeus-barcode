@@ -8,7 +8,7 @@ use Zeus\Barcode\Upc\Upca;
  * 
  * @author Rafael M. Salvioni
  */
-class UpcaTest extends \PHPUnit_Framework_TestCase
+class UpcaTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

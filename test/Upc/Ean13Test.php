@@ -8,7 +8,7 @@ use Zeus\Barcode\Upc\Ean13;
  * 
  * @author Rafael M. Salvioni
  */
-class Ean13Test extends \PHPUnit_Framework_TestCase
+class Ean13Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
@@ -32,7 +32,7 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
                 $this->assertTrue($info[1]);
                 $this->assertEquals($bc->getProductCode(), \substr($data, 7, 5));
                 $this->assertEquals($bc->withProductCode('56')->getProductCode(), '00056');
-                $this->assertEquals($bc->isUpcaCompatible(), $data{0} == '0');
+                $this->assertEquals($bc->isUpcaCompatible(), ($data[0] ?? '') == '0');
                 if ($bc->isUpcaCompatible()) {
                     $this->assertStringStartsWith(\substr($data, 1), $bc->toUpca()->getData());
                 }
@@ -119,11 +119,11 @@ class Ean13Test extends \PHPUnit_Framework_TestCase
     /**
      * @test
      * @depends withTest
-     * @expectedException \Zeus\Barcode\Upc\Ean13Exception
      */
     public function systemCodeErrorTest()
     {
         $bc = new Ean13('991103131130', false);
+        $this->expectException(\Zeus\Barcode\Upc\Ean13Exception::class);
         $bc = $bc->withSystemCode('750');
     }
 }

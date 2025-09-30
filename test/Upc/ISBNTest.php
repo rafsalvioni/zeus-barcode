@@ -8,7 +8,7 @@ use Zeus\Barcode\Upc\ISBN;
  * 
  * @author Rafael M. Salvioni
  */
-class ISBNTest extends \PHPUnit_Framework_TestCase
+class ISBNTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test

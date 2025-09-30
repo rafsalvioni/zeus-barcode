@@ -8,7 +8,7 @@ use Zeus\Barcode\Code2of5\Standard;
  * 
  * @author Rafael M. Salvioni
  */
-class Industrial25Test extends \PHPUnit_Framework_TestCase
+class Industrial25Test extends \PHPUnit\Framework\TestCase
 {
     /**
      * @test
